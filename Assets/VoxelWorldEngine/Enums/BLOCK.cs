@@ -9,6 +9,6 @@ namespace VoxelWorldEngine.Enums
     public enum BLOCK : byte
     {
         NULL,
-        DIRT
+        SOLID
     }
 }
