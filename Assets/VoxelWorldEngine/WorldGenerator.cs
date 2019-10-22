@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,11 +14,15 @@ namespace VoxelWorldEngine
         public int ChunksY;
         public int ChunksZ;
 
-        public readonly int k = 4;
-
+        private static Dictionary<Vector3, Chunk> m_chunks;
+             
         // Start is called before the first frame update
         void Start()
         {
+            //Initialize variables
+            m_chunks = new Dictionary<Vector3, Chunk>();
+
+            //Generate the world
             GenerateWorld();
         }
 
@@ -35,10 +40,19 @@ namespace VoxelWorldEngine
                 {
                     for (int z = 0; z < ChunksZ; z++)
                     {
-                        GameObject tmp_chunk = Instantiate(ChunkPrefab, new Vector3(x * Chunk.XSize, y * Chunk.YSize, z * Chunk.ZSize), new Quaternion(0,0,0,0), this.transform);
+                        Vector3 pos = new Vector3(x * Chunk.XSize, y * Chunk.YSize, z * Chunk.ZSize);
+                        GameObject tmp_chunk = Instantiate(ChunkPrefab, pos, new Quaternion(0,0,0,0), this.transform);
+                        m_chunks.Add(pos, tmp_chunk.GetComponent<Chunk>());
                     }
                 }
             }
+        }
+        //****************************************************************
+        public static bool CheckSurroundings(Vector3 pos, int x, int y, int v)
+        {
+            Chunk chunk = m_chunks[pos];
+
+            throw new NotImplementedException();
         }
     }
 }
