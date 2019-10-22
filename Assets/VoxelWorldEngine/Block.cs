@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using VoxelWorldEngine.Enums;
 
 namespace VoxelWorldEngine
 {
-    public class Block
+    public static class Block
     {
 
-        //******************************************************
+        //*********************************************************************************
         #region Face generation methods
         public static void TopFace(int x, int y, int z, List<Vector3> vertices, List<int> triangles, int faceCount)
         {
@@ -96,7 +97,19 @@ namespace VoxelWorldEngine
             triangles.Add(faceCount * 4 + 2); //3
             triangles.Add(faceCount * 4 + 3); //4
         }
-        #endregion
-        //******************************************************
+        #endregion                                 
+        //*********************************************************************************
+        public static bool IsTransparent(BLOCK id)
+        {
+            switch (id)
+            {
+                //AIR, TRANSPARENT, FLUID ...
+                case BLOCK.NULL:
+                    return true;
+                //All the solids
+                default:
+                    return false;
+            }
+        }
     }
 }
