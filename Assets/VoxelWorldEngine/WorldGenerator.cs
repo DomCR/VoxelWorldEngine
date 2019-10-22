@@ -90,27 +90,27 @@ namespace VoxelWorldEngine
             return 0;
         }
 
-        bool CheckSurroundings_old(int x, int y, int z)
-        {
-            int wx = x + (int)this.transform.position.x;
-            int wy = y + (int)this.transform.position.y;
-            int wz = z + (int)this.transform.position.z;
-            //Debug.Log((int)this.transform.position.x);
+        //bool CheckSurroundings_old(int x, int y, int z)
+        //{
+        //    int wx = x + (int)this.transform.position.x;
+        //    int wy = y + (int)this.transform.position.y;
+        //    int wz = z + (int)this.transform.position.z;
+        //    //Debug.Log((int)this.transform.position.x);
 
-            //Check array limits
-            if (wx >= World.WorldBlocks.GetLength(0) ||
-                wy >= World.WorldBlocks.GetLength(1) ||
-                wz >= World.WorldBlocks.GetLength(2) ||
-                wx < 0 || wy < 0 || wz < 0
-                )
-            {
-                return true;
-            }
+        //    //Check array limits
+        //    if (wx >= World.WorldBlocks.GetLength(0) ||
+        //        wy >= World.WorldBlocks.GetLength(1) ||
+        //        wz >= World.WorldBlocks.GetLength(2) ||
+        //        wx < 0 || wy < 0 || wz < 0
+        //        )
+        //    {
+        //        return true;
+        //    }
 
-            if (World.WorldBlocks[wx, wy, wz] == BLOCK.NULL)
-                return true;
+        //    if (World.WorldBlocks[wx, wy, wz] == BLOCK.NULL)
+        //        return true;
 
-            return false;
-        }
+        //    return false;
+        //}
     }
 }

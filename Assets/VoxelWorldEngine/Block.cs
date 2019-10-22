@@ -97,8 +97,42 @@ namespace VoxelWorldEngine
             triangles.Add(faceCount * 4 + 2); //3
             triangles.Add(faceCount * 4 + 3); //4
         }
-        #endregion                                 
+        #endregion
         //*********************************************************************************
+        public static List<Vector2> GetTexture(BLOCK blockType)
+        {
+            List<Vector2> newUV = new List<Vector2>();
+            Vector2 TexturePos = GetTexturePosition(blockType);
+            float tUnit = 0.0625f;
+            //float tUnit = 1 / 16;
+            //float vUnit = 16 / 256;
+
+            TexturePos = new Vector2(0, 15);
+
+            newUV.Add(new Vector2(tUnit * TexturePos.x + tUnit, tUnit * TexturePos.y));
+            newUV.Add(new Vector2(tUnit * TexturePos.x + tUnit, tUnit * TexturePos.y + tUnit));
+            newUV.Add(new Vector2(tUnit * TexturePos.x, tUnit * TexturePos.y + tUnit));
+            newUV.Add(new Vector2(tUnit * TexturePos.x, tUnit * TexturePos.y));
+
+            //newUV.Add(new Vector2(tUnit, tUnit * 16));
+            //newUV.Add(new Vector2(tUnit, tUnit * 16 + tUnit));
+            //newUV.Add(new Vector2(0, tUnit * 16 + tUnit));
+            //newUV.Add(new Vector2(0, tUnit * 16));
+
+            return newUV;
+        }
+
+        public static Vector2 GetTexturePosition(BLOCK block)
+        {
+            switch (block)
+            {
+                case BLOCK.NULL:
+                case BLOCK.SOLID:
+                default:
+                    return new Vector2();
+            }
+        }
+
         public static bool IsTransparent(BLOCK id)
         {
             switch (id)
