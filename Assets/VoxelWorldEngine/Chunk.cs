@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -36,10 +37,11 @@ namespace VoxelWorldEngine
             m_collider = this.GetComponent<MeshCollider>();
 
             //Generate the current chunk
-            GenerateChunk();
-            GenerateMesh();
+            //GenerateChunk();
+            //GenerateMesh();
+            //UpdateMesh();
 
-            UpdateMesh();
+            StartCoroutine(CreateChunk());
         }
         void Update()
         {
@@ -117,7 +119,9 @@ namespace VoxelWorldEngine
                 }
             }
         }
-    
+        /// <summary>
+        /// Update the mesh parameters, vertices, triangles and uv
+        /// </summary>
         public void UpdateMesh()
         {
             //Reset mesh
@@ -142,6 +146,15 @@ namespace VoxelWorldEngine
             m_triangles.Clear();
             m_colors.Clear();
             m_faceCount = 0;
+        }
+        //*************************************************************
+        private IEnumerator CreateChunk()
+        {
+            GenerateChunk();
+            GenerateMesh();
+            UpdateMesh();
+
+            yield return null;
         }
     }
 }

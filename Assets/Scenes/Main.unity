@@ -165,9 +165,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ChunkPrefab: {fileID: 662855818199676993, guid: c7922437e70d5654c99418c25739b33e,
     type: 3}
-  ChunksX: 5
+  ChunksX: 2
   ChunksY: 1
-  ChunksZ: 5
+  ChunksZ: 2
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
