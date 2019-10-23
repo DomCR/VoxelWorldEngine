@@ -83,7 +83,7 @@ namespace VoxelWorldEngine
             triangles.Add(faceCount * 4 + 2); //3
             triangles.Add(faceCount * 4 + 3); //4
         }
-        public static void BotFace(int x, int y, int z, List<Vector3> vertices, List<int> triangles, int faceCount)
+        public static void BottomFace(int x, int y, int z, List<Vector3> vertices, List<int> triangles, int faceCount)
         {
             vertices.Add(new Vector3(x, y - 1, z));
             vertices.Add(new Vector3(x + 1, y - 1, z));
@@ -99,7 +99,7 @@ namespace VoxelWorldEngine
         }
         #endregion
         //*********************************************************************************
-        public static List<Vector2> GetTexture(BLOCK blockType)
+        public static List<Vector2> GetTexture(EBlock blockType)
         {
             List<Vector2> newUV = new List<Vector2>();
             Vector2 TexturePos = GetTexturePosition(blockType);
@@ -122,23 +122,46 @@ namespace VoxelWorldEngine
             return newUV;
         }
 
-        public static Vector2 GetTexturePosition(BLOCK block)
+        public static Vector2 GetTextureMapping(EBlock block, EFace face)
+        {
+            switch (face)
+            {
+                case EFace.Top:
+                    break;
+                case EFace.North:
+                    break;
+                case EFace.East:
+                    break;
+                case EFace.South:
+                    break;
+                case EFace.West:
+                    break;
+                case EFace.Bottom:
+                    break;
+                default:
+                    break;
+            }
+
+            throw new NotImplementedException();
+        }
+
+        public static Vector2 GetTexturePosition(EBlock block)
         {
             switch (block)
             {
-                case BLOCK.NULL:
-                case BLOCK.SOLID:
+                case EBlock.NULL:
+                case EBlock.SOLID:
                 default:
                     return new Vector2();
             }
         }
 
-        public static bool IsTransparent(BLOCK id)
+        public static bool IsTransparent(EBlock id)
         {
             switch (id)
             {
                 //AIR, TRANSPARENT, FLUID ...
-                case BLOCK.NULL:
+                case EBlock.NULL:
                     return true;
                 //All the solids
                 default:

@@ -56,7 +56,10 @@ namespace VoxelWorldEngine
 
             //Find in which chunk is the point
             //Vector3 global_pos = new Vector3(pos.x + x, pos.y + y, pos.z + z);
-            Vector3 chunk_key = new Vector3(pos.x + CheckLimits((int)pos.x, Chunk.XSize), pos.y + CheckLimits((int)pos.y, Chunk.YSize), pos.z + CheckLimits((int)pos.z, Chunk.ZSize));
+            Vector3 chunk_key = new Vector3(
+                pos.x + CheckLimits((int)(x + pos.x), (int)pos.x, Chunk.XSize), 
+                pos.y + CheckLimits((int)(y + pos.y), (int)pos.y, Chunk.YSize), 
+                pos.z + CheckLimits((int)(z + pos.z), (int)pos.z, Chunk.ZSize));
 
             //If the chunk doesn't exist, return true (AIR)
             m_chunks.TryGetValue(chunk_key, out chunk);
@@ -76,13 +79,28 @@ namespace VoxelWorldEngine
             return Block.IsTransparent(chunk.Blocks[x, y, z]);
         }
 
-        public static int CheckLimits(int value, int limit)
+        public static int CheckLimits(Vector3 pos, Vector3 point)
         {
-            if (value - limit < 0)
+            Vector3 rel = new Vector3(pos.x + Chunk.XSize, pos.y + Chunk.YSize, pos.z + Chunk.ZSize);
+
+            if(point.x < pos.x || point.y < pos.y ||point.z < pos.z)
             {
                 return -1;
             }
-            if (value + limit >= limit)
+
+
+            throw new NotImplementedException();
+        }
+
+        public static int CheckLimits(int value, int axisPos, int limit)
+        {
+            int max = axisPos + limit;
+
+            if (value < axisPos)
+            {
+                return -1;
+            }
+            if (value > max - 1)
             {
                 return 1;
             }

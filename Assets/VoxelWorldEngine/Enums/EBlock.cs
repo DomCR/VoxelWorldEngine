@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VoxelWorldEngine.Enums
 {
-    public enum BLOCK : byte
+    public enum EBlock : byte
     {
         NULL,
         SOLID
