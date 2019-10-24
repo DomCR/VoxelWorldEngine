@@ -60,11 +60,7 @@ namespace VoxelWorldEngine
                 {
                     for (int y = 0; y < YSize; y++)
                     {
-                        //Apply Noise...
-                        if(y == 1)
-                        {
-                            Blocks[x, y, z] = EBlock.SOLID;
-                        }
+                        //TODO: Get the noise from the height map and biome
                     }
                 }
             }
