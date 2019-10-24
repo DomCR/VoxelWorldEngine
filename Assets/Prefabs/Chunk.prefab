@@ -106,3 +106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ff49b3375934e44da53e6a04a448da9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  HeightScale: 125
+  HeightMagnitude: 200
+  NoiseScale: 25
+  Threshold: 0.45

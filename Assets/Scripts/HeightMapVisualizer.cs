@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using VoxelWorldEngine.NoiseVariations;
 
+//[ExecuteInEditMode]
 public class HeightMapVisualizer : MonoBehaviour
 {
     public enum NoiseMethodType
@@ -45,7 +46,7 @@ public class HeightMapVisualizer : MonoBehaviour
     }
     private void Update()
     {
-        if (Refresh)
+        if (true)
         {
             FillTexture();
             Refresh = false;

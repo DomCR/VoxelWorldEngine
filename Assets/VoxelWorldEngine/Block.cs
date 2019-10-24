@@ -99,7 +99,7 @@ namespace VoxelWorldEngine
         }
         #endregion
         //*********************************************************************************
-        public static List<Vector2> GetTexture(EBlock blockType)
+        public static List<Vector2> GetTexture(BlockType blockType)
         {
             List<Vector2> newUV = new List<Vector2>();
             Vector2 TexturePos = GetTexturePosition(blockType);
@@ -122,21 +122,21 @@ namespace VoxelWorldEngine
             return newUV;
         }
 
-        public static Vector2 GetTextureMapping(EBlock block, EFace face)
+        public static Vector2 GetTextureMapping(BlockType block, FaceType face)
         {
             switch (face)
             {
-                case EFace.Top:
+                case FaceType.Top:
                     break;
-                case EFace.North:
+                case FaceType.North:
                     break;
-                case EFace.East:
+                case FaceType.East:
                     break;
-                case EFace.South:
+                case FaceType.South:
                     break;
-                case EFace.West:
+                case FaceType.West:
                     break;
-                case EFace.Bottom:
+                case FaceType.Bottom:
                     break;
                 default:
                     break;
@@ -145,23 +145,23 @@ namespace VoxelWorldEngine
             throw new NotImplementedException();
         }
 
-        public static Vector2 GetTexturePosition(EBlock block)
+        public static Vector2 GetTexturePosition(BlockType block)
         {
             switch (block)
             {
-                case EBlock.NULL:
-                case EBlock.SOLID:
+                case BlockType.NULL:
+                case BlockType.SOLID:
                 default:
                     return new Vector2();
             }
         }
 
-        public static bool IsTransparent(EBlock id)
+        public static bool IsTransparent(BlockType id)
         {
             switch (id)
             {
                 //AIR, TRANSPARENT, FLUID ...
-                case EBlock.NULL:
+                case BlockType.NULL:
                     return true;
                 //All the solids
                 default:

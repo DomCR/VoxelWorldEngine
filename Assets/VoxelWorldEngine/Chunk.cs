@@ -6,15 +6,27 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using VoxelWorldEngine.Enums;
+using VoxelWorldEngine.NoiseVariations;
 
 namespace VoxelWorldEngine
 {
     public class Chunk : MonoBehaviour
     {
-        public EBlock[,,] Blocks;
+        public BlockType[,,] Blocks;
         public const int XSize = 16;
         public const int YSize = 256;
         public const int ZSize = 16;
+
+        [Range(0, 999f)]
+        [Tooltip("WaveLength of Height Map Noise")]
+        public float HeightScale;
+        [Range(0, 999f)]
+        public float HeightMagnitude;
+        [Space()]
+        [Range(0, 999f)]
+        public float NoiseScale;
+        [Range(0, 1.0f)]
+        public float Threshold = 0.5f;
         //*************************************************************
         private List<Vector3> m_vertices = new List<Vector3>();
         private List<int> m_triangles = new List<int>();
@@ -27,10 +39,16 @@ namespace VoxelWorldEngine
 
         //*************************************************************
         #region Behaviour methods
-        void Start()
+        void Awake()
         {
+            //Get the nois variables from world generator (should be from the biome)
+            HeightScale = WorldGenerator.s_HeightScale;
+            HeightMagnitude = WorldGenerator.s_HeightMagnitude;
+            NoiseScale = WorldGenerator.s_NoiseScale;
+            Threshold = WorldGenerator.s_Threshold;
+
             //Initialize the block array
-            Blocks = new EBlock[16,256,16];
+            Blocks = new BlockType[16, 256, 16];
 
             //Get the gameobject components
             m_mesh = this.GetComponent<MeshFilter>().mesh;
@@ -38,14 +56,14 @@ namespace VoxelWorldEngine
 
             //Generate the current chunk
             //GenerateChunk();
-            //GenerateMesh();
-            //UpdateMesh();
+            GenerateMesh();
+            UpdateMesh();
 
-            StartCoroutine(CreateChunk());
+            //StartCoroutine(CreateChunk());
         }
         void Update()
         {
-            
+
         }
         #endregion
         //*************************************************************
@@ -58,9 +76,21 @@ namespace VoxelWorldEngine
             {
                 for (int z = 0; z < ZSize; z++)
                 {
-                    for (int y = 0; y < YSize; y++)
+                    //Get the height map
+                    int height = (int)(Mathf.PerlinNoise(
+                        (x + this.transform.position.x) / HeightScale,
+                        (z + this.transform.position.z) / HeightScale) * HeightMagnitude);
+
+                    for (int y = 0; y < height; y++)
                     {
-                        //TODO: Get the noise from the height map and biome
+                        //Generate a 3D noise to create, holes and irregularities in the terrain
+                        if (PerlinNoise3D.Generate_01(
+                            (x + this.transform.position.x) / NoiseScale,
+                            (y + this.transform.position.y) / NoiseScale,
+                            (z + this.transform.position.z) / NoiseScale) >= Threshold)
+                            Blocks[x, y, z] = BlockType.SOLID;
+                        else
+                            Blocks[x, y, z] = BlockType.NULL;
                     }
                 }
             }
@@ -76,37 +106,50 @@ namespace VoxelWorldEngine
                 {
                     for (int z = 0; z < ZSize; z++)
                     {
+                        Vector3 currBlockPos = new Vector3(
+                            x + this.transform.position.x,
+                            y + this.transform.position.y,
+                            z + this.transform.position.z);
+
+                        Blocks[x, y, z] = WorldGenerator.GetWorldBlock(currBlockPos);
+
                         //Guard: blocks to ignore
-                        if (Blocks[x, y, z] == EBlock.NULL)
+                        if (Blocks[x, y, z] == BlockType.NULL)
                             continue;
 
                         //Set the visible faces
-                        if (WorldGenerator.CheckSurroundings(this.transform.position, x + 1, y, z))
+                        //if (WorldGenerator.CheckSurroundings(this.transform.position, x + 1, y, z))
+                        if (WorldGenerator.GetWorldBlock(currBlockPos.x + 1, currBlockPos.y, currBlockPos.z) == BlockType.NULL)
                         {
                             Block.EastFace(x, y, z, m_vertices, m_triangles, m_faceCount);
                             m_faceCount++;
                         }
-                        if (WorldGenerator.CheckSurroundings(this.transform.position, x, y + 1, z))
+                        //if (WorldGenerator.CheckSurroundings(this.transform.position, x, y + 1, z))
+                        if (WorldGenerator.GetWorldBlock(currBlockPos.x, currBlockPos.y + 1, currBlockPos.z) == BlockType.NULL)
                         {
                             Block.TopFace(x, y, z, m_vertices, m_triangles, m_faceCount);
                             m_faceCount++;
                         }
-                        if (WorldGenerator.CheckSurroundings(this.transform.position, x, y, z + 1))
+                        //if (WorldGenerator.CheckSurroundings(this.transform.position, x, y, z + 1))
+                        if (WorldGenerator.GetWorldBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z + 1) == BlockType.NULL)
                         {
                             Block.NorthFace(x, y, z, m_vertices, m_triangles, m_faceCount);
                             m_faceCount++;
                         }
-                        if (WorldGenerator.CheckSurroundings(this.transform.position, x - 1, y, z))
+                        //if (WorldGenerator.CheckSurroundings(this.transform.position, x - 1, y, z))
+                        if (WorldGenerator.GetWorldBlock(currBlockPos.x - 1, currBlockPos.y, currBlockPos.z) == BlockType.NULL)
                         {
                             Block.WestFace(x, y, z, m_vertices, m_triangles, m_faceCount);
                             m_faceCount++;
                         }
-                        if (WorldGenerator.CheckSurroundings(this.transform.position, x, y - 1, z))
+                        //if (WorldGenerator.CheckSurroundings(this.transform.position, x, y - 1, z))
+                        if (WorldGenerator.GetWorldBlock(currBlockPos.x, currBlockPos.y - 1, currBlockPos.z) == BlockType.NULL)
                         {
                             Block.BottomFace(x, y, z, m_vertices, m_triangles, m_faceCount);
                             m_faceCount++;
                         }
-                        if (WorldGenerator.CheckSurroundings(this.transform.position, x, y, z - 1))
+                        //if (WorldGenerator.CheckSurroundings(this.transform.position, x, y, z - 1))
+                        if (WorldGenerator.GetWorldBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z - 1) == BlockType.NULL)
                         {
                             Block.SouthFace(x, y, z, m_vertices, m_triangles, m_faceCount);
                             m_faceCount++;
@@ -146,7 +189,12 @@ namespace VoxelWorldEngine
         //*************************************************************
         private IEnumerator CreateChunk()
         {
-            GenerateChunk();
+            //TODO:Do not use coroutines to create the chunks, use threads
+            //The mesh and collider assaignments must be outside the trhead,
+            //Not compatible with Unity API.
+
+            //Optimization: join generate chunk and mesh, use method, getblock() where it returns the block
+            //GenerateChunk();
             GenerateMesh();
             UpdateMesh();
 

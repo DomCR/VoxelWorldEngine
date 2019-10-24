@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VoxelWorldEngine.Enums
 {
-    public enum EFace
+    public enum FaceType
     {
         Top,
         North,
