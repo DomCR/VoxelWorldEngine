@@ -27,6 +27,8 @@ namespace VoxelWorldEngine
         public float NoiseScale;
         [Range(0, 1.0f)]
         public float Threshold = 0.5f;
+
+        public ChunkState State { get; private set; }
         //*************************************************************
         private List<Vector3> m_vertices = new List<Vector3>();
         private List<int> m_triangles = new List<int>();
@@ -63,7 +65,7 @@ namespace VoxelWorldEngine
         }
         void Update()
         {
-
+            
         }
         #endregion
         //*************************************************************
@@ -100,6 +102,9 @@ namespace VoxelWorldEngine
         /// </summary>
         void GenerateMesh()
         {
+            //Update the chunk state
+            State = ChunkState.CreatingMesh;
+
             for (int x = 0; x < XSize; x++)
             {
                 for (int y = 0; y < YSize; y++)
@@ -157,11 +162,14 @@ namespace VoxelWorldEngine
                     }
                 }
             }
+
+            //Update the chunk state
+            State = ChunkState.NeedMeshUpdate;
         }
         /// <summary>
         /// Update the mesh parameters, vertices, triangles and uv
         /// </summary>
-        public void UpdateMesh()
+        void UpdateMesh()
         {
             //Reset mesh
             m_mesh.Clear();
