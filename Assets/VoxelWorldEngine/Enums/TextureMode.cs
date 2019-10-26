@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace VoxelWorldEngine.Enums
 {
-    public enum BlockType : byte
+    public enum TextureMode
     {
-        NULL,
-        SOLID,
-
-        END_BLOCK
+        SOLID_COLOR,
+        CANVAS_TEXTURE
     }
 }

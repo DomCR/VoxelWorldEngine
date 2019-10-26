@@ -13,6 +13,36 @@ namespace VoxelWorldEngine
 
         //*********************************************************************************
         #region Face generation methods
+        public static void CreateFace(int x, int y, int z, List<Vector3> vertices, List<int> triangles, int faceCount, FaceType face)
+        {
+            GetFace(x, y, z, vertices, triangles, faceCount, face);
+        }
+        public static void GetFace(int x, int y, int z, List<Vector3> vertices, List<int> triangles, int faceCount, FaceType face)
+        {
+            switch (face)
+            {
+                case FaceType.Top:
+                    TopFace(x, y, z, vertices, triangles, faceCount);
+                    break;
+                case FaceType.North:
+                    TopFace(x, y, z, vertices, triangles, faceCount);
+                    break;
+                case FaceType.East:
+                    TopFace(x, y, z, vertices, triangles, faceCount);
+                    break;
+                case FaceType.South:
+                    TopFace(x, y, z, vertices, triangles, faceCount);
+                    break;
+                case FaceType.West:
+                    TopFace(x, y, z, vertices, triangles, faceCount);
+                    break;
+                case FaceType.Bottom:
+                    TopFace(x, y, z, vertices, triangles, faceCount);
+                    break;
+                default:
+                    break;
+            }
+        }
         public static void TopFace(int x, int y, int z, List<Vector3> vertices, List<int> triangles, int faceCount)
         {
             vertices.Add(new Vector3(x, y, z + 1));
@@ -121,7 +151,6 @@ namespace VoxelWorldEngine
 
             return newUV;
         }
-
         public static Vector2 GetTextureMapping(BlockType block, FaceType face)
         {
             switch (face)
@@ -141,10 +170,22 @@ namespace VoxelWorldEngine
                 default:
                     break;
             }
-
             throw new NotImplementedException();
         }
-
+        public static Color GetColor(BlockType block)
+        {
+            switch (block)
+            {
+                //case BlockType.NULL:
+                //    break;
+                case BlockType.SOLID:
+                    return new Color(255, 255, 255);
+                case BlockType.END_BLOCK:
+                    return new Color(0, 0, 0);
+                default:
+                    return new Color(255, 255, 255);
+            }
+        }
         public static Vector2 GetTexturePosition(BlockType block)
         {
             switch (block)

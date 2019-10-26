@@ -20,6 +20,12 @@ namespace VoxelWorldEngine
         public static int s_ChunksY;
         public static int s_ChunksZ;
 
+        [Space()]
+        public TextureMode TextureMode;
+
+        public static TextureMode s_textureMode;
+
+        [Space()]
         //Noise setup
         [Range(0, 999f)]
         [Tooltip("WaveLength of Height Map Noise")]
@@ -47,6 +53,8 @@ namespace VoxelWorldEngine
             s_ChunksY = ChunksY;
             s_ChunksZ = ChunksZ;
 
+            s_textureMode = TextureMode;
+
             s_HeightScale = HeightScale;
             s_HeightMagnitude = HeightMagnitude;
             s_NoiseScale = NoiseScale;
@@ -65,6 +73,9 @@ namespace VoxelWorldEngine
 
         }
         //****************************************************************
+        /// <summary>
+        /// Create the world chunks 
+        /// </summary>
         void GenerateWorld()
         {
             for (int x = 0; x < ChunksX; x++)
@@ -81,7 +92,15 @@ namespace VoxelWorldEngine
             }
         }
         //****************************************************************
-        public static bool GetBlock(Vector3 pos, int x, int y, int z)
+        /// <summary>
+        /// Get the block in a designated coordinates
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        /// <returns></returns>
+        public static BlockType GetBlock(Vector3 pos, int x, int y, int z)
         {
             Chunk chunk = null;
 
@@ -93,10 +112,19 @@ namespace VoxelWorldEngine
 
             //If the chunk doesn't exist, return true (AIR)
             m_chunks.TryGetValue(chunk_key, out chunk);
-            if (chunk == null) return true;
 
-            return Block.IsTransparent(chunk.Blocks[x, y, z]);
+            //TODO: fix the coordinate of the block
+            throw new NotImplementedException();
+            return chunk.Blocks[x,y,z];
         }
+        /// <summary>
+        /// Get the block of the current world initialization
+        /// Once the world is generated use GetBlock()
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        /// <returns></returns>
         public static BlockType GetWorldBlock(float x, float y, float z)
         {
             return GetWorldBlock(new Vector3(x, y, z));
@@ -109,6 +137,11 @@ namespace VoxelWorldEngine
                 (int)pos.y >= s_ChunksY * Chunk.YSize ||
                 (int)pos.z >= s_ChunksZ * Chunk.ZSize)
                 return BlockType.NULL;
+
+            //Set the bottom edge blocks 
+            int height_endBlock = (int)(Mathf.PerlinNoise(pos.x, pos.y));
+            if (pos.y < height_endBlock)
+                return BlockType.END_BLOCK;
 
             //Get the height map
             int height = (int)(Mathf.PerlinNoise(

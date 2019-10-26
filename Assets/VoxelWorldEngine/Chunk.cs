@@ -17,17 +17,6 @@ namespace VoxelWorldEngine
         public const int YSize = 256;
         public const int ZSize = 16;
 
-        [Range(0, 999f)]
-        [Tooltip("WaveLength of Height Map Noise")]
-        public float HeightScale;
-        [Range(0, 999f)]
-        public float HeightMagnitude;
-        [Space()]
-        [Range(0, 999f)]
-        public float NoiseScale;
-        [Range(0, 1.0f)]
-        public float Threshold = 0.5f;
-
         public ChunkState State { get; private set; }
         //*************************************************************
         private List<Vector3> m_vertices = new List<Vector3>();
@@ -43,12 +32,6 @@ namespace VoxelWorldEngine
         #region Behaviour methods
         void Awake()
         {
-            //Get the nois variables from world generator (should be from the biome)
-            HeightScale = WorldGenerator.s_HeightScale;
-            HeightMagnitude = WorldGenerator.s_HeightMagnitude;
-            NoiseScale = WorldGenerator.s_NoiseScale;
-            Threshold = WorldGenerator.s_Threshold;
-
             //Initialize the block array
             Blocks = new BlockType[16, 256, 16];
 
@@ -65,38 +48,10 @@ namespace VoxelWorldEngine
         }
         void Update()
         {
-            
+
         }
         #endregion
         //*************************************************************
-        /// <summary>
-        /// Generate the chunk data, applying the noise, biome and height factors
-        /// </summary>
-        void GenerateChunk()
-        {
-            for (int x = 0; x < XSize; x++)
-            {
-                for (int z = 0; z < ZSize; z++)
-                {
-                    //Get the height map
-                    int height = (int)(Mathf.PerlinNoise(
-                        (x + this.transform.position.x) / HeightScale,
-                        (z + this.transform.position.z) / HeightScale) * HeightMagnitude);
-
-                    for (int y = 0; y < height; y++)
-                    {
-                        //Generate a 3D noise to create, holes and irregularities in the terrain
-                        if (PerlinNoise3D.Generate_01(
-                            (x + this.transform.position.x) / NoiseScale,
-                            (y + this.transform.position.y) / NoiseScale,
-                            (z + this.transform.position.z) / NoiseScale) >= Threshold)
-                            Blocks[x, y, z] = BlockType.SOLID;
-                        else
-                            Blocks[x, y, z] = BlockType.NULL;
-                    }
-                }
-            }
-        }
         /// <summary>
         /// Generate the chunk mesh
         /// </summary>
@@ -127,6 +82,18 @@ namespace VoxelWorldEngine
                         if (WorldGenerator.GetWorldBlock(currBlockPos.x + 1, currBlockPos.y, currBlockPos.z) == BlockType.NULL)
                         {
                             Block.EastFace(x, y, z, m_vertices, m_triangles, m_faceCount);
+
+                            switch (WorldGenerator.s_textureMode)
+                            {
+                                case TextureMode.SOLID_COLOR:
+                                    m_colors.Add(Block.GetColor(Blocks[x, y, z]));
+                                    break;
+                                case TextureMode.CANVAS_TEXTURE:
+                                    break;
+                                default:
+                                    break;
+                            }
+
                             m_faceCount++;
                         }
                         //if (WorldGenerator.CheckSurroundings(this.transform.position, x, y + 1, z))
