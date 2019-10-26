@@ -115,7 +115,7 @@ namespace VoxelWorldEngine
 
             //TODO: fix the coordinate of the block
             throw new NotImplementedException();
-            return chunk.Blocks[x,y,z];
+            //return chunk.Blocks[x,y,z];
         }
         /// <summary>
         /// Get the block of the current world initialization

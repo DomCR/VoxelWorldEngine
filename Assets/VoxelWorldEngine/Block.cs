@@ -179,7 +179,7 @@ namespace VoxelWorldEngine
                 //case BlockType.NULL:
                 //    break;
                 case BlockType.SOLID:
-                    return new Color(255, 255, 255);
+                    return new Color(255, 125, 255);
                 case BlockType.END_BLOCK:
                     return new Color(0, 0, 0);
                 default:
@@ -196,7 +196,6 @@ namespace VoxelWorldEngine
                     return new Vector2();
             }
         }
-
         public static bool IsTransparent(BlockType id)
         {
             switch (id)

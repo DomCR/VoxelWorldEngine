@@ -78,52 +78,40 @@ namespace VoxelWorldEngine
                             continue;
 
                         //Set the visible faces
-                        //if (WorldGenerator.CheckSurroundings(this.transform.position, x + 1, y, z))
                         if (WorldGenerator.GetWorldBlock(currBlockPos.x + 1, currBlockPos.y, currBlockPos.z) == BlockType.NULL)
                         {
                             Block.EastFace(x, y, z, m_vertices, m_triangles, m_faceCount);
-
-                            switch (WorldGenerator.s_textureMode)
-                            {
-                                case TextureMode.SOLID_COLOR:
-                                    m_colors.Add(Block.GetColor(Blocks[x, y, z]));
-                                    break;
-                                case TextureMode.CANVAS_TEXTURE:
-                                    break;
-                                default:
-                                    break;
-                            }
-
+                            setFaceTexture(x, y, z);
                             m_faceCount++;
                         }
-                        //if (WorldGenerator.CheckSurroundings(this.transform.position, x, y + 1, z))
                         if (WorldGenerator.GetWorldBlock(currBlockPos.x, currBlockPos.y + 1, currBlockPos.z) == BlockType.NULL)
                         {
                             Block.TopFace(x, y, z, m_vertices, m_triangles, m_faceCount);
+                            setFaceTexture(x, y, z);
                             m_faceCount++;
                         }
-                        //if (WorldGenerator.CheckSurroundings(this.transform.position, x, y, z + 1))
                         if (WorldGenerator.GetWorldBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z + 1) == BlockType.NULL)
                         {
                             Block.NorthFace(x, y, z, m_vertices, m_triangles, m_faceCount);
+                            setFaceTexture(x, y, z);
                             m_faceCount++;
                         }
-                        //if (WorldGenerator.CheckSurroundings(this.transform.position, x - 1, y, z))
                         if (WorldGenerator.GetWorldBlock(currBlockPos.x - 1, currBlockPos.y, currBlockPos.z) == BlockType.NULL)
                         {
                             Block.WestFace(x, y, z, m_vertices, m_triangles, m_faceCount);
+                            setFaceTexture(x, y, z);
                             m_faceCount++;
                         }
-                        //if (WorldGenerator.CheckSurroundings(this.transform.position, x, y - 1, z))
                         if (WorldGenerator.GetWorldBlock(currBlockPos.x, currBlockPos.y - 1, currBlockPos.z) == BlockType.NULL)
                         {
                             Block.BottomFace(x, y, z, m_vertices, m_triangles, m_faceCount);
+                            setFaceTexture(x, y, z);
                             m_faceCount++;
                         }
-                        //if (WorldGenerator.CheckSurroundings(this.transform.position, x, y, z - 1))
                         if (WorldGenerator.GetWorldBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z - 1) == BlockType.NULL)
                         {
                             Block.SouthFace(x, y, z, m_vertices, m_triangles, m_faceCount);
+                            setFaceTexture(x, y, z);
                             m_faceCount++;
                         }
                     }
@@ -145,10 +133,16 @@ namespace VoxelWorldEngine
             m_mesh.triangles = m_triangles.ToArray();
             m_mesh.RecalculateNormals();
 
-            //set the textures
-            if (true)
+            //Set the textures
+            switch (WorldGenerator.s_textureMode)
             {
-                m_mesh.colors = m_colors.ToArray();
+                case TextureMode.SOLID_COLOR:
+                    m_mesh.colors = m_colors.ToArray();
+                    break;
+                case TextureMode.CANVAS_TEXTURE:
+                    break;
+                default:
+                    break;
             }
 
             //Setup the collider
@@ -162,6 +156,22 @@ namespace VoxelWorldEngine
             m_faceCount = 0;
         }
         //*************************************************************
+        private void setFaceTexture(int x, int y, int z)
+        {
+            switch (WorldGenerator.s_textureMode)
+            {
+                case TextureMode.SOLID_COLOR:
+                    for (int i = 0; i < 4; i++)
+                    {
+                        m_colors.Add(Block.GetColor(Blocks[x, y, z]));
+                    }
+                    break;
+                case TextureMode.CANVAS_TEXTURE:
+                    break;
+                default:
+                    break;
+            }
+        }
         private IEnumerator CreateChunk()
         {
             //TODO:Do not use coroutines to create the chunks, use threads
