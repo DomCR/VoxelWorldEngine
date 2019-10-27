@@ -81,37 +81,37 @@ namespace VoxelWorldEngine
                         if (WorldGenerator.GetWorldBlock(currBlockPos.x + 1, currBlockPos.y, currBlockPos.z) == BlockType.NULL)
                         {
                             Block.EastFace(x, y, z, m_vertices, m_triangles, m_faceCount);
-                            setFaceTexture(x, y, z);
+                            setFaceTexture(x, y, z, FaceType.East);
                             m_faceCount++;
                         }
                         if (WorldGenerator.GetWorldBlock(currBlockPos.x, currBlockPos.y + 1, currBlockPos.z) == BlockType.NULL)
                         {
                             Block.TopFace(x, y, z, m_vertices, m_triangles, m_faceCount);
-                            setFaceTexture(x, y, z);
+                            setFaceTexture(x, y, z, FaceType.Top);
                             m_faceCount++;
                         }
                         if (WorldGenerator.GetWorldBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z + 1) == BlockType.NULL)
                         {
                             Block.NorthFace(x, y, z, m_vertices, m_triangles, m_faceCount);
-                            setFaceTexture(x, y, z);
+                            setFaceTexture(x, y, z, FaceType.North);
                             m_faceCount++;
                         }
                         if (WorldGenerator.GetWorldBlock(currBlockPos.x - 1, currBlockPos.y, currBlockPos.z) == BlockType.NULL)
                         {
                             Block.WestFace(x, y, z, m_vertices, m_triangles, m_faceCount);
-                            setFaceTexture(x, y, z);
+                            setFaceTexture(x, y, z, FaceType.West);
                             m_faceCount++;
                         }
                         if (WorldGenerator.GetWorldBlock(currBlockPos.x, currBlockPos.y - 1, currBlockPos.z) == BlockType.NULL)
                         {
                             Block.BottomFace(x, y, z, m_vertices, m_triangles, m_faceCount);
-                            setFaceTexture(x, y, z);
+                            setFaceTexture(x, y, z, FaceType.Bottom);
                             m_faceCount++;
                         }
                         if (WorldGenerator.GetWorldBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z - 1) == BlockType.NULL)
                         {
                             Block.SouthFace(x, y, z, m_vertices, m_triangles, m_faceCount);
-                            setFaceTexture(x, y, z);
+                            setFaceTexture(x, y, z, FaceType.South);
                             m_faceCount++;
                         }
                     }
@@ -132,6 +132,7 @@ namespace VoxelWorldEngine
             m_mesh.uv = m_uv.ToArray();
             m_mesh.triangles = m_triangles.ToArray();
             m_mesh.RecalculateNormals();
+            m_mesh.Optimize();
 
             //Set the textures
             switch (WorldGenerator.s_textureMode)
@@ -156,17 +157,18 @@ namespace VoxelWorldEngine
             m_faceCount = 0;
         }
         //*************************************************************
-        private void setFaceTexture(int x, int y, int z)
+        private void setFaceTexture(int x, int y, int z, FaceType face)
         {
             switch (WorldGenerator.s_textureMode)
             {
                 case TextureMode.SOLID_COLOR:
                     for (int i = 0; i < 4; i++)
                     {
-                        m_colors.Add(Block.GetColor(Blocks[x, y, z]));
+                        //m_colors.Add(Block.GetColor(Blocks[x, y, z]));
                     }
                     break;
                 case TextureMode.CANVAS_TEXTURE:
+                    m_uv.AddRange(Block.GetTexture(Blocks[x, y, z]));
                     break;
                 default:
                     break;

@@ -132,22 +132,23 @@ namespace VoxelWorldEngine
         public static List<Vector2> GetTexture(BlockType blockType)
         {
             List<Vector2> newUV = new List<Vector2>();
-            Vector2 TexturePos = GetTexturePosition(blockType);
-            float tUnit = 0.0625f;
-            //float tUnit = 1 / 16;
-            //float vUnit = 16 / 256;
+            Vector2 texturePos = GetTexturePosition(blockType);
+            //float tUnit = 0.0625f;
+            float hUnit = 16f / 384f;
+            float vUnit = 16f / 576f;
 
-            TexturePos = new Vector2(0, 15);
+            //texturePos = new Vector2(0, 15);
 
-            newUV.Add(new Vector2(tUnit * TexturePos.x + tUnit, tUnit * TexturePos.y));
-            newUV.Add(new Vector2(tUnit * TexturePos.x + tUnit, tUnit * TexturePos.y + tUnit));
-            newUV.Add(new Vector2(tUnit * TexturePos.x, tUnit * TexturePos.y + tUnit));
-            newUV.Add(new Vector2(tUnit * TexturePos.x, tUnit * TexturePos.y));
+            //hUnit = 32f / 128f;
+            //vUnit = 32f / 128f;
 
-            //newUV.Add(new Vector2(tUnit, tUnit * 16));
-            //newUV.Add(new Vector2(tUnit, tUnit * 16 + tUnit));
-            //newUV.Add(new Vector2(0, tUnit * 16 + tUnit));
-            //newUV.Add(new Vector2(0, tUnit * 16));
+            //hUnit = 0.25f;
+            //vUnit = 0.25f;
+
+            newUV.Add(new Vector2(hUnit * texturePos.x + hUnit, vUnit * texturePos.y));
+            newUV.Add(new Vector2(hUnit * texturePos.x + hUnit, vUnit * texturePos.y + vUnit));
+            newUV.Add(new Vector2(hUnit * texturePos.x, vUnit * texturePos.y + vUnit));
+            newUV.Add(new Vector2(hUnit * texturePos.x, vUnit * texturePos.y));
 
             return newUV;
         }
@@ -178,23 +179,29 @@ namespace VoxelWorldEngine
             {
                 //case BlockType.NULL:
                 //    break;
-                case BlockType.SOLID:
+                case BlockType.GRASS_TOP:
                     return new Color(255, 125, 255);
-                case BlockType.END_BLOCK:
-                    return new Color(0, 0, 0);
                 default:
                     return new Color(255, 255, 255);
             }
         }
         public static Vector2 GetTexturePosition(BlockType block)
         {
-            switch (block)
-            {
-                case BlockType.NULL:
-                case BlockType.SOLID:
-                default:
-                    return new Vector2();
-            }
+            int value = ((int)block) - 1;
+            //24, 36
+            Vector2 map = new Vector2(((int)value % 24), ((int)(35 - (value / 24))));
+
+            return map;
+
+            //switch (block)
+            //{
+            //    case BlockType.NULL:
+            //        return new Vector2();
+            //    case BlockType.GRASS_TOP:
+            //        return new Vector2(0, 35);
+            //    default:
+            //        return new Vector2();
+            //}
         }
         public static bool IsTransparent(BlockType id)
         {

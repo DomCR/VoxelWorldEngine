@@ -168,6 +168,7 @@ MonoBehaviour:
   ChunksX: 10
   ChunksY: 1
   ChunksZ: 10
+  TextureMode: 1
   HeightScale: 125
   HeightMagnitude: 200
   NoiseScale: 25

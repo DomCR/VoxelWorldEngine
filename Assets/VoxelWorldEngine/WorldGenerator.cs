@@ -140,8 +140,8 @@ namespace VoxelWorldEngine
 
             //Set the bottom edge blocks 
             int height_endBlock = (int)(Mathf.PerlinNoise(pos.x, pos.y));
-            if (pos.y < height_endBlock)
-                return BlockType.END_BLOCK;
+            if (pos.y < 3)
+                return BlockType.STONE;
 
             //Get the height map
             int height = (int)(Mathf.PerlinNoise(
@@ -156,7 +156,7 @@ namespace VoxelWorldEngine
                 (int)pos.x / s_NoiseScale,
                 (int)pos.y / s_NoiseScale,
                 (int)pos.z / s_NoiseScale) >= s_Threshold)
-                return BlockType.SOLID;
+                return BlockType.GRASS_TOP;
             else
                 return BlockType.NULL;
         }

@@ -9,8 +9,9 @@ namespace VoxelWorldEngine.Enums
     public enum BlockType : byte
     {
         NULL,
-        SOLID,
-
-        END_BLOCK
+        GRASS_TOP,
+        STONE,
+        DIRT,
+        GRASS_SIDE,
     }
 }
