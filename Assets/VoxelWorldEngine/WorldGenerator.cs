@@ -32,9 +32,13 @@ namespace VoxelWorldEngine
         [Tooltip("Global 3d noise scale")]
         public float NoiseScale = 25;
         [Range(0, 1.0f)]
-        public float Threshold = 0.45f;
+        public float Density = 0.45f;
 
-        private static Dictionary<Vector3, Chunk> m_chunks;
+        [SerializeField]
+        public Noise.Noise[] noises;
+        public Noise.NoiseLayer[] layerNoises;
+
+        private Dictionary<Vector3, Chunk> m_chunks;
 
         // Start is called before the first frame update
         void Start()
@@ -116,7 +120,7 @@ namespace VoxelWorldEngine
         /// <returns></returns>
         public BlockType GetWorldBlock(Vector3 pos)
         {
-            //Check edge
+            //Check edges
             if (pos.z < 0 || pos.y < 0 || pos.x < 0 ||
                 (int)pos.x >= ChunksX * Chunk.XSize ||
                 (int)pos.y >= ChunksY * Chunk.YSize ||
@@ -130,19 +134,23 @@ namespace VoxelWorldEngine
             if (pos.y < height_endBlock)
                 return BlockType.STONE;
 
+            #region Height layer (example)
             //Get the height map
             int height = (int)(Mathf.PerlinNoise(
                 (int)pos.x / WidthMagnitude,
                 (int)pos.z / WidthMagnitude) * HeightMagnitude);
 
             if ((int)pos.y > height)
-                return BlockType.NULL;
+                return BlockType.NULL; 
+
+
+            #endregion
 
             //Generate a 3D noise to create, holes and irregularities in the terrain
             if (PerlinNoise3D.Generate_01(
                 (int)pos.x / NoiseScale,
                 (int)pos.y / NoiseScale,
-                (int)pos.z / NoiseScale) >= Threshold)
+                (int)pos.z / NoiseScale) >= Density)
                 return BlockType.GRASS_TOP;
             else
                 return BlockType.NULL;

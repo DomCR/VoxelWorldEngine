@@ -21,5 +21,10 @@ namespace VoxelWorldEngine.Noise
             float xyz = xy + yz + xz + yx + zy + zx;
             return xyz / 6f;
         }
+
+        internal static float Generate_01(object p1, object p2, object p3)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

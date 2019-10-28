@@ -249,7 +249,38 @@ MonoBehaviour:
   WidthMagnitude: 125
   HeightMagnitude: 200
   NoiseScale: 25
-  Threshold: 0.45
+  Density: 0.45
+  layerNoises:
+  - Name: 
+    WidthMagnitudeX: 0
+    WidthMagnitudeZ: 0
+    HeightMagnitude: 0
+    NoiseScaleX: 0
+    NoiseScaleY: 0
+    NoiseScaleZ: 0
+    IsNegative: 0
+    Density: 0
+    Type: 0
+  - Name: 
+    WidthMagnitudeX: 0
+    WidthMagnitudeZ: 0
+    HeightMagnitude: 0
+    NoiseScaleX: 0
+    NoiseScaleY: 0
+    NoiseScaleZ: 0
+    IsNegative: 0
+    Density: 0
+    Type: 0
+  - Name: 
+    WidthMagnitudeX: 0
+    WidthMagnitudeZ: 0
+    HeightMagnitude: 0
+    NoiseScaleX: 0
+    NoiseScaleY: 0
+    NoiseScaleZ: 0
+    IsNegative: 0
+    Density: 0
+    Type: 0
 --- !u!4 &1105157858
 Transform:
   m_ObjectHideFlags: 0

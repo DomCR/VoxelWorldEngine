@@ -172,7 +172,8 @@ MonoBehaviour:
   WidthMagnitude: 125
   HeightMagnitude: 200
   NoiseScale: 25
-  Threshold: 0.45
+  Density: 0.45
+  layerNoises: []
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
