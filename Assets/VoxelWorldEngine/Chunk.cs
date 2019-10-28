@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using VoxelWorldEngine.Enums;
-using VoxelWorldEngine.NoiseVariations;
+using VoxelWorldEngine.Noise;
 
 namespace VoxelWorldEngine
 {
@@ -28,16 +28,21 @@ namespace VoxelWorldEngine
         private Mesh m_mesh;
         private MeshCollider m_collider;
 
+        //TODO: implement the world class
+        private WorldGenerator m_parent;
         //*************************************************************
         #region Behaviour methods
         void Awake()
         {
             //Initialize the block array
-            Blocks = new BlockType[16, 256, 16];
+            Blocks = new BlockType[XSize, YSize, ZSize];
 
             //Get the gameobject components
             m_mesh = this.GetComponent<MeshFilter>().mesh;
             m_collider = this.GetComponent<MeshCollider>();
+
+            //Get the parent (world)
+            m_parent = this.GetComponentInParent<WorldGenerator>();
 
             //Generate the current chunk
             //GenerateChunk();
@@ -71,44 +76,44 @@ namespace VoxelWorldEngine
                             y + this.transform.position.y,
                             z + this.transform.position.z);
 
-                        Blocks[x, y, z] = WorldGenerator.GetWorldBlock(currBlockPos);
+                        Blocks[x, y, z] = m_parent.GetWorldBlock(currBlockPos);
 
                         //Guard: blocks to ignore
                         if (Blocks[x, y, z] == BlockType.NULL)
                             continue;
 
                         //Set the visible faces
-                        if (WorldGenerator.GetWorldBlock(currBlockPos.x + 1, currBlockPos.y, currBlockPos.z) == BlockType.NULL)
+                        if (m_parent.GetWorldBlock(currBlockPos.x + 1, currBlockPos.y, currBlockPos.z) == BlockType.NULL)
                         {
                             Block.EastFace(x, y, z, m_vertices, m_triangles, m_faceCount);
                             setFaceTexture(x, y, z, FaceType.East);
                             m_faceCount++;
                         }
-                        if (WorldGenerator.GetWorldBlock(currBlockPos.x, currBlockPos.y + 1, currBlockPos.z) == BlockType.NULL)
+                        if (m_parent.GetWorldBlock(currBlockPos.x, currBlockPos.y + 1, currBlockPos.z) == BlockType.NULL)
                         {
                             Block.TopFace(x, y, z, m_vertices, m_triangles, m_faceCount);
                             setFaceTexture(x, y, z, FaceType.Top);
                             m_faceCount++;
                         }
-                        if (WorldGenerator.GetWorldBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z + 1) == BlockType.NULL)
+                        if (m_parent.GetWorldBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z + 1) == BlockType.NULL)
                         {
                             Block.NorthFace(x, y, z, m_vertices, m_triangles, m_faceCount);
                             setFaceTexture(x, y, z, FaceType.North);
                             m_faceCount++;
                         }
-                        if (WorldGenerator.GetWorldBlock(currBlockPos.x - 1, currBlockPos.y, currBlockPos.z) == BlockType.NULL)
+                        if (m_parent.GetWorldBlock(currBlockPos.x - 1, currBlockPos.y, currBlockPos.z) == BlockType.NULL)
                         {
                             Block.WestFace(x, y, z, m_vertices, m_triangles, m_faceCount);
                             setFaceTexture(x, y, z, FaceType.West);
                             m_faceCount++;
                         }
-                        if (WorldGenerator.GetWorldBlock(currBlockPos.x, currBlockPos.y - 1, currBlockPos.z) == BlockType.NULL)
+                        if (m_parent.GetWorldBlock(currBlockPos.x, currBlockPos.y - 1, currBlockPos.z) == BlockType.NULL)
                         {
                             Block.BottomFace(x, y, z, m_vertices, m_triangles, m_faceCount);
                             setFaceTexture(x, y, z, FaceType.Bottom);
                             m_faceCount++;
                         }
-                        if (WorldGenerator.GetWorldBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z - 1) == BlockType.NULL)
+                        if (m_parent.GetWorldBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z - 1) == BlockType.NULL)
                         {
                             Block.SouthFace(x, y, z, m_vertices, m_triangles, m_faceCount);
                             setFaceTexture(x, y, z, FaceType.South);
@@ -135,7 +140,7 @@ namespace VoxelWorldEngine
             m_mesh.Optimize();
 
             //Set the textures
-            switch (WorldGenerator.s_textureMode)
+            switch (m_parent.TextureMode)
             {
                 case TextureMode.SOLID_COLOR:
                     m_mesh.colors = m_colors.ToArray();
@@ -159,7 +164,7 @@ namespace VoxelWorldEngine
         //*************************************************************
         private void setFaceTexture(int x, int y, int z, FaceType face)
         {
-            switch (WorldGenerator.s_textureMode)
+            switch (m_parent.TextureMode)
             {
                 case TextureMode.SOLID_COLOR:
                     for (int i = 0; i < 4; i++)

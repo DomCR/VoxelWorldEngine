@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using VoxelWorldEngine.NoiseVariations;
+using VoxelWorldEngine.Noise;
 
 //[ExecuteInEditMode]
 public class HeightMapVisualizer : MonoBehaviour

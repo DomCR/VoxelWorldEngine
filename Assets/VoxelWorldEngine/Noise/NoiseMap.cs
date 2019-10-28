@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace VoxelWorldEngine.NoiseVariations
+namespace VoxelWorldEngine.Noise
 {
     public delegate float NoiseMethod(Vector3 point, float frequency);
     public static class NoiseMap

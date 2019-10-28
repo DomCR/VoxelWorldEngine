@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using VoxelWorldEngine.Enums;
-using VoxelWorldEngine.NoiseVariations;
+using VoxelWorldEngine.Noise;
 
 namespace VoxelWorldEngine
 {
@@ -16,50 +16,29 @@ namespace VoxelWorldEngine
         public int ChunksY;
         public int ChunksZ;
 
-        public static int s_ChunksX;
-        public static int s_ChunksY;
-        public static int s_ChunksZ;
-
         [Space()]
         public TextureMode TextureMode;
-
-        public static TextureMode s_textureMode;
 
         [Space()]
         //Noise setup
         [Range(0, 999f)]
-        [Tooltip("WaveLength of Height Map Noise")]
-        public float HeightScale = 125;
+        [Tooltip("Wave length of the noise")]
+        public float WidthMagnitude = 125;
         [Range(0, 999f)]
+        [Tooltip("Wave height of the noise")]
         public float HeightMagnitude = 200;
         [Space()]
         [Range(0, 999f)]
+        [Tooltip("Global 3d noise scale")]
         public float NoiseScale = 25;
         [Range(0, 1.0f)]
         public float Threshold = 0.45f;
-
-        //Public static noise variables
-        public static float s_HeightScale;
-        public static float s_HeightMagnitude;
-        public static float s_NoiseScale;
-        public static float s_Threshold;
 
         private static Dictionary<Vector3, Chunk> m_chunks;
 
         // Start is called before the first frame update
         void Start()
         {
-            s_ChunksX = ChunksX;
-            s_ChunksY = ChunksY;
-            s_ChunksZ = ChunksZ;
-
-            s_textureMode = TextureMode;
-
-            s_HeightScale = HeightScale;
-            s_HeightMagnitude = HeightMagnitude;
-            s_NoiseScale = NoiseScale;
-            s_Threshold = Threshold;
-
             //Initialize variables
             m_chunks = new Dictionary<Vector3, Chunk>();
 
@@ -100,7 +79,7 @@ namespace VoxelWorldEngine
         /// <param name="y"></param>
         /// <param name="z"></param>
         /// <returns></returns>
-        public static BlockType GetBlock(Vector3 pos, int x, int y, int z)
+        public BlockType GetBlock(Vector3 pos, int x, int y, int z)
         {
             Chunk chunk = null;
 
@@ -125,37 +104,45 @@ namespace VoxelWorldEngine
         /// <param name="y"></param>
         /// <param name="z"></param>
         /// <returns></returns>
-        public static BlockType GetWorldBlock(float x, float y, float z)
+        public BlockType GetWorldBlock(float x, float y, float z)
         {
             return GetWorldBlock(new Vector3(x, y, z));
         }
-        public static BlockType GetWorldBlock(Vector3 pos)
+        /// <summary>
+        /// Get the block of the current world initialization
+        /// Once the world is generated use GetBlock()
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <returns></returns>
+        public BlockType GetWorldBlock(Vector3 pos)
         {
             //Check edge
             if (pos.z < 0 || pos.y < 0 || pos.x < 0 ||
-                (int)pos.x >= s_ChunksX * Chunk.XSize ||
-                (int)pos.y >= s_ChunksY * Chunk.YSize ||
-                (int)pos.z >= s_ChunksZ * Chunk.ZSize)
+                (int)pos.x >= ChunksX * Chunk.XSize ||
+                (int)pos.y >= ChunksY * Chunk.YSize ||
+                (int)pos.z >= ChunksZ * Chunk.ZSize)
                 return BlockType.NULL;
 
             //Set the bottom edge blocks 
-            int height_endBlock = (int)(Mathf.PerlinNoise(pos.x, pos.y));
-            if (pos.y < 3)
+            int height_endBlock = (int)(Mathf.PerlinNoise(
+                pos.x / WidthMagnitude * 50f,
+                pos.z / WidthMagnitude * 50f) * 10);
+            if (pos.y < height_endBlock)
                 return BlockType.STONE;
 
             //Get the height map
             int height = (int)(Mathf.PerlinNoise(
-                (int)pos.x / s_HeightScale,
-                (int)pos.z / s_HeightScale) * s_HeightMagnitude);
+                (int)pos.x / WidthMagnitude,
+                (int)pos.z / WidthMagnitude) * HeightMagnitude);
 
             if ((int)pos.y > height)
                 return BlockType.NULL;
 
             //Generate a 3D noise to create, holes and irregularities in the terrain
             if (PerlinNoise3D.Generate_01(
-                (int)pos.x / s_NoiseScale,
-                (int)pos.y / s_NoiseScale,
-                (int)pos.z / s_NoiseScale) >= s_Threshold)
+                (int)pos.x / NoiseScale,
+                (int)pos.y / NoiseScale,
+                (int)pos.z / NoiseScale) >= Threshold)
                 return BlockType.GRASS_TOP;
             else
                 return BlockType.NULL;
