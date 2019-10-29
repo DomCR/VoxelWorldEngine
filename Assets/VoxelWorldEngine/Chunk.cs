@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +31,9 @@ namespace VoxelWorldEngine
 
         //TODO: implement the world class
         private WorldGenerator m_parent;
+
+        Thread t;
+        Vector3 mainpos;
         //*************************************************************
         #region Behaviour methods
         void Awake()
@@ -45,25 +49,28 @@ namespace VoxelWorldEngine
             m_parent = this.GetComponentInParent<WorldGenerator>();
 
             //Generate the current chunk
-            //GenerateChunk();
-            GenerateMesh();
-            UpdateMesh();
-
-            //StartCoroutine(CreateChunk());
+            mainpos = transform.position;
+            t = new Thread(new ThreadStart(GenerateHeightMap));
+            t.Start();
+            //GenerateHeightMap();
+            //UpdateMesh();
         }
         void Update()
         {
-
+            if(State == ChunkState.NeedMeshUpdate)
+            {
+                UpdateMesh();
+            }
         }
         #endregion
         //*************************************************************
         /// <summary>
         /// Generate the chunk mesh
         /// </summary>
-        void GenerateMesh()
+        void GenerateHeightMap()
         {
             //Update the chunk state
-            State = ChunkState.CreatingMesh;
+            State = ChunkState.CreatingHeightMap;
 
             for (int x = 0; x < XSize; x++)
             {
@@ -71,10 +78,14 @@ namespace VoxelWorldEngine
                 {
                     for (int z = 0; z < ZSize; z++)
                     {
+                        //Vector3 currBlockPos = new Vector3(
+                        //    x + this.transform.position.x,
+                        //    y + this.transform.position.y,
+                        //    z + this.transform.position.z);  
                         Vector3 currBlockPos = new Vector3(
-                            x + this.transform.position.x,
-                            y + this.transform.position.y,
-                            z + this.transform.position.z);
+                            x + mainpos.x,
+                            y + mainpos.y,
+                            z + mainpos.z);
 
                         Blocks[x, y, z] = m_parent.GetWorldBlock(currBlockPos);
 
@@ -160,6 +171,8 @@ namespace VoxelWorldEngine
             m_triangles.Clear();
             m_colors.Clear();
             m_faceCount = 0;
+
+            State = ChunkState.Idle;
         }
         //*************************************************************
         private void setFaceTexture(int x, int y, int z, FaceType face)
@@ -178,19 +191,6 @@ namespace VoxelWorldEngine
                 default:
                     break;
             }
-        }
-        private IEnumerator CreateChunk()
-        {
-            //TODO:Do not use coroutines to create the chunks, use threads
-            //The mesh and collider assaignments must be outside the trhead,
-            //Not compatible with Unity API.
-
-            //Optimization: join generate chunk and mesh, use method, getblock() where it returns the block
-            //GenerateChunk();
-            GenerateMesh();
-            UpdateMesh();
-
-            yield return null;
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using VoxelWorldEngine.Noise;
+using VoxelWorldEngine.Noise.RawNoise;
 
 //[ExecuteInEditMode]
 public class HeightMapVisualizer : MonoBehaviour
@@ -67,7 +68,7 @@ public class HeightMapVisualizer : MonoBehaviour
 
         Random.InitState(Seed);
 
-        NoiseMethod method = NoiseMap.noiseMethods[(int)NoiseType][dimensions - 1];
+        NoiseMethod_delegate method = NoiseMap.noiseMethods[(int)NoiseType][dimensions - 1];
         float stepSize = 1f / Resolution;
         for (int y = 0; y < Resolution; y++)
         {

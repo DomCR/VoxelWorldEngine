@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace VoxelWorldEngine.Noise
+namespace VoxelWorldEngine.Noise.RawNoise
 {
-    public delegate float NoiseMethod(Vector3 point, float frequency);
+    public delegate float NoiseMethod_delegate(Vector3 point, float frequency);
     public static class NoiseMap
     {
         private static int[] hash = {
@@ -81,17 +81,17 @@ namespace VoxelWorldEngine.Noise
             new Vector3( 0f,-1f,-1f)
         };
         //******************************************************
-        public static NoiseMethod[] valueMethods = {
+        public static NoiseMethod_delegate[] valueMethods = {
             Value1D,
             Value2D,
             Value3D
         };
-        public static NoiseMethod[] perlinMethods = {
+        public static NoiseMethod_delegate[] perlinMethods = {
             Perlin1D,
             Perlin2D,
             Perlin3D
         };
-        public static NoiseMethod[][] noiseMethods = {
+        public static NoiseMethod_delegate[][] noiseMethods = {
             valueMethods,
             perlinMethods
         };
@@ -279,7 +279,7 @@ namespace VoxelWorldEngine.Noise
                 Mathf.Lerp(Mathf.Lerp(v001, v101, tx), Mathf.Lerp(v011, v111, tx), ty),
                 tz);
         }
-        public static float Sum(NoiseMethod method, Vector3 point, float frequency, int octaves, float lacunarity, float persistence)
+        public static float Sum(NoiseMethod_delegate method, Vector3 point, float frequency, int octaves, float lacunarity, float persistence)
         {
             float sum = method(point, frequency);
             float amplitude = 1f;
@@ -294,6 +294,7 @@ namespace VoxelWorldEngine.Noise
             return sum / range;
         }
         //******************************************************
+        #region Utility methods
         private static float Smooth(float t)
         {
             return t * t * t * (t * (t * 6f - 15f) + 10f);
@@ -305,7 +306,8 @@ namespace VoxelWorldEngine.Noise
         private static float Dot3D(Vector3 g, float x, float y, float z)
         {
             return g.x * x + g.y * y + g.z * z;
-        }
+        } 
+        #endregion
         //******************************************************
     }
 }

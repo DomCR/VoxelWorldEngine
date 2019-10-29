@@ -11,7 +11,7 @@ namespace VoxelWorldEngine.Enums
         Idle,
 
         //Transformation states
-        CreatingMesh,
+        CreatingHeightMap,
         Updating,
 
         //Request States

@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace VoxelWorldEngine.Noise
+namespace VoxelWorldEngine.Noise.RawNoise
 {
-    public class PerlinNoise3D
+    public static class PerlinNoise3D
     {
         public static float Generate_01(float x, float y, float z)
         {

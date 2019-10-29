@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using VoxelWorldEngine.Enums;
 using VoxelWorldEngine.Noise;
+using VoxelWorldEngine.Noise.RawNoise;
 
 namespace VoxelWorldEngine
 {
@@ -34,9 +36,8 @@ namespace VoxelWorldEngine
         [Range(0, 1.0f)]
         public float Density = 0.45f;
 
-        [SerializeField]
-        public Noise.Noise[] noises;
-        public Noise.NoiseLayer[] layerNoises;
+        public bool TestingNoise = false;
+        public List<NoiseLayer> NoiseLayers;
 
         private Dictionary<Vector3, Chunk> m_chunks;
 
@@ -120,11 +121,12 @@ namespace VoxelWorldEngine
         /// <returns></returns>
         public BlockType GetWorldBlock(Vector3 pos)
         {
+            //TEST NOISE
+            if (TestingNoise)
+                return ComputeNoiseLayers(pos, NoiseType.HEIGHT_2D);
+
             //Check edges
-            if (pos.z < 0 || pos.y < 0 || pos.x < 0 ||
-                (int)pos.x >= ChunksX * Chunk.XSize ||
-                (int)pos.y >= ChunksY * Chunk.YSize ||
-                (int)pos.z >= ChunksZ * Chunk.ZSize)
+            if (isWorldEdge(pos))
                 return BlockType.NULL;
 
             //Set the bottom edge blocks 
@@ -132,7 +134,7 @@ namespace VoxelWorldEngine
                 pos.x / WidthMagnitude * 50f,
                 pos.z / WidthMagnitude * 50f) * 10);
             if (pos.y < height_endBlock)
-                return BlockType.STONE;
+                return BlockType.BEDROCK;
 
             #region Height layer (example)
             //Get the height map
@@ -141,9 +143,7 @@ namespace VoxelWorldEngine
                 (int)pos.z / WidthMagnitude) * HeightMagnitude);
 
             if ((int)pos.y > height)
-                return BlockType.NULL; 
-
-
+                return BlockType.NULL;
             #endregion
 
             //Generate a 3D noise to create, holes and irregularities in the terrain
@@ -151,9 +151,75 @@ namespace VoxelWorldEngine
                 (int)pos.x / NoiseScale,
                 (int)pos.y / NoiseScale,
                 (int)pos.z / NoiseScale) >= Density)
-                return BlockType.GRASS_TOP;
+                return BlockType.STONE;
             else
                 return BlockType.NULL;
+        }
+
+        public BlockType ComputeNoiseLayers(float x, float y, float z, NoiseType type)
+        {
+            return ComputeNoiseLayers(new Vector3(x, y, z), type);
+        }
+        public BlockType ComputeNoiseLayers(Vector3 pos, NoiseType type)
+        {
+            BlockType block = BlockType.NULL;
+
+            //Check edges
+            if (isWorldEdge(pos))
+                return BlockType.NULL;
+
+            //Noise variables
+            List<int> limit_upper = new List<int>();
+            float limit_lower = 0;
+            float density_positive = 0;
+            float density_negative = 0;
+
+            foreach (NoiseLayer layer in NoiseLayers)
+            {
+                switch (layer.LayerType)
+                {
+                    case NoiseLayerType.LIMIT_UPPER:
+                        limit_upper.Add(layer.Compute(pos.x, pos.z));
+                        break;
+                    case NoiseLayerType.LIMIT_LOWER:
+                        limit_lower += layer.Compute(pos.x, pos.z);
+                        break;
+                    case NoiseLayerType.DENSITY_POSITIVE:
+                        density_positive += layer.Compute(pos.x, pos.y, pos.z);
+                        break;
+                    case NoiseLayerType.DENSITY_NEGATIVE:
+                        density_negative += layer.Compute(pos.x, pos.y, pos.z);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            switch (type)
+            {
+                case NoiseType.HEIGHT_2D:
+                    //Check if is in the upper limit layers
+                    foreach (float upper in limit_upper)
+                    {
+                        if ((int)pos.y < upper)
+                            block = BlockType.STONE;
+                    }
+                    //Cannot apply a negative lower and negative upper at the same time
+                    //TODO: Get rid of the limit lower noise? is useles?
+                    //if (pos.y > limit_lower)
+                    //    block = BlockType.STONE;
+                    //else
+                    //    block = BlockType.NULL;
+                    break;
+                case NoiseType.DENSITY_POSITIVE_3D:
+                    break;
+                case NoiseType.DENSITY_NEGATIVE_3D:
+                    break;
+                default:
+                    break;
+            }
+
+            return block;
         }
         //****************************************************************
         private static int checkLimits(int value, int axisPos, int limit)
@@ -170,6 +236,16 @@ namespace VoxelWorldEngine
             }
 
             return 0;
+        }
+        private bool isWorldEdge(Vector3 pos)
+        {
+            if (pos.z < 0 || pos.y < 0 || pos.x < 0 ||
+                (int)pos.x >= ChunksX * Chunk.XSize ||
+                (int)pos.y >= ChunksY * Chunk.YSize ||
+                (int)pos.z >= ChunksZ * Chunk.ZSize)
+                return true;
+
+            return false;
         }
 
     }

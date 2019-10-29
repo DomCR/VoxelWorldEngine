@@ -173,7 +173,34 @@ MonoBehaviour:
   HeightMagnitude: 200
   NoiseScale: 25
   Density: 0.45
-  layerNoises: []
+  TestingNoise: 1
+  NoiseLayers:
+  - Name: 'Height '
+    GapX: 0
+    GapZ: 0
+    WidthMagnitudeX: 20
+    WidthMagnitudeZ: 20
+    HeightMagnitude: 50
+    NoiseScaleX: 0
+    NoiseScaleY: 0
+    NoiseScaleZ: 0
+    Density: 0
+    Type: 0
+    LayerType: 0
+    Method: 0
+  - Name: Height_02
+    GapX: 0
+    GapZ: 5000
+    WidthMagnitudeX: 70
+    WidthMagnitudeZ: 10
+    HeightMagnitude: 50
+    NoiseScaleX: 0
+    NoiseScaleY: 0
+    NoiseScaleZ: 0
+    Density: 0
+    Type: 0
+    LayerType: 0
+    Method: 0
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

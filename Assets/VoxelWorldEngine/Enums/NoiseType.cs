@@ -9,7 +9,8 @@ namespace VoxelWorldEngine.Enums
     public enum NoiseType
     {
         HEIGHT_2D,
-        DENSITY_3D
+        DENSITY_POSITIVE_3D,
+        DENSITY_NEGATIVE_3D
     }
 
     //Test enum for noise layers
