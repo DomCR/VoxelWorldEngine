@@ -12,7 +12,7 @@ using VoxelWorldEngine.Noise;
 
 namespace VoxelWorldEngine
 {
-    public class Chunk : MonoBehaviour
+    public class Chunk_backup : MonoBehaviour
     {
         public BlockType[,,] Blocks;
         public const int XSize = 16;
@@ -31,9 +31,8 @@ namespace VoxelWorldEngine
         private MeshCollider m_collider;
 
         //TODO: implement the world class
-        private IWorldGenerator m_parent;
+        private WorldGenerator m_parent;
 
-        //Thread variables
         Thread t;
         Vector3 mainpos;
         //*************************************************************
@@ -48,7 +47,7 @@ namespace VoxelWorldEngine
             m_collider = this.GetComponent<MeshCollider>();
 
             //Get the parent (world)
-            m_parent = this.GetComponentInParent<IWorldGenerator>();
+            m_parent = this.GetComponentInParent<WorldGenerator>();
 
             //Generate the current chunk
             mainpos = transform.position;
@@ -93,76 +92,50 @@ namespace VoxelWorldEngine
                         //Vector3 currBlockPos = new Vector3(
                         //    x + this.transform.position.x,
                         //    y + this.transform.position.y,
-                        //    z + this.transform.position.z); 
+                        //    z + this.transform.position.z);  
                         Vector3 currBlockPos = new Vector3(
                             x + mainpos.x,
                             y + mainpos.y,
                             z + mainpos.z);
 
-                        Blocks[x, y, z] = m_parent.ComputeHeightNoise(currBlockPos.x, currBlockPos.y, currBlockPos.z);
-                    }
-                }
-            }
-
-            //Update the chunk state
-            State = ChunkState.NeedMeshUpdate;
-        }
-        void UpdateFaces()
-        {
-            //Update the chunk state
-            State = ChunkState.Updating;
-
-            for (int x = 0; x < XSize; x++)
-            {
-                for (int y = 0; y < YSize; y++)
-                {
-                    for (int z = 0; z < ZSize; z++)
-                    {
-                        //Vector3 currBlockPos = new Vector3(
-                        //    x + this.transform.position.x,
-                        //    y + this.transform.position.y,
-                        //    z + this.transform.position.z); 
-                        Vector3 currBlockPos = new Vector3(
-                            x + mainpos.x,
-                            y + mainpos.y,
-                            z + mainpos.z);
+                        Blocks[x, y, z] = m_parent.GetWorldBlock(currBlockPos);
 
                         //Guard: blocks to ignore
                         if (Blocks[x, y, z] == BlockType.NULL)
                             continue;
 
                         //Set the visible faces
-                        if (m_parent.GetBlock(currBlockPos.x + 1, currBlockPos.y, currBlockPos.z) == BlockType.NULL)
+                        if (m_parent.GetWorldBlock(currBlockPos.x + 1, currBlockPos.y, currBlockPos.z) == BlockType.NULL)
                         {
                             Block.EastFace(x, y, z, m_vertices, m_triangles, m_faceCount);
                             setFaceTexture(x, y, z, FaceType.East);
                             m_faceCount++;
                         }
-                        if (m_parent.GetBlock(currBlockPos.x, currBlockPos.y + 1, currBlockPos.z) == BlockType.NULL)
+                        if (m_parent.GetWorldBlock(currBlockPos.x, currBlockPos.y + 1, currBlockPos.z) == BlockType.NULL)
                         {
                             Block.TopFace(x, y, z, m_vertices, m_triangles, m_faceCount);
                             setFaceTexture(x, y, z, FaceType.Top);
                             m_faceCount++;
                         }
-                        if (m_parent.GetBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z + 1) == BlockType.NULL)
+                        if (m_parent.GetWorldBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z + 1) == BlockType.NULL)
                         {
                             Block.NorthFace(x, y, z, m_vertices, m_triangles, m_faceCount);
                             setFaceTexture(x, y, z, FaceType.North);
                             m_faceCount++;
                         }
-                        if (m_parent.GetBlock(currBlockPos.x - 1, currBlockPos.y, currBlockPos.z) == BlockType.NULL)
+                        if (m_parent.GetWorldBlock(currBlockPos.x - 1, currBlockPos.y, currBlockPos.z) == BlockType.NULL)
                         {
                             Block.WestFace(x, y, z, m_vertices, m_triangles, m_faceCount);
                             setFaceTexture(x, y, z, FaceType.West);
                             m_faceCount++;
                         }
-                        if (m_parent.GetBlock(currBlockPos.x, currBlockPos.y - 1, currBlockPos.z) == BlockType.NULL)
+                        if (m_parent.GetWorldBlock(currBlockPos.x, currBlockPos.y - 1, currBlockPos.z) == BlockType.NULL)
                         {
                             Block.BottomFace(x, y, z, m_vertices, m_triangles, m_faceCount);
                             setFaceTexture(x, y, z, FaceType.Bottom);
                             m_faceCount++;
                         }
-                        if (m_parent.GetBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z - 1) == BlockType.NULL)
+                        if (m_parent.GetWorldBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z - 1) == BlockType.NULL)
                         {
                             Block.SouthFace(x, y, z, m_vertices, m_triangles, m_faceCount);
                             setFaceTexture(x, y, z, FaceType.South);
@@ -188,6 +161,18 @@ namespace VoxelWorldEngine
             m_mesh.RecalculateNormals();
             m_mesh.Optimize();
 
+            //Set the textures
+            switch (m_parent.TextureMode)
+            {
+                case TextureMode.SOLID_COLOR:
+                    m_mesh.colors = m_colors.ToArray();
+                    break;
+                case TextureMode.CANVAS_TEXTURE:
+                    break;
+                default:
+                    break;
+            }
+
             //Setup the collider
             m_collider.sharedMesh = m_mesh;
 
@@ -203,7 +188,20 @@ namespace VoxelWorldEngine
         //*************************************************************
         private void setFaceTexture(int x, int y, int z, FaceType face)
         {
-            m_uv.AddRange(Block.GetTexture(Blocks[x, y, z]));
+            switch (m_parent.TextureMode)
+            {
+                case TextureMode.SOLID_COLOR:
+                    for (int i = 0; i < 4; i++)
+                    {
+                        //m_colors.Add(Block.GetColor(Blocks[x, y, z]));
+                    }
+                    break;
+                case TextureMode.CANVAS_TEXTURE:
+                    m_uv.AddRange(Block.GetTexture(Blocks[x, y, z]));
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

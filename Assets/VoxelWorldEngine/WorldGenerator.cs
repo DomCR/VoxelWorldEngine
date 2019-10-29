@@ -156,7 +156,6 @@ namespace VoxelWorldEngine
             else
                 return BlockType.NULL;
         }
-
         public BlockType ComputeNoiseLayers(float x, float y, float z, NoiseType type)
         {
             return ComputeNoiseLayers(new Vector3(x, y, z), type);
