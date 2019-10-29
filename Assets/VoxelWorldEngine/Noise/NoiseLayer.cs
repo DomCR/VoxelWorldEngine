@@ -31,25 +31,18 @@ namespace VoxelWorldEngine.Noise
         public NoiseLayerType LayerType;
         public NoiseMethod Method;
 
-        public int Compute(float x, float z)
+        public float Compute(float x, float y, float z)
         {
-            //Get the height map
-            int height = 0;
-
             switch (Method)
             {
                 case NoiseMethod.UNITY_2D:
-                    height += m_unityNoise(x, z);
-                    break;
+                    return m_unityNoise(x, z);
+                case NoiseMethod.NOISE_MAP_PERLIN_3D:
+                    return m_noiseMapPerlin3D(x, y, z);
                 default:
+                    return 0;
                     break;
             }
-
-            return height;
-        }
-        public int Compute(float x, float y, float z)
-        {
-            throw new NotImplementedException();
         }
         //********************************************************
         private int m_unityNoise(float x, float z)
@@ -57,6 +50,13 @@ namespace VoxelWorldEngine.Noise
             return (int)(Mathf.PerlinNoise(
                 (int)(x + GapX) / WidthMagnitudeX, 
                 (int)(z + GapZ) / WidthMagnitudeZ) * HeightMagnitude);
+        }
+        private float m_noiseMapPerlin3D(float x, float y, float z)
+        {
+            return RawNoise.PerlinNoise3D.Generate_01(
+                (int)x / NoiseScaleX,
+                (int)y / NoiseScaleY,
+                (int)z / NoiseScaleZ);
         }
     }
 }

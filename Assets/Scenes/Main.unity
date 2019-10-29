@@ -173,7 +173,7 @@ MonoBehaviour:
   HeightMagnitude: 200
   NoiseScale: 25
   Density: 0.45
-  TestingNoise: 1
+  TestingNoise: 0
   NoiseLayers:
   - Name: 'Height '
     GapX: 0

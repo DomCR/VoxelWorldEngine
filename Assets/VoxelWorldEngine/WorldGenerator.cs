@@ -9,6 +9,7 @@ using VoxelWorldEngine.Noise.RawNoise;
 
 namespace VoxelWorldEngine
 {
+    [Obsolete("Implement the abstract class for a generic world generator.")]
     public class WorldGenerator : MonoBehaviour
     {
         public GameObject ChunkPrefab;
@@ -162,27 +163,26 @@ namespace VoxelWorldEngine
         }
         public BlockType ComputeNoiseLayers(Vector3 pos, NoiseType type)
         {
-            BlockType block = BlockType.NULL;
+            BlockType block = BlockType.STONE;
 
             //Check edges
             if (isWorldEdge(pos))
                 return BlockType.NULL;
 
             //Noise variables
-            List<int> limit_upper = new List<int>();
-            float limit_lower = 0;
-            float density_positive = 0;
-            float density_negative = 0;
+            int limit_upper = -1;
+            float density_positive = -1;
+            float density_negative = -1;
 
             foreach (NoiseLayer layer in NoiseLayers)
             {
                 switch (layer.LayerType)
                 {
                     case NoiseLayerType.LIMIT_UPPER:
-                        limit_upper.Add(layer.Compute(pos.x, pos.z));
-                        break;
-                    case NoiseLayerType.LIMIT_LOWER:
-                        limit_lower += layer.Compute(pos.x, pos.z);
+                        //Temporal variable to optimize process resources
+                        float tmp;
+                        if (limit_upper < (tmp = layer.Compute(pos.x, pos.y, pos.z)))
+                            limit_upper = (int)tmp;
                         break;
                     case NoiseLayerType.DENSITY_POSITIVE:
                         density_positive += layer.Compute(pos.x, pos.y, pos.z);
@@ -195,29 +195,40 @@ namespace VoxelWorldEngine
                 }
             }
 
-            switch (type)
+            //Check the height map
+            if(limit_upper != -1)
             {
-                case NoiseType.HEIGHT_2D:
-                    //Check if is in the upper limit layers
-                    foreach (float upper in limit_upper)
-                    {
-                        if ((int)pos.y < upper)
-                            block = BlockType.STONE;
-                    }
-                    //Cannot apply a negative lower and negative upper at the same time
-                    //TODO: Get rid of the limit lower noise? is useles?
-                    //if (pos.y > limit_lower)
-                    //    block = BlockType.STONE;
-                    //else
-                    //    block = BlockType.NULL;
-                    break;
-                case NoiseType.DENSITY_POSITIVE_3D:
-                    break;
-                case NoiseType.DENSITY_NEGATIVE_3D:
-                    break;
-                default:
-                    break;
+                if ((int)pos.y > limit_upper)
+                    return BlockType.NULL;
             }
+            if(density_positive != -1)
+            {
+                if (density_positive <= Density)
+                    return BlockType.NULL;
+            }
+            if (density_negative != -1)
+            {
+                if (density_negative >= Density)
+                    return BlockType.NULL;
+            }
+
+            //switch (type)
+            //{
+            //    case NoiseType.HEIGHT_2D:
+            //        if ((int)pos.y < limit_upper)
+            //            block = BlockType.STONE;
+            //        break;
+            //    case NoiseType.DENSITY_POSITIVE_3D:
+            //        if (density_positive >= Density)
+            //            block = BlockType.STONE;
+            //        break;
+            //    case NoiseType.DENSITY_NEGATIVE_3D:
+            //        if (density_negative <= Density)
+            //            block = BlockType.STONE;
+            //        break;
+            //    default:
+            //        break;
+            //}
 
             return block;
         }

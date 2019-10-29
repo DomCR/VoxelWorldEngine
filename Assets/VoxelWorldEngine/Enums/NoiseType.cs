@@ -21,8 +21,9 @@ namespace VoxelWorldEngine.Enums
         /// </summary>
         LIMIT_UPPER,
         /// <summary>
-        /// Return null if is inferior
+        /// Return null if is inferior (OBSOLETE)
         /// </summary>
+        [Obsolete("Not well implemented, should be deleted?")]
         LIMIT_LOWER,
         /// <summary>
         /// Return null if is superior, example: caves

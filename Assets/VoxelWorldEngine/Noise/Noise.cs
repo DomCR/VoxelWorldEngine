@@ -41,33 +41,33 @@ namespace VoxelWorldEngine.Noise
         //Method scheme
         public void ComputeHeight(float x, float y, float z)
         {
-            //Get the noise layers: (foreach)
-            //Compute in order (stablish layer priority)
-            float limit_upper = 0;
-            float limit_lower = 0;
-            float density_positive = 0;
-            float density_negative = 0;
+            ////Get the noise layers: (foreach)
+            ////Compute in order (stablish layer priority)
+            //float limit_upper = 0;
+            //float limit_lower = 0;
+            //float density_positive = 0;
+            //float density_negative = 0;
 
-            foreach (NoiseLayer layer in Layers)
-            {
-                switch (layer.LayerType)
-                {
-                    case NoiseLayerType.LIMIT_UPPER:
-                        limit_upper += layer.Compute(x, z);
-                        break;
-                    case NoiseLayerType.LIMIT_LOWER:
-                        limit_lower -= layer.Compute(x, z);
-                        break;
-                    case NoiseLayerType.DENSITY_POSITIVE:
-                        density_positive += layer.Compute(x, y, z);
-                        break;
-                    case NoiseLayerType.DENSITY_NEGATIVE:
-                        density_negative += layer.Compute(x, y, z);
-                        break;
-                    default:
-                        break;
-                }
-            }
+            //foreach (NoiseLayer layer in Layers)
+            //{
+            //    switch (layer.LayerType)
+            //    {
+            //        case NoiseLayerType.LIMIT_UPPER:
+            //            limit_upper += layer.Compute(x, z);
+            //            break;
+            //        case NoiseLayerType.LIMIT_LOWER:
+            //            limit_lower -= layer.Compute(x, z);
+            //            break;
+            //        case NoiseLayerType.DENSITY_POSITIVE:
+            //            density_positive += layer.Compute(x, y, z);
+            //            break;
+            //        case NoiseLayerType.DENSITY_NEGATIVE:
+            //            density_negative += layer.Compute(x, y, z);
+            //            break;
+            //        default:
+            //            break;
+            //    }
+            //}
         }
 
         public abstract float Compute(float x, float z);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -50,16 +51,26 @@ namespace VoxelWorldEngine
 
             //Generate the current chunk
             mainpos = transform.position;
+
             t = new Thread(new ThreadStart(GenerateHeightMap));
             t.Start();
-            //GenerateHeightMap();
-            //UpdateMesh();
         }
         void Update()
         {
-            if(State == ChunkState.NeedMeshUpdate)
+            switch (State)
             {
-                UpdateMesh();
+                case ChunkState.Idle:
+                    break;
+                case ChunkState.HeightMapGeneration:
+
+                    break;
+                case ChunkState.Updating:
+                    break;
+                case ChunkState.NeedMeshUpdate:
+                    UpdateMesh();
+                    break;
+                default:
+                    break;
             }
         }
         #endregion
@@ -70,7 +81,7 @@ namespace VoxelWorldEngine
         void GenerateHeightMap()
         {
             //Update the chunk state
-            State = ChunkState.CreatingHeightMap;
+            State = ChunkState.Updating;
 
             for (int x = 0; x < XSize; x++)
             {
