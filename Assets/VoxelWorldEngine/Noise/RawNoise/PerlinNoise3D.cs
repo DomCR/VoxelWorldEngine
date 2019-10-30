@@ -22,6 +22,20 @@ namespace VoxelWorldEngine.Noise.RawNoise
             return xyz / 6f;
         }
 
+        public static int ScalatedNoise(float x, float y, float z, float scale, float height, float power)
+        {
+            float rValue;
+            rValue = PerlinNoise3D.Generate_01(x / scale, y / scale, z / scale);
+            rValue *= height;
+
+            if (power != 0)
+            {
+                rValue = Mathf.Pow(rValue, power);
+            }
+
+            return (int)rValue;
+        }
+
         internal static float Generate_01(object p1, object p2, object p3)
         {
             throw new NotImplementedException();

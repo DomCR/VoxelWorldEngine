@@ -19,7 +19,9 @@ namespace VoxelWorldEngine
         public const int YSize = 256;
         public const int ZSize = 16;
 
-        public ChunkState State { get; private set; }
+        public ChunkState State = ChunkState.HeightMapGeneration;
+
+        public Vector3 Position { get; private set; }
         //*************************************************************
         private List<Vector3> m_vertices = new List<Vector3>();
         private List<int> m_triangles = new List<int>();
@@ -31,11 +33,10 @@ namespace VoxelWorldEngine
         private MeshCollider m_collider;
 
         //TODO: implement the world class
-        private IWorldGenerator m_parent;
+        private WorldGenerator m_parent;
 
         //Thread variables
-        Thread t;
-        Vector3 mainpos;
+        Thread ChunkThread;
         //*************************************************************
         #region Behaviour methods
         void Awake()
@@ -48,24 +49,31 @@ namespace VoxelWorldEngine
             m_collider = this.GetComponent<MeshCollider>();
 
             //Get the parent (world)
-            m_parent = this.GetComponentInParent<IWorldGenerator>();
+            m_parent = this.GetComponentInParent<WorldGenerator>();
 
-            //Generate the current chunk
-            mainpos = transform.position;
-
-            t = new Thread(new ThreadStart(GenerateHeightMap));
-            t.Start();
+            //THREAD TEST: Generate the current chunk
+            Position = transform.position;
+            State = ChunkState.HeightMapGeneration;
         }
         void Update()
         {
             switch (State)
             {
+                //No action taken states
                 case ChunkState.Idle:
+                case ChunkState.Updating:
                     break;
                 case ChunkState.HeightMapGeneration:
-
+                    ChunkThread = new Thread(new ThreadStart(GenerateHeightMap));
+                    ChunkThread.Start();
                     break;
-                case ChunkState.Updating:
+                case ChunkState.HolesGeneration:
+                    ChunkThread = new Thread(new ThreadStart(GenerateHoles));
+                    ChunkThread.Start();
+                    break;
+                case ChunkState.NeedFaceUpdate:
+                    ChunkThread = new Thread(new ThreadStart(UpdateFaces));
+                    ChunkThread.Start();
                     break;
                 case ChunkState.NeedMeshUpdate:
                     UpdateMesh();
@@ -95,17 +103,47 @@ namespace VoxelWorldEngine
                         //    y + this.transform.position.y,
                         //    z + this.transform.position.z); 
                         Vector3 currBlockPos = new Vector3(
-                            x + mainpos.x,
-                            y + mainpos.y,
-                            z + mainpos.z);
+                            x + Position.x,
+                            y + Position.y,
+                            z + Position.z);
 
-                        Blocks[x, y, z] = m_parent.ComputeHeightNoise(currBlockPos.x, currBlockPos.y, currBlockPos.z);
+                        //TODO: optimize the process by sending a column of the array
+                        BlockType bl = Blocks[x, y, z] = m_parent.ComputeHeightNoise(currBlockPos);
                     }
                 }
             }
 
             //Update the chunk state
-            State = ChunkState.NeedMeshUpdate;
+            State = ChunkState.NeedFaceUpdate;
+        }
+        void GenerateHoles()
+        {
+            //Update the chunk state
+            State = ChunkState.Updating;
+
+            for (int x = 0; x < XSize; x++)
+            {
+                for (int y = 0; y < YSize; y++)
+                {
+                    for (int z = 0; z < ZSize; z++)
+                    {
+                        //Vector3 currBlockPos = new Vector3(
+                        //    x + this.transform.position.x,
+                        //    y + this.transform.position.y,
+                        //    z + this.transform.position.z); 
+                        Vector3 currBlockPos = new Vector3(
+                            x + Position.x,
+                            y + Position.y,
+                            z + Position.z);
+
+                        //TODO: optimize the process by sending a column of the array
+                        BlockType bl = Blocks[x, y, z] = m_parent.ComputeDensityNoise(currBlockPos);
+                    }
+                }
+            }
+
+            //Update the chunk state
+            State = ChunkState.NeedFaceUpdate;
         }
         void UpdateFaces()
         {
@@ -123,14 +161,15 @@ namespace VoxelWorldEngine
                         //    y + this.transform.position.y,
                         //    z + this.transform.position.z); 
                         Vector3 currBlockPos = new Vector3(
-                            x + mainpos.x,
-                            y + mainpos.y,
-                            z + mainpos.z);
+                            x + Position.x,
+                            y + Position.y,
+                            z + Position.z);
 
                         //Guard: blocks to ignore
                         if (Blocks[x, y, z] == BlockType.NULL)
                             continue;
 
+                        #region Face generation
                         //Set the visible faces
                         if (m_parent.GetBlock(currBlockPos.x + 1, currBlockPos.y, currBlockPos.z) == BlockType.NULL)
                         {
@@ -168,6 +207,7 @@ namespace VoxelWorldEngine
                             setFaceTexture(x, y, z, FaceType.South);
                             m_faceCount++;
                         }
+                        #endregion
                     }
                 }
             }

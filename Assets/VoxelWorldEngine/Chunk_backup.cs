@@ -31,7 +31,7 @@ namespace VoxelWorldEngine
         private MeshCollider m_collider;
 
         //TODO: implement the world class
-        private WorldGenerator m_parent;
+        private WorldGenerator_Obsolete m_parent;
 
         Thread t;
         Vector3 mainpos;
@@ -47,7 +47,7 @@ namespace VoxelWorldEngine
             m_collider = this.GetComponent<MeshCollider>();
 
             //Get the parent (world)
-            m_parent = this.GetComponentInParent<WorldGenerator>();
+            m_parent = this.GetComponentInParent<WorldGenerator_Obsolete>();
 
             //Generate the current chunk
             mainpos = transform.position;

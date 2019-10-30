@@ -130,7 +130,6 @@ GameObject:
   m_Component:
   - component: {fileID: 487414545}
   - component: {fileID: 487414546}
-  - component: {fileID: 487414547}
   m_Layer: 0
   m_Name: WorldGenerator
   m_TagString: Untagged
@@ -159,59 +158,9 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 487414544}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f047e31a5718d542988c7300bc89325, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ChunkPrefab: {fileID: 662855818199676993, guid: c7922437e70d5654c99418c25739b33e,
-    type: 3}
-  ChunksX: 10
-  ChunksY: 1
-  ChunksZ: 10
-  TextureMode: 1
-  WidthMagnitude: 125
-  HeightMagnitude: 200
-  NoiseScale: 25
-  Density: 0.45
-  TestingNoise: 0
-  NoiseLayers:
-  - Name: 'Height '
-    GapX: 0
-    GapZ: 0
-    WidthMagnitudeX: 20
-    WidthMagnitudeZ: 20
-    HeightMagnitude: 50
-    NoiseScaleX: 0
-    NoiseScaleY: 0
-    NoiseScaleZ: 0
-    Density: 0
-    Type: 0
-    LayerType: 0
-    Method: 0
-  - Name: Height_02
-    GapX: 0
-    GapZ: 5000
-    WidthMagnitudeX: 70
-    WidthMagnitudeZ: 10
-    HeightMagnitude: 50
-    NoiseScaleX: 0
-    NoiseScaleY: 0
-    NoiseScaleZ: 0
-    Density: 0
-    Type: 0
-    LayerType: 0
-    Method: 0
---- !u!114 &487414547
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 487414544}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b28ab82d8a15df244995896cc147b051, type: 3}
+  m_Script: {fileID: 11500000, guid: 22cd86a008ee74449b42d1133f7f182d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ChunkPrefab: {fileID: 662855818199676993, guid: c7922437e70d5654c99418c25739b33e,
@@ -219,6 +168,10 @@ MonoBehaviour:
   ChunksX: 20
   ChunksY: 1
   ChunksZ: 20
+  WidthMagnitude: 125
+  HeightMagnitude: 200
+  NoiseScale: 25
+  Density: 0.45
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

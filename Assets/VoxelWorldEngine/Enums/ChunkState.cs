@@ -12,9 +12,11 @@ namespace VoxelWorldEngine.Enums
 
         //Transformation states
         HeightMapGeneration,
+        HolesGeneration,
         Updating,
 
         //Request States
+        NeedFaceUpdate,
         NeedMeshUpdate
     }
 }
