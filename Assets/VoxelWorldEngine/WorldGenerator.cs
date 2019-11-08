@@ -92,30 +92,6 @@ namespace VoxelWorldEngine
                 //There is no chunk, limit found
                 return BlockType.NULL;
         }
-        /// <summary>
-        /// Get the block of the current world initialization
-        /// Once the world is generated use GetBlock()
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="z"></param>
-        /// <returns></returns>
-        [Obsolete("Use GetBlock instead")]
-        public BlockType GetWorldBlock(float x, float y, float z)
-        {
-            return GetWorldBlock(new Vector3(x, y, z));
-        }
-        /// <summary>
-        /// Get the block of the current world initialization
-        /// Once the world is generated use GetBlock()
-        /// </summary>
-        /// <param name="pos"></param>
-        /// <returns></returns>
-        [Obsolete("Use GetBlock instead")]
-        public BlockType GetWorldBlock(Vector3 pos)
-        {
-            return BlockType.NULL;
-        }
         public BlockType ComputeHeightNoise(Vector3 pos)
         {
             BlockType block = BlockType.NULL;
@@ -134,6 +110,11 @@ namespace VoxelWorldEngine
             return DensityNoise(pos);
         }
         //****************************************************************
+        /// <summary>
+        /// Set the bedrock at the limit of the world
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <returns></returns>
         protected BlockType setBedRock(Vector3 pos)
         {
             //Set the bottom edge blocks 

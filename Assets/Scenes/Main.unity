@@ -382,15 +382,13 @@ MonoBehaviour:
   ChunksY: 1
   ChunksZ: 20
   WidthMagnitude: 100
-  HeightMagnitude: 100
+  HeightMagnitude: 50
   MinHeight: 20
-  NoiseScale: 25
-  Density: 0.45
-  Frequency: 1
-  Octaves: 8
+  Frequency: 3
+  Octaves: 4
   Lacunarity: 2
   Persistence: 0.5
-  dimensions: 3
+  Dimensions: 3
   NoiseType: 0
 --- !u!4 &1668945964
 Transform:

@@ -7,6 +7,12 @@ using UnityEngine;
 
 namespace VoxelWorldEngine.Noise.RawNoise
 {
+    /// <summary>
+    /// Delegate the noise methods
+    /// </summary>
+    /// <param name="point"></param>
+    /// <param name="frequency"></param>
+    /// <returns></returns>
     public delegate float NoiseMethod_delegate(Vector3 point, float frequency);
     public static class NoiseMap
     {
@@ -45,7 +51,6 @@ namespace VoxelWorldEngine.Noise.RawNoise
         184, 84,204,176,115,121, 50, 45,127,  4,150,254,138,236,205, 93,
         222,114, 67, 29, 24, 72,243,141,128,195, 78, 66,215, 61,156,180
     };
-
         private const int hashMask = 255;
         private const int gradientsMask1D = 1;
         private const int gradientsMask2D = 7;
@@ -110,31 +115,29 @@ namespace VoxelWorldEngine.Noise.RawNoise
             t = Smooth(t);
             return Mathf.Lerp(h0, h1, t) * (1f / hashMask);
         }
-
         public static float Value2D(Vector3 point, float frequency)
         {
             point *= frequency;
             int ix0 = Mathf.FloorToInt(point.x);
-            int iy0 = Mathf.FloorToInt(point.y);
+            int iy0 = Mathf.FloorToInt(point.z);
             float tx = point.x - ix0;
-            float ty = point.y - iy0;
+            float tz = point.z - iy0;
             ix0 &= hashMask;
             iy0 &= hashMask;
             int ix1 = ix0 + 1;
-            int iy1 = iy0 + 1;
+            int iz1 = iy0 + 1;
 
             int h0 = hash[ix0];
             int h1 = hash[ix1];
             int h00 = hash[h0 + iy0];
             int h10 = hash[h1 + iy0];
-            int h01 = hash[h0 + iy1];
-            int h11 = hash[h1 + iy1];
+            int h01 = hash[h0 + iz1];
+            int h11 = hash[h1 + iz1];
 
             tx = Smooth(tx);
-            ty = Smooth(ty);
-            return Mathf.Lerp(Mathf.Lerp(h00, h10, tx), Mathf.Lerp(h01, h11, tx), ty) * (1f / hashMask);
+            tz = Smooth(tz);
+            return Mathf.Lerp(Mathf.Lerp(h00, h10, tx), Mathf.Lerp(h01, h11, tx), tz) * (1f / hashMask);
         }
-
         public static float Value3D(Vector3 point, float frequency)
         {
             point *= frequency;
@@ -174,7 +177,12 @@ namespace VoxelWorldEngine.Noise.RawNoise
                 Mathf.Lerp(Mathf.Lerp(h001, h101, tx), Mathf.Lerp(h011, h111, tx), ty),
                 tz) * (1f / hashMask);
         }
-
+        /// <summary>
+        /// One dimension perlin noise, uses the x as a changing variable.
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="frequency"></param>
+        /// <returns></returns>
         public static float Perlin1D(Vector3 point, float frequency)
         {
             point *= frequency;
@@ -193,41 +201,51 @@ namespace VoxelWorldEngine.Noise.RawNoise
             float t = Smooth(t0);
             return Mathf.Lerp(v0, v1, t) * 2f;
         }
-
+        /// <summary>
+        /// Two dimension perlin noise, uses the x and z as a plane.
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="frequency"></param>
+        /// <returns></returns>
         public static float Perlin2D(Vector3 point, float frequency)
         {
             point *= frequency;
             int ix0 = Mathf.FloorToInt(point.x);
-            int iy0 = Mathf.FloorToInt(point.z);
+            int iz0 = Mathf.FloorToInt(point.z);
             float tx0 = point.x - ix0;
-            float ty0 = point.z - iy0;
+            float tz0 = point.z - iz0;
             float tx1 = tx0 - 1f;
-            float ty1 = ty0 - 1f;
+            float ty1 = tz0 - 1f;
             ix0 &= hashMask;
-            iy0 &= hashMask;
+            iz0 &= hashMask;
             int ix1 = ix0 + 1;
-            int iy1 = iy0 + 1;
+            int iz1 = iz0 + 1;
 
             int h0 = hash[ix0];
             int h1 = hash[ix1];
-            Vector2 g00 = gradients2D[hash[h0 + iy0] & gradientsMask2D];
-            Vector2 g10 = gradients2D[hash[h1 + iy0] & gradientsMask2D];
-            Vector2 g01 = gradients2D[hash[h0 + iy1] & gradientsMask2D];
-            Vector2 g11 = gradients2D[hash[h1 + iy1] & gradientsMask2D];
+            Vector2 g00 = gradients2D[hash[h0 + iz0] & gradientsMask2D];
+            Vector2 g10 = gradients2D[hash[h1 + iz0] & gradientsMask2D];
+            Vector2 g01 = gradients2D[hash[h0 + iz1] & gradientsMask2D];
+            Vector2 g11 = gradients2D[hash[h1 + iz1] & gradientsMask2D];
 
-            float v00 = Dot2D(g00, tx0, ty0);
-            float v10 = Dot2D(g10, tx1, ty0);
+            float v00 = Dot2D(g00, tx0, tz0);
+            float v10 = Dot2D(g10, tx1, tz0);
             float v01 = Dot2D(g01, tx0, ty1);
             float v11 = Dot2D(g11, tx1, ty1);
 
             float tx = Smooth(tx0);
-            float ty = Smooth(ty0);
+            float tz = Smooth(tz0);
             return Mathf.Lerp(
                 Mathf.Lerp(v00, v10, tx),
                 Mathf.Lerp(v01, v11, tx),
-                ty) * Mathf.Sqrt(2.0f);
+                tz) * Mathf.Sqrt(2.0f);
         }
-
+        /// <summary>
+        /// Three dimension perlin noise.
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="frequency"></param>
+        /// <returns></returns>
         public static float Perlin3D(Vector3 point, float frequency)
         {
             point *= frequency;
