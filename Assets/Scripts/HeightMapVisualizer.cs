@@ -5,13 +5,13 @@ using VoxelWorldEngine.Noise;
 using VoxelWorldEngine.Noise.RawNoise;
 
 //[ExecuteInEditMode]
+public enum NoiseMethodType
+{
+    Value,
+    Perlin
+}
 public class HeightMapVisualizer : MonoBehaviour
 {
-    public enum NoiseMethodType
-    {
-        Value,
-        Perlin
-    }
     //******************************************************
     public int Seed;
     public float Frequency;

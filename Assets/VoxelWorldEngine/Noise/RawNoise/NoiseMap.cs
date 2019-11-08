@@ -198,9 +198,9 @@ namespace VoxelWorldEngine.Noise.RawNoise
         {
             point *= frequency;
             int ix0 = Mathf.FloorToInt(point.x);
-            int iy0 = Mathf.FloorToInt(point.y);
+            int iy0 = Mathf.FloorToInt(point.z);
             float tx0 = point.x - ix0;
-            float ty0 = point.y - iy0;
+            float ty0 = point.z - iy0;
             float tx1 = tx0 - 1f;
             float ty1 = ty0 - 1f;
             ix0 &= hashMask;
@@ -279,6 +279,16 @@ namespace VoxelWorldEngine.Noise.RawNoise
                 Mathf.Lerp(Mathf.Lerp(v001, v101, tx), Mathf.Lerp(v011, v111, tx), ty),
                 tz);
         }
+        /// <summary>
+        /// Return the sumatory of different noises
+        /// </summary>
+        /// <param name="method">Method to combine.</param>
+        /// <param name="point">Point to compute the noise</param>
+        /// <param name="frequency"></param>
+        /// <param name="octaves">Number of noise combinations</param>
+        /// <param name="lacunarity"></param>
+        /// <param name="persistence"></param>
+        /// <returns>Value between -1, 1</returns>
         public static float Sum(NoiseMethod_delegate method, Vector3 point, float frequency, int octaves, float lacunarity, float persistence)
         {
             float sum = method(point, frequency);

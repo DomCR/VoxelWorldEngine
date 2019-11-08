@@ -16,6 +16,8 @@ namespace VoxelWorldEngine
         [Range(0, 999f)]
         [Tooltip("Wave height of the noise")]
         public float HeightMagnitude = 200;
+        [Tooltip("Minimum height under the noise")]
+        public int MinHeight = 0;
         [Space()]
         [Range(0, 999f)]
         [Tooltip("Global 3d noise scale")]
@@ -45,13 +47,12 @@ namespace VoxelWorldEngine
             //Get the height map
             int height = (int)(Mathf.PerlinNoise(
                 (int)pos.x / WidthMagnitude,
-                (int)pos.z / WidthMagnitude) * (HeightMagnitude));
+                (int)pos.z / WidthMagnitude) * (HeightMagnitude)) + MinHeight;
 
             if ((int)pos.y > height)
                 return BlockType.NULL;
             else
             {
-
                 return BlockType.STONE;
             }
             #endregion

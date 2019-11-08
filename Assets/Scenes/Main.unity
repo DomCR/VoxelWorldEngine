@@ -131,12 +131,12 @@ GameObject:
   - component: {fileID: 487414545}
   - component: {fileID: 487414546}
   m_Layer: 0
-  m_Name: WorldGenerator
+  m_Name: WG Simple
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &487414545
 Transform:
   m_ObjectHideFlags: 0
@@ -170,6 +170,7 @@ MonoBehaviour:
   ChunksZ: 20
   WidthMagnitude: 80
   HeightMagnitude: 100
+  MinHeight: 20
   NoiseScale: 25
   Density: 0.45
 --- !u!1 &705507993
@@ -346,3 +347,114 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 45, y: 45, z: 0}
+--- !u!1 &1668945962
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1668945964}
+  - component: {fileID: 1668945963}
+  m_Layer: 0
+  m_Name: WG Octave
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1668945963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1668945962}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5445b2daad2e8e4439eabcbeb56eb403, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ChunkPrefab: {fileID: 662855818199676993, guid: c7922437e70d5654c99418c25739b33e,
+    type: 3}
+  ChunksX: 20
+  ChunksY: 1
+  ChunksZ: 20
+  WidthMagnitude: 100
+  HeightMagnitude: 100
+  MinHeight: 20
+  NoiseScale: 25
+  Density: 0.45
+  Frequency: 1
+  Octaves: 8
+  Lacunarity: 2
+  Persistence: 0.5
+  dimensions: 3
+  NoiseType: 0
+--- !u!4 &1668945964
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1668945962}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1777660874
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1777660876}
+  - component: {fileID: 1777660875}
+  m_Layer: 0
+  m_Name: WG Classic
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &1777660875
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1777660874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22cd86a008ee74449b42d1133f7f182d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ChunkPrefab: {fileID: 662855818199676993, guid: c7922437e70d5654c99418c25739b33e,
+    type: 3}
+  ChunksX: 0
+  ChunksY: 0
+  ChunksZ: 0
+  WidthMagnitude: 125
+  HeightMagnitude: 200
+  NoiseScale: 25
+  Density: 0.45
+--- !u!4 &1777660876
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1777660874}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
