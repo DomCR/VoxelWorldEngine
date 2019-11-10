@@ -134,9 +134,9 @@ namespace VoxelWorldEngine
         }
         protected bool isWorldEdge(Vector3 pos)
         {
-            if (pos.z < m_position.x || 
+            if (pos.x < m_position.x || 
                 pos.y < m_position.y || 
-                pos.x < m_position.z ||
+                pos.z < m_position.z ||
                 (int)pos.x >= ChunksX * Chunk.XSize + m_position.x ||
                 (int)pos.y >= ChunksY * Chunk.YSize + m_position.y ||
                 (int)pos.z >= ChunksZ * Chunk.ZSize + m_position.z)
