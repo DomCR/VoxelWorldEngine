@@ -20,6 +20,7 @@ namespace VoxelWorldEngine
         public int ChunksY;
         public int ChunksZ;
 
+        protected Vector3 m_position;
         protected Dictionary<Vector3, Chunk> m_chunks;
 
         #region Behaviour methods
@@ -27,6 +28,7 @@ namespace VoxelWorldEngine
         void Start()
         {
             //Initialize variables
+            m_position = this.transform.position;
             m_chunks = new Dictionary<Vector3, Chunk>();
 
             //Generate the world
@@ -50,7 +52,11 @@ namespace VoxelWorldEngine
                 {
                     for (int z = 0; z < ChunksZ; z++)
                     {
+                        //Vector3 pos = new Vector3(x * Chunk.XSize, y * Chunk.YSize, z * Chunk.ZSize);
                         Vector3 pos = new Vector3(x * Chunk.XSize, y * Chunk.YSize, z * Chunk.ZSize);
+                        //Add the position of this world
+                        pos += this.transform.position;
+
                         GameObject tmp_chunk = Instantiate(ChunkPrefab, pos, new Quaternion(0, 0, 0, 0), this.transform);
                         m_chunks.Add(pos, tmp_chunk.GetComponent<Chunk>());
                     }
@@ -128,10 +134,12 @@ namespace VoxelWorldEngine
         }
         protected bool isWorldEdge(Vector3 pos)
         {
-            if (pos.z < 0 || pos.y < 0 || pos.x < 0 ||
-                (int)pos.x >= ChunksX * Chunk.XSize ||
-                (int)pos.y >= ChunksY * Chunk.YSize ||
-                (int)pos.z >= ChunksZ * Chunk.ZSize)
+            if (pos.z < m_position.x || 
+                pos.y < m_position.y || 
+                pos.x < m_position.z ||
+                (int)pos.x >= ChunksX * Chunk.XSize + m_position.x ||
+                (int)pos.y >= ChunksY * Chunk.YSize + m_position.y ||
+                (int)pos.z >= ChunksZ * Chunk.ZSize + m_position.z)
                 return true;
 
             return false;

@@ -98,10 +98,6 @@ namespace VoxelWorldEngine
                 {
                     for (int z = 0; z < ZSize; z++)
                     {
-                        //Vector3 currBlockPos = new Vector3(
-                        //    x + this.transform.position.x,
-                        //    y + this.transform.position.y,
-                        //    z + this.transform.position.z); 
                         Vector3 currBlockPos = new Vector3(
                             x + Position.x,
                             y + Position.y,
@@ -156,10 +152,6 @@ namespace VoxelWorldEngine
                 {
                     for (int z = 0; z < ZSize; z++)
                     {
-                        //Vector3 currBlockPos = new Vector3(
-                        //    x + this.transform.position.x,
-                        //    y + this.transform.position.y,
-                        //    z + this.transform.position.z); 
                         Vector3 currBlockPos = new Vector3(
                             x + Position.x,
                             y + Position.y,
