@@ -36,7 +36,10 @@ namespace VoxelWorldEngine
         private WorldGenerator m_parent;
 
         //Thread variables
-        Thread ChunkThread;
+        Thread m_chunkThread;
+        //TODO: implement thread pool to control the pc resources
+        private static List<Thread> m_threadPool = new List<Thread>();
+        private const int k_threadLimit = 8;
         //*************************************************************
         #region Behaviour methods
         void Awake()
@@ -64,16 +67,19 @@ namespace VoxelWorldEngine
                 case ChunkState.Updating:
                     break;
                 case ChunkState.HeightMapGeneration:
-                    ChunkThread = new Thread(new ThreadStart(GenerateHeightMap));
-                    ChunkThread.Start();
+                    m_chunkThread = new Thread(new ThreadStart(GenerateHeightMap));
+                    m_threadPool.Add(m_chunkThread);
+                    m_chunkThread.Start();
                     break;
                 case ChunkState.HolesGeneration:
-                    ChunkThread = new Thread(new ThreadStart(GenerateHoles));
-                    ChunkThread.Start();
+                    m_chunkThread = new Thread(new ThreadStart(GenerateHoles));
+                    m_threadPool.Add(m_chunkThread);
+                    m_chunkThread.Start();
                     break;
                 case ChunkState.NeedFaceUpdate:
-                    ChunkThread = new Thread(new ThreadStart(UpdateFaces));
-                    ChunkThread.Start();
+                    m_chunkThread = new Thread(new ThreadStart(UpdateFaces));
+                    m_threadPool.Add(m_chunkThread);
+                    m_chunkThread.Start();
                     break;
                 case ChunkState.NeedMeshUpdate:
                     UpdateMesh();
@@ -81,6 +87,43 @@ namespace VoxelWorldEngine
                 default:
                     break;
             }
+
+            ////Set the active threads limit
+            //int tactive;
+            //if ((tactive = m_threadPool.Where(o => o.IsAlive).Count()) < k_threadLimit)
+            //    foreach (Thread th in m_threadPool)
+            //    {
+            //        if(tactive < k_threadLimit)
+            //        {
+            //            switch (th.ThreadState)
+            //            {
+            //                case System.Threading.ThreadState.Aborted:
+            //                    break;
+            //                case System.Threading.ThreadState.AbortRequested:
+            //                    break;
+            //                case System.Threading.ThreadState.Background:
+            //                    break;
+            //                case System.Threading.ThreadState.Running:
+            //                    break;
+            //                case System.Threading.ThreadState.Stopped:
+            //                    break;
+            //                case System.Threading.ThreadState.StopRequested:
+            //                    break;
+            //                case System.Threading.ThreadState.Suspended:
+            //                    break;
+            //                case System.Threading.ThreadState.SuspendRequested:
+            //                    break;
+            //                case System.Threading.ThreadState.Unstarted:
+            //                    th.Start();
+            //                    tactive++;
+            //                    break;
+            //                case System.Threading.ThreadState.WaitSleepJoin:
+            //                    break;
+            //                default:
+            //                    break;
+            //            }
+            //        }
+            //    }
         }
         #endregion
         //*************************************************************

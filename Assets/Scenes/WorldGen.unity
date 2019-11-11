@@ -136,7 +136,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &487414545
 Transform:
   m_ObjectHideFlags: 0
@@ -341,7 +341,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: 0.35355338, y: 0.35355338, z: -0.1464466, w: 0.8535535}
-  m_LocalPosition: {x: 0, y: 100, z: -10}
+  m_LocalPosition: {x: -30, y: 155, z: -25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -363,7 +363,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1668945963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -378,9 +378,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ChunkPrefab: {fileID: 662855818199676993, guid: c7922437e70d5654c99418c25739b33e,
     type: 3}
-  ChunksX: 5
+  ChunksX: 10
   ChunksY: 1
-  ChunksZ: 5
+  ChunksZ: 10
   WidthMagnitude: 100
   HeightMagnitude: 50
   MinHeight: 20
@@ -389,7 +389,7 @@ MonoBehaviour:
   Lacunarity: 2
   Persistence: 0.5
   Dimensions: 3
-  NoiseType: 0
+  NoiseType: 1
 --- !u!4 &1668945964
 Transform:
   m_ObjectHideFlags: 0

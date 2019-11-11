@@ -20,7 +20,7 @@ namespace VoxelWorldEngine
         public float HeightMagnitude = 200;
         [Tooltip("Minimum height under the noise")]
         public int MinHeight = 0;
-        
+
         //[Space()]
         //[Range(0, 999f)]
         //[Tooltip("Global 3d noise scale")]
@@ -46,6 +46,8 @@ namespace VoxelWorldEngine
         public int Dimensions = 3;
         [Tooltip("Method to apply.")]
         public NoiseMethodType NoiseType;
+        [Space]
+        public Dictionary<string, string> NoiseLayers;
         //****************************************************************
         protected override BlockType DensityNoise(Vector3 pos)
         {
@@ -56,17 +58,28 @@ namespace VoxelWorldEngine
         {
             NoiseMethod_delegate method = NoiseMap.noiseMethods[(int)NoiseType][Dimensions - 1];
             float sample = NoiseMap.Sum(method, pos / WidthMagnitude, Frequency, Octaves, Lacunarity, Persistence) + 1;
-            
+
             //Apply the height magnitude
+            float h = Mathf.PerlinNoise(pos.x / (WidthMagnitude), pos.z / (WidthMagnitude)) * 200;
+            //Debug.Log(h);
             sample *= HeightMagnitude;
+            //sample *= h;
 
             //Set the minimum height of the world
             sample += MinHeight;
 
+            if (pos.y < MinHeight)
+                return BlockType.DIRT;
             if (pos.y < sample)
                 return BlockType.STONE;
 
             return BlockType.NULL;
+        }
+        //****************************************************************
+        private float computeHeightMagnitude(Vector3 pos)
+        {
+
+            throw new NotImplementedException();
         }
     }
 }

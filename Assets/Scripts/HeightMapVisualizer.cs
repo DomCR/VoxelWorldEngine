@@ -78,6 +78,7 @@ public class HeightMapVisualizer : MonoBehaviour
             {
                 Vector3 point = Vector3.Lerp(point0, point1, (x + 0.5f) * stepSize);
                 float sample = NoiseMap.Sum(method, point, Frequency, octaves, lacunarity, persistence);
+                //sample = Mathf.PerlinNoise(point.x / Frequency, point.z / Frequency);
                 if (NoiseType != NoiseMethodType.Value)
                 {
                     sample = sample * 0.5f + 0.5f;

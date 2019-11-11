@@ -517,10 +517,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Seed: 5046987
   Frequency: 4
-  octaves: 1
+  octaves: 2
   lacunarity: 2
   persistence: 0.5
-  dimensions: 2
+  dimensions: 3
   NoiseType: 1
   Resolution: 256
   coloring:
