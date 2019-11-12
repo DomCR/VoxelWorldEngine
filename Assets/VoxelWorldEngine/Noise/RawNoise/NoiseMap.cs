@@ -16,7 +16,7 @@ namespace VoxelWorldEngine.Noise.RawNoise
     public delegate float NoiseMethod_delegate(Vector3 point, float frequency);
     public static class NoiseMap
     {
-        private static int[] hash = {
+        private static int[] m_hash = {
         151,160,137, 91, 90, 15,131, 13,201, 95, 96, 53,194,233,  7,225,
         140, 36,103, 30, 69,142,  8, 99, 37,240, 21, 10, 23,190,  6,148,
         247,120,234, 75,  0, 26,197, 62, 94,252,219,203,117, 35, 11, 32,
@@ -51,12 +51,12 @@ namespace VoxelWorldEngine.Noise.RawNoise
         184, 84,204,176,115,121, 50, 45,127,  4,150,254,138,236,205, 93,
         222,114, 67, 29, 24, 72,243,141,128,195, 78, 66,215, 61,156,180
     };
-        private const int hashMask = 255;
-        private const int gradientsMask1D = 1;
-        private const int gradientsMask2D = 7;
-        private const int gradientsMask3D = 15;
-        private static float[] gradients1D = { 1f, -1f };
-        private static Vector2[] gradients2D = {
+        private const int m_hashMask = 255;
+        private const int m_gradientsMask1D = 1;
+        private const int m_gradientsMask2D = 7;
+        private const int m_gradientsMask3D = 15;
+        private static float[] m_gradients1D = { 1f, -1f };
+        private static Vector2[] m_gradients2D = {
             new Vector2( 1f, 0f),
             new Vector2(-1f, 0f),
             new Vector2( 0f, 1f),
@@ -66,7 +66,7 @@ namespace VoxelWorldEngine.Noise.RawNoise
             new Vector2( 1f,-1f).normalized,
             new Vector2(-1f,-1f).normalized
         };
-        private static Vector3[] gradients3D = {
+        private static Vector3[] m_gradients3D = {
             new Vector3( 1f, 1f, 0f),
             new Vector3(-1f, 1f, 0f),
             new Vector3( 1f,-1f, 0f),
@@ -86,19 +86,19 @@ namespace VoxelWorldEngine.Noise.RawNoise
             new Vector3( 0f,-1f,-1f)
         };
         //******************************************************
-        public static NoiseMethod_delegate[] valueMethods = {
+        public static NoiseMethod_delegate[] ValueMethods = {
             Value1D,
             Value2D,
             Value3D
         };
-        public static NoiseMethod_delegate[] perlinMethods = {
+        public static NoiseMethod_delegate[] PerlinMethods = {
             Perlin1D,
             Perlin2D,
             Perlin3D
         };
-        public static NoiseMethod_delegate[][] noiseMethods = {
-            valueMethods,
-            perlinMethods
+        public static NoiseMethod_delegate[][] NoiseMethods = {
+            ValueMethods,
+            PerlinMethods
         };
         //******************************************************
         public static float Value1D(Vector3 point, float frequency)
@@ -106,14 +106,14 @@ namespace VoxelWorldEngine.Noise.RawNoise
             point *= frequency;
             int i0 = Mathf.FloorToInt(point.x);
             float t = point.x - i0;
-            i0 &= hashMask;
+            i0 &= m_hashMask;
             int i1 = i0 + 1;
 
-            int h0 = hash[i0];
-            int h1 = hash[i1];
+            int h0 = m_hash[i0];
+            int h1 = m_hash[i1];
 
-            t = Smooth(t);
-            return Mathf.Lerp(h0, h1, t) * (1f / hashMask);
+            t = smooth(t);
+            return Mathf.Lerp(h0, h1, t) * (1f / m_hashMask);
         }
         public static float Value2D(Vector3 point, float frequency)
         {
@@ -122,21 +122,21 @@ namespace VoxelWorldEngine.Noise.RawNoise
             int iy0 = Mathf.FloorToInt(point.z);
             float tx = point.x - ix0;
             float tz = point.z - iy0;
-            ix0 &= hashMask;
-            iy0 &= hashMask;
+            ix0 &= m_hashMask;
+            iy0 &= m_hashMask;
             int ix1 = ix0 + 1;
             int iz1 = iy0 + 1;
 
-            int h0 = hash[ix0];
-            int h1 = hash[ix1];
-            int h00 = hash[h0 + iy0];
-            int h10 = hash[h1 + iy0];
-            int h01 = hash[h0 + iz1];
-            int h11 = hash[h1 + iz1];
+            int h0 = m_hash[ix0];
+            int h1 = m_hash[ix1];
+            int h00 = m_hash[h0 + iy0];
+            int h10 = m_hash[h1 + iy0];
+            int h01 = m_hash[h0 + iz1];
+            int h11 = m_hash[h1 + iz1];
 
-            tx = Smooth(tx);
-            tz = Smooth(tz);
-            return Mathf.Lerp(Mathf.Lerp(h00, h10, tx), Mathf.Lerp(h01, h11, tx), tz) * (1f / hashMask);
+            tx = smooth(tx);
+            tz = smooth(tz);
+            return Mathf.Lerp(Mathf.Lerp(h00, h10, tx), Mathf.Lerp(h01, h11, tx), tz) * (1f / m_hashMask);
         }
         public static float Value3D(Vector3 point, float frequency)
         {
@@ -147,35 +147,35 @@ namespace VoxelWorldEngine.Noise.RawNoise
             float tx = point.x - ix0;
             float ty = point.y - iy0;
             float tz = point.z - iz0;
-            ix0 &= hashMask;
-            iy0 &= hashMask;
-            iz0 &= hashMask;
+            ix0 &= m_hashMask;
+            iy0 &= m_hashMask;
+            iz0 &= m_hashMask;
             int ix1 = ix0 + 1;
             int iy1 = iy0 + 1;
             int iz1 = iz0 + 1;
 
-            int h0 = hash[ix0];
-            int h1 = hash[ix1];
-            int h00 = hash[h0 + iy0];
-            int h10 = hash[h1 + iy0];
-            int h01 = hash[h0 + iy1];
-            int h11 = hash[h1 + iy1];
-            int h000 = hash[h00 + iz0];
-            int h100 = hash[h10 + iz0];
-            int h010 = hash[h01 + iz0];
-            int h110 = hash[h11 + iz0];
-            int h001 = hash[h00 + iz1];
-            int h101 = hash[h10 + iz1];
-            int h011 = hash[h01 + iz1];
-            int h111 = hash[h11 + iz1];
+            int h0 = m_hash[ix0];
+            int h1 = m_hash[ix1];
+            int h00 = m_hash[h0 + iy0];
+            int h10 = m_hash[h1 + iy0];
+            int h01 = m_hash[h0 + iy1];
+            int h11 = m_hash[h1 + iy1];
+            int h000 = m_hash[h00 + iz0];
+            int h100 = m_hash[h10 + iz0];
+            int h010 = m_hash[h01 + iz0];
+            int h110 = m_hash[h11 + iz0];
+            int h001 = m_hash[h00 + iz1];
+            int h101 = m_hash[h10 + iz1];
+            int h011 = m_hash[h01 + iz1];
+            int h111 = m_hash[h11 + iz1];
 
-            tx = Smooth(tx);
-            ty = Smooth(ty);
-            tz = Smooth(tz);
+            tx = smooth(tx);
+            ty = smooth(ty);
+            tz = smooth(tz);
             return Mathf.Lerp(
                 Mathf.Lerp(Mathf.Lerp(h000, h100, tx), Mathf.Lerp(h010, h110, tx), ty),
                 Mathf.Lerp(Mathf.Lerp(h001, h101, tx), Mathf.Lerp(h011, h111, tx), ty),
-                tz) * (1f / hashMask);
+                tz) * (1f / m_hashMask);
         }
         /// <summary>
         /// One dimension perlin noise, uses the x as a changing variable.
@@ -189,16 +189,16 @@ namespace VoxelWorldEngine.Noise.RawNoise
             int i0 = Mathf.FloorToInt(point.x);
             float t0 = point.x - i0;
             float t1 = t0 - 1f;
-            i0 &= hashMask;
+            i0 &= m_hashMask;
             int i1 = i0 + 1;
 
-            float g0 = gradients1D[hash[i0] & gradientsMask1D];
-            float g1 = gradients1D[hash[i1] & gradientsMask1D];
+            float g0 = m_gradients1D[m_hash[i0] & m_gradientsMask1D];
+            float g1 = m_gradients1D[m_hash[i1] & m_gradientsMask1D];
 
             float v0 = g0 * t0;
             float v1 = g1 * t1;
 
-            float t = Smooth(t0);
+            float t = smooth(t0);
             return Mathf.Lerp(v0, v1, t) * 2f;
         }
         /// <summary>
@@ -216,25 +216,25 @@ namespace VoxelWorldEngine.Noise.RawNoise
             float tz0 = point.z - iz0;
             float tx1 = tx0 - 1f;
             float ty1 = tz0 - 1f;
-            ix0 &= hashMask;
-            iz0 &= hashMask;
+            ix0 &= m_hashMask;
+            iz0 &= m_hashMask;
             int ix1 = ix0 + 1;
             int iz1 = iz0 + 1;
 
-            int h0 = hash[ix0];
-            int h1 = hash[ix1];
-            Vector2 g00 = gradients2D[hash[h0 + iz0] & gradientsMask2D];
-            Vector2 g10 = gradients2D[hash[h1 + iz0] & gradientsMask2D];
-            Vector2 g01 = gradients2D[hash[h0 + iz1] & gradientsMask2D];
-            Vector2 g11 = gradients2D[hash[h1 + iz1] & gradientsMask2D];
+            int h0 = m_hash[ix0];
+            int h1 = m_hash[ix1];
+            Vector2 g00 = m_gradients2D[m_hash[h0 + iz0] & m_gradientsMask2D];
+            Vector2 g10 = m_gradients2D[m_hash[h1 + iz0] & m_gradientsMask2D];
+            Vector2 g01 = m_gradients2D[m_hash[h0 + iz1] & m_gradientsMask2D];
+            Vector2 g11 = m_gradients2D[m_hash[h1 + iz1] & m_gradientsMask2D];
 
-            float v00 = Dot2D(g00, tx0, tz0);
-            float v10 = Dot2D(g10, tx1, tz0);
-            float v01 = Dot2D(g01, tx0, ty1);
-            float v11 = Dot2D(g11, tx1, ty1);
+            float v00 = dot2D(g00, tx0, tz0);
+            float v10 = dot2D(g10, tx1, tz0);
+            float v01 = dot2D(g01, tx0, ty1);
+            float v11 = dot2D(g11, tx1, ty1);
 
-            float tx = Smooth(tx0);
-            float tz = Smooth(tz0);
+            float tx = smooth(tx0);
+            float tz = smooth(tz0);
             return Mathf.Lerp(
                 Mathf.Lerp(v00, v10, tx),
                 Mathf.Lerp(v01, v11, tx),
@@ -258,40 +258,40 @@ namespace VoxelWorldEngine.Noise.RawNoise
             float tx1 = tx0 - 1f;
             float ty1 = ty0 - 1f;
             float tz1 = tz0 - 1f;
-            ix0 &= hashMask;
-            iy0 &= hashMask;
-            iz0 &= hashMask;
+            ix0 &= m_hashMask;
+            iy0 &= m_hashMask;
+            iz0 &= m_hashMask;
             int ix1 = ix0 + 1;
             int iy1 = iy0 + 1;
             int iz1 = iz0 + 1;
 
-            int h0 = hash[ix0];
-            int h1 = hash[ix1];
-            int h00 = hash[h0 + iy0];
-            int h10 = hash[h1 + iy0];
-            int h01 = hash[h0 + iy1];
-            int h11 = hash[h1 + iy1];
-            Vector3 g000 = gradients3D[hash[h00 + iz0] & gradientsMask3D];
-            Vector3 g100 = gradients3D[hash[h10 + iz0] & gradientsMask3D];
-            Vector3 g010 = gradients3D[hash[h01 + iz0] & gradientsMask3D];
-            Vector3 g110 = gradients3D[hash[h11 + iz0] & gradientsMask3D];
-            Vector3 g001 = gradients3D[hash[h00 + iz1] & gradientsMask3D];
-            Vector3 g101 = gradients3D[hash[h10 + iz1] & gradientsMask3D];
-            Vector3 g011 = gradients3D[hash[h01 + iz1] & gradientsMask3D];
-            Vector3 g111 = gradients3D[hash[h11 + iz1] & gradientsMask3D];
+            int h0 = m_hash[ix0];
+            int h1 = m_hash[ix1];
+            int h00 = m_hash[h0 + iy0];
+            int h10 = m_hash[h1 + iy0];
+            int h01 = m_hash[h0 + iy1];
+            int h11 = m_hash[h1 + iy1];
+            Vector3 g000 = m_gradients3D[m_hash[h00 + iz0] & m_gradientsMask3D];
+            Vector3 g100 = m_gradients3D[m_hash[h10 + iz0] & m_gradientsMask3D];
+            Vector3 g010 = m_gradients3D[m_hash[h01 + iz0] & m_gradientsMask3D];
+            Vector3 g110 = m_gradients3D[m_hash[h11 + iz0] & m_gradientsMask3D];
+            Vector3 g001 = m_gradients3D[m_hash[h00 + iz1] & m_gradientsMask3D];
+            Vector3 g101 = m_gradients3D[m_hash[h10 + iz1] & m_gradientsMask3D];
+            Vector3 g011 = m_gradients3D[m_hash[h01 + iz1] & m_gradientsMask3D];
+            Vector3 g111 = m_gradients3D[m_hash[h11 + iz1] & m_gradientsMask3D];
 
-            float v000 = Dot3D(g000, tx0, ty0, tz0);
-            float v100 = Dot3D(g100, tx1, ty0, tz0);
-            float v010 = Dot3D(g010, tx0, ty1, tz0);
-            float v110 = Dot3D(g110, tx1, ty1, tz0);
-            float v001 = Dot3D(g001, tx0, ty0, tz1);
-            float v101 = Dot3D(g101, tx1, ty0, tz1);
-            float v011 = Dot3D(g011, tx0, ty1, tz1);
-            float v111 = Dot3D(g111, tx1, ty1, tz1);
+            float v000 = dot3D(g000, tx0, ty0, tz0);
+            float v100 = dot3D(g100, tx1, ty0, tz0);
+            float v010 = dot3D(g010, tx0, ty1, tz0);
+            float v110 = dot3D(g110, tx1, ty1, tz0);
+            float v001 = dot3D(g001, tx0, ty0, tz1);
+            float v101 = dot3D(g101, tx1, ty0, tz1);
+            float v011 = dot3D(g011, tx0, ty1, tz1);
+            float v111 = dot3D(g111, tx1, ty1, tz1);
 
-            float tx = Smooth(tx0);
-            float ty = Smooth(ty0);
-            float tz = Smooth(tz0);
+            float tx = smooth(tx0);
+            float ty = smooth(ty0);
+            float tz = smooth(tz0);
             return Mathf.Lerp(
                 Mathf.Lerp(Mathf.Lerp(v000, v100, tx), Mathf.Lerp(v010, v110, tx), ty),
                 Mathf.Lerp(Mathf.Lerp(v001, v101, tx), Mathf.Lerp(v011, v111, tx), ty),
@@ -323,15 +323,15 @@ namespace VoxelWorldEngine.Noise.RawNoise
         }
         //******************************************************
         #region Utility methods
-        private static float Smooth(float t)
+        private static float smooth(float t)
         {
             return t * t * t * (t * (t * 6f - 15f) + 10f);
         }
-        private static float Dot2D(Vector2 g, float x, float y)
+        private static float dot2D(Vector2 g, float x, float y)
         {
             return g.x * x + g.y * y;
         }
-        private static float Dot3D(Vector3 g, float x, float y, float z)
+        private static float dot3D(Vector3 g, float x, float y, float z)
         {
             return g.x * x + g.y * y + g.z * z;
         } 

@@ -67,7 +67,8 @@ namespace VoxelWorldEngine
                 case ChunkState.Updating:
                     break;
                 case ChunkState.HeightMapGeneration:
-                    m_chunkThread = new Thread(new ThreadStart(GenerateHeightMap));
+                    m_chunkThread = new Thread(new ThreadStart(GenerateHoles));
+                    //m_chunkThread = new Thread(new ThreadStart(GenerateHeightMap));
                     m_threadPool.Add(m_chunkThread);
                     m_chunkThread.Start();
                     break;
@@ -93,7 +94,7 @@ namespace VoxelWorldEngine
             //if ((tactive = m_threadPool.Where(o => o.IsAlive).Count()) < k_threadLimit)
             //    foreach (Thread th in m_threadPool)
             //    {
-            //        if(tactive < k_threadLimit)
+            //        if (tactive < k_threadLimit)
             //        {
             //            switch (th.ThreadState)
             //            {

@@ -9,14 +9,14 @@ namespace VoxelWorldEngine
 {
     public class Classic : WorldGenerator
     {
-        [Space()]
-        //Noise setup
-        [Range(0, 999f)]
-        [Tooltip("Wave length of the noise")]
-        public float WidthMagnitude = 125;
-        [Range(0, 999f)]
-        [Tooltip("Wave height of the noise")]
-        public float HeightMagnitude = 200;
+        //[Space()]
+        ////Noise setup
+        //[Range(0, 999f)]
+        //[Tooltip("Wave length of the noise")]
+        //public float WidthMagnitude = 125;
+        //[Range(0, 999f)]
+        //[Tooltip("Wave height of the noise")]
+        //public float HeightMagnitude = 200;
         [Space()]
         [Range(0, 999f)]
         [Tooltip("Global 3d noise scale")]

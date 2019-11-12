@@ -68,7 +68,7 @@ public class HeightMapVisualizer : MonoBehaviour
 
         Random.InitState(Seed);
 
-        NoiseMethod_delegate method = NoiseMap.noiseMethods[(int)NoiseType][dimensions - 1];
+        NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)NoiseType][dimensions - 1];
         float stepSize = 1f / Resolution;
         for (int y = 0; y < Resolution; y++)
         {

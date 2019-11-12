@@ -20,6 +20,17 @@ namespace VoxelWorldEngine
         public int ChunksY;
         public int ChunksZ;
 
+        [Space()]
+        [Header("Generic noise properties")]
+        [Range(0, 999f)]
+        [Tooltip("Wave length of the noise")]
+        public float WidthMagnitude = 125;
+        [Range(0, 999f)]
+        [Tooltip("Wave height of the noise")]
+        public float HeightMagnitude = 200;
+        [Tooltip("Minimum height under the noise")]
+        public int MinHeight = 0;
+
         protected Vector3 m_position;
         protected Dictionary<Vector3, Chunk> m_chunks;
 

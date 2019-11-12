@@ -8,16 +8,16 @@ namespace VoxelWorldEngine
 {
     public class Simple : WorldGenerator
     {
-        [Space()]
-        //Noise setup
-        [Range(0, 999f)]
-        [Tooltip("Wave length of the noise")]
-        public float WidthMagnitude = 125;
-        [Range(0, 999f)]
-        [Tooltip("Wave height of the noise")]
-        public float HeightMagnitude = 200;
-        [Tooltip("Minimum height under the noise")]
-        public int MinHeight = 0;
+        //[Space()]
+        ////Noise setup
+        //[Range(0, 999f)]
+        //[Tooltip("Wave length of the noise")]
+        //public float WidthMagnitude = 125;
+        //[Range(0, 999f)]
+        //[Tooltip("Wave height of the noise")]
+        //public float HeightMagnitude = 200;
+        //[Tooltip("Minimum height under the noise")]
+        //public int MinHeight = 0;
         [Space()]
         [Range(0, 999f)]
         [Tooltip("Global 3d noise scale")]
