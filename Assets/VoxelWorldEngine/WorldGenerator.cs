@@ -15,6 +15,9 @@ namespace VoxelWorldEngine
     {
         public GameObject ChunkPrefab;
 
+        public int Seed;
+        public bool UseSeed;
+
         [Space()]
         public int ChunksX;
         public int ChunksY;
@@ -113,12 +116,20 @@ namespace VoxelWorldEngine
         {
             BlockType block = BlockType.NULL;
 
+            //Add the seed to the position
+            Vector3 seedPos = new Vector3();
+
+            if (UseSeed)
+                seedPos = new Vector3(pos.x + Seed, pos.y, pos.z + Seed);
+            else
+                seedPos = pos;
+
             //Set the bottom edge blocks 
-            block = setBedRock(pos);
+            block = setBedRock(seedPos);
             if (block == BlockType.BEDROCK)
                 return block;
 
-            block = HeightNoise(pos);
+            block = HeightNoise(seedPos);
 
             return block;
         }
