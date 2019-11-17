@@ -34,7 +34,7 @@ namespace VoxelWorldEngine
 
         //TODO: implement the world class
         private WorldGenerator m_parent;
-
+        
         //Thread variables
         Thread m_chunkThread;
         //TODO: implement thread pool to control the pc resources
@@ -67,7 +67,7 @@ namespace VoxelWorldEngine
                 case ChunkState.Updating:
                     break;
                 case ChunkState.HeightMapGeneration:
-                    m_chunkThread = new Thread(new ThreadStart(GenerateHoles));
+                    m_chunkThread = new Thread(new ThreadStart(GenerateHeightMap));
                     //m_chunkThread = new Thread(new ThreadStart(GenerateHeightMap));
                     m_threadPool.Add(m_chunkThread);
                     m_chunkThread.Start();
