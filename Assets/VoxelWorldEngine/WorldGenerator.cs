@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using VoxelWorldEngine.Enums;
+using VoxelWorldEngine.Utils;
 using VoxelWorldEngine.Noise;
 using VoxelWorldEngine.Noise.RawNoise;
 
@@ -15,6 +16,9 @@ namespace VoxelWorldEngine
     {
         public GameObject ChunkPrefab;
 
+        public WGDebugOptions debug;
+        
+        [Space()]
         public int Seed;
         public bool UseSeed;
 

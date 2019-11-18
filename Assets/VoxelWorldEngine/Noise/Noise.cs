@@ -121,7 +121,7 @@ namespace VoxelWorldEngine.Noise
                 (int)pos.x / NoiseScale,
                 (int)pos.y / NoiseScale,
                 (int)pos.z / NoiseScale) >= Threshold)
-                return BlockType.GRASS_TOP;
+                return BlockType.GRASS;
             else
                 return BlockType.NULL;
             #endregion

@@ -7,6 +7,7 @@ using VoxelWorldEngine.Noise.RawNoise;
 
 namespace VoxelWorldEngine
 {
+    [Obsolete]
     public class Classic : WorldGenerator
     {
         //[Space()]

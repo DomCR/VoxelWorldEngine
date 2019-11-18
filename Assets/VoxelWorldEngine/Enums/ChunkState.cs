@@ -12,10 +12,17 @@ namespace VoxelWorldEngine.Enums
 
         //Transformation states
         HeightMapGeneration,
-        HolesGeneration,
+        CaveGeneration,
+        OreGeneration,
+        StrataGeneration,
+
+        //Testing
+        DensityMapGeneration,
+
+        //Working states
         Updating,
 
-        //Request States
+        //Request states
         NeedFaceUpdate,
         NeedMeshUpdate
     }

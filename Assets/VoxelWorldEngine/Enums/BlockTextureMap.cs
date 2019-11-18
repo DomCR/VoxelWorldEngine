@@ -6,28 +6,30 @@ using System.Threading.Tasks;
 
 namespace VoxelWorldEngine.Enums
 {
-    public enum BlockType : byte
+    public enum BlockTextureMap
     {
         NULL,
-
         //ROW 1
-        GRASS,
-        STONE = BlockTextureMap.STONE,
-        DIRT = BlockTextureMap.DIRT,
-        WOOD_TILES = BlockTextureMap.WOOD_TILES,
-        STONE_PAVEMENT = BlockTextureMap.STONE_PAVEMENT,
+        GRASS_TOP,
+        STONE,
+        DIRT,
+        GRASS_SIDE,
+        WOOD_TILES,
+        STONE_PAVEMENT,
         IRON_BLOCK,
         BRICK,
-        TNT,
+        TNT_SIDE,
+        TNT_TOP,
+        TNT_BOTTOM,
         SPIDER_NET,
         FLOWER_RED,
         FLOWER_YELLOW,
-        MUD = BlockTextureMap.MUD,
+        MUD,
         SAPLING_OAK,
         BRICK_HALF,
         SANDSTONE_HALF,
         COBBLESTONE_HALF,
-        
+
         ICON_BED,
         ICON_DOOR,
         ICON_WOOD_STONE,
@@ -36,9 +38,10 @@ namespace VoxelWorldEngine.Enums
 
         //ROW 2
         COBBLESTONE,
-        BEDROCK = BlockTextureMap.BEDROCK,
-        SAND = BlockTextureMap.SAND,
+        BEDROCK,
+        SAND,
         GRABEL,
-        OAKTREE_LOG,
+        OAKTREE_SIDE,
+        OAKTREE_TOP
     }
 }

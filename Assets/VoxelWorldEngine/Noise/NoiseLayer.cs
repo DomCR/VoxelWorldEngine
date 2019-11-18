@@ -5,58 +5,59 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using VoxelWorldEngine.Enums;
+using VoxelWorldEngine.Noise.RawNoise;
 
 namespace VoxelWorldEngine.Noise
 {
     [Serializable]
-    public class NoiseLayer
+    public class NoiseLayer : INoiseLayer
     {
         public string Name;
-
-        public float GapX;
-        public float GapZ;
-
-        public float WidthMagnitudeX = 1;
-        public float WidthMagnitudeZ = 1;
+        public BlockType Block;
         
-        public float HeightMagnitude = 1;
+        [Space]
+        [Header("Height map noise properties")]
+        [Tooltip("Stablish the noise frequency by each point.")]
+        public float Frequency = 4;
+        [Range(1, 8)]
+        [Tooltip("Number of iterations for the noise, each octave is a new noise sum.")]
+        public int Octaves = 1;
+        [Range(1f, 4f)]
+        [Tooltip("Phase between the different noise frequencies when the sum is applied.")]
+        public float Lacunarity = 2f;
+        [Range(0f, 1f)]
+        [Tooltip("Multiplier for the noise sum, decrease each noise sum")]
+        public float Persistence = 0.5f;
 
-        public float NoiseScaleX = 1;
-        public float NoiseScaleY = 1;
-        public float NoiseScaleZ = 1;
+        [Space()]
+        [Header("Density noise properties")]
+        [Range(0, 1.0f)]
+        public float Density = 0.45f;
+        public bool Inverted = false;
 
-        public float Density = 1;
+        [Space]
+        [Range(1, 3)]
+        [Tooltip("Noise dimensions, (x,z) as a 2Dplane, y is the up axis.")]
+        public int Dimensions = 3;
+        [Tooltip("Method to apply.")]
+        public NoiseMethodType NoiseType;
 
-        public NoiseType Type;
-        public NoiseLayerType LayerType;
-        public NoiseMethod Method;
-
-        public float Compute(float x, float y, float z)
+        public BlockType Compute2D(Vector3 pos)
         {
-            switch (Method)
-            {
-                case NoiseMethod.UNITY_2D:
-                    return m_unityNoise(x, z);
-                case NoiseMethod.NOISE_MAP_PERLIN_3D:
-                    return m_noiseMapPerlin3D(x, y, z);
-                default:
-                    return 0;
-                    break;
-            }
+            //TODO: implement inferior limit of the noise Ex: Dirt
+
+            //TODO: Compute the height noise, return block type if correct
+
+            throw new NotImplementedException();
         }
-        //********************************************************
-        private int m_unityNoise(float x, float z)
+
+        public BlockType Compute3D(Vector3 pos)
         {
-            return (int)(Mathf.PerlinNoise(
-                (int)(x + GapX) / WidthMagnitudeX, 
-                (int)(z + GapZ) / WidthMagnitudeZ) * HeightMagnitude);
-        }
-        private float m_noiseMapPerlin3D(float x, float y, float z)
-        {
-            return RawNoise.PerlinNoise3D.Generate_01(
-                (int)x / NoiseScaleX,
-                (int)y / NoiseScaleY,
-                (int)z / NoiseScaleZ);
+            //TODO: Implement the height limit of the noise (use a noise layer ?)
+
+            //TODO: Compute the noise, return the ore block or null if is a cave
+
+            throw new NotImplementedException();
         }
     }
 }

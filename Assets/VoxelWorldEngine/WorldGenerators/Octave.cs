@@ -26,6 +26,7 @@ namespace VoxelWorldEngine
         public float Persistence = 0.5f;
         [Space]
         [Range(1, 3)]
+
         [Tooltip("Noise dimensions, (x,z) as a 2Dplane, y is the up axis.")]
         public int Dimensions = 3;
         [Tooltip("Method to apply.")]
@@ -33,22 +34,51 @@ namespace VoxelWorldEngine
 
         [Space(10)]
         [Header("Density noise properties")]
-        //[Range(0, 999f)]
-        //[Tooltip("Global 3d noise scale")]
-        //public float NoiseScale = 25;
         [Range(0, 1.0f)]
         public float Density = 0.45f;
-        public float WidthDensity = 50f;
+        public bool Inverted = false;
+        [Space]
+        public float Frequency3D = 2;
+        [Range(1, 8)]
+        [Tooltip("Number of iterations for the noise, each octave is a new noise sum.")]
+        public int Octaves3D = 1;
+        [Range(1f, 4f)]
+        [Tooltip("Phase between the different noise frequencies when the sum is applied.")]
+        public float Lacunarity3D = 1;
+        [Range(0f, 1f)]
+        [Tooltip("Multiplier for the noise sum, decrease each noise sum")]
+        public float Persistence3D = 0.5f;
+        public float Width3D = 50f;
+        [Space]
+        [Range(1, 3)]
+        [Tooltip("Noise dimensions, (x,z) as a 2Dplane, y is the up axis.")]
+        public int DimensionsDensity = 3;
+        [Tooltip("Method to apply.")]
+        public NoiseMethodType NoiseTypeDensity;
+
         //public Dictionary<string, string> NoiseLayers;
         //****************************************************************
         protected override BlockType DensityNoise(Vector3 pos)
         {
-            NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)NoiseType][Dimensions - 1];
-            float sample = (NoiseMap.Sum(method, pos / WidthDensity, Frequency, Octaves, Lacunarity, Persistence) + 1) / 2;
+            //TEST ORE GENERATION: Using to test the ores
 
-            if(sample < Density)
+            NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)NoiseTypeDensity][DimensionsDensity - 1];
+            //float sample = (NoiseMap.Sum(method, pos / WidthDensity, Frequency, Octaves, Lacunarity, Persistence) + 1) / 2;
+            float sample = (NoiseMap.Sum(method, pos / Width3D, Frequency3D, Octaves3D, Lacunarity3D, Persistence3D) + 1) / 2;
+
+            if (Inverted)
             {
-                return BlockType.STONE;
+                if (sample > Density)
+                {
+                    return BlockType.STONE;
+                }
+            }
+            else
+            {
+                if (sample < Density)
+                {
+                    return BlockType.STONE;
+                }
             }
 
             return BlockType.NULL;
@@ -69,7 +99,7 @@ namespace VoxelWorldEngine
             sample += MinHeight;
 
             if (pos.y < MinHeight)
-                return BlockType.DIRT;
+                return BlockType.SAND;
             if (pos.y < sample)
                 return BlockType.STONE;
 

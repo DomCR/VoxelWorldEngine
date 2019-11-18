@@ -54,9 +54,17 @@ namespace VoxelWorldEngine
             //Get the parent (world)
             m_parent = this.GetComponentInParent<WorldGenerator>();
 
+            #region Debug utils
+            if (m_parent.debug.IsActive)
+                State = m_parent.debug.InitialState;
+            else
+                State = ChunkState.HeightMapGeneration;
+            #endregion
+
             //THREAD TEST: Generate the current chunk
-            Position = transform.position;
-            State = ChunkState.HeightMapGeneration;
+            #region Thread variable ref
+            Position = transform.position; 
+            #endregion
         }
         void Update()
         {
@@ -72,7 +80,7 @@ namespace VoxelWorldEngine
                     m_threadPool.Add(m_chunkThread);
                     m_chunkThread.Start();
                     break;
-                case ChunkState.HolesGeneration:
+                case ChunkState.CaveGeneration:
                     m_chunkThread = new Thread(new ThreadStart(GenerateHoles));
                     m_threadPool.Add(m_chunkThread);
                     m_chunkThread.Start();
@@ -85,10 +93,18 @@ namespace VoxelWorldEngine
                 case ChunkState.NeedMeshUpdate:
                     UpdateMesh();
                     break;
+                case ChunkState.OreGeneration:
+                    break;
+                case ChunkState.StrataGeneration:
+                    break;
+                case ChunkState.DensityMapGeneration:
+                    m_chunkThread = new Thread(new ThreadStart(GenerateDensityMap));
+                    m_threadPool.Add(m_chunkThread);
+                    m_chunkThread.Start();
+                    break;
                 default:
                     break;
             }
-
             ////Set the active threads limit
             //int tactive;
             //if ((tactive = m_threadPool.Where(o => o.IsAlive).Count()) < k_threadLimit)
@@ -147,8 +163,7 @@ namespace VoxelWorldEngine
                             y + Position.y,
                             z + Position.z);
 
-                        //TODO: optimize the process by sending a column of the array
-                        BlockType bl = Blocks[x, y, z] = m_parent.ComputeHeightNoise(currBlockPos);
+                        Blocks[x, y, z] = m_parent.ComputeHeightNoise(currBlockPos);
                     }
                 }
             }
@@ -156,7 +171,30 @@ namespace VoxelWorldEngine
             //Update the chunk state
             State = ChunkState.NeedFaceUpdate;
         }
-        void GenerateHoles()
+        void GenerateStrata()
+        {
+            //Update the chunk state
+            State = ChunkState.Updating;
+
+            for (int x = 0; x < XSize; x++)
+            {
+                for (int y = 0; y < YSize; y++)
+                {
+                    for (int z = 0; z < ZSize; z++)
+                    {
+                        Vector3 currBlockPos = new Vector3(
+                            x + Position.x,
+                            y + Position.y,
+                            z + Position.z);
+
+                    }
+                }
+            }
+
+            //Update the chunk state
+            State = ChunkState.NeedFaceUpdate;
+        }
+        void GenerateDensityMap()
         {
             //Update the chunk state
             State = ChunkState.Updating;
@@ -185,6 +223,36 @@ namespace VoxelWorldEngine
             //Update the chunk state
             State = ChunkState.NeedFaceUpdate;
         }
+        void GenerateHoles()
+        {
+            //Update the chunk state
+            State = ChunkState.Updating;
+
+            for (int x = 0; x < XSize; x++)
+            {
+                for (int y = 0; y < YSize; y++)
+                {
+                    for (int z = 0; z < ZSize; z++)
+                    {
+                        //Vector3 currBlockPos = new Vector3(
+                        //    x + this.transform.position.x,
+                        //    y + this.transform.position.y,
+                        //    z + this.transform.position.z); 
+                        Vector3 currBlockPos = new Vector3(
+                            x + Position.x,
+                            y + Position.y,
+                            z + Position.z);
+
+                    }
+                }
+            }
+
+            //Update the chunk state
+            State = ChunkState.NeedFaceUpdate;
+        }
+        /// <summary>
+        /// Update the vertices to generate the faces
+        /// </summary>
         void UpdateFaces()
         {
             //Update the chunk state
@@ -279,7 +347,40 @@ namespace VoxelWorldEngine
         //*************************************************************
         private void setFaceTexture(int x, int y, int z, FaceType face)
         {
-            m_uv.AddRange(Block.GetTexture(Blocks[x, y, z]));
+            BlockTextureMap map = (BlockTextureMap)Blocks[x, y, z];
+
+            //Set the block face in case that is different from the side
+            switch (Blocks[x, y, z])
+            {
+                case BlockType.GRASS:
+                    switch (face)
+                    {
+                        case FaceType.Top:
+                            map = BlockTextureMap.GRASS_TOP;
+                            break;
+                        case FaceType.North:
+                        case FaceType.East:
+                        case FaceType.South:
+                        case FaceType.West:
+                            map = BlockTextureMap.GRASS_SIDE;
+                            break;
+                        case FaceType.Bottom:
+                            map = BlockTextureMap.DIRT;
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case BlockType.TNT:
+                    break;
+                case BlockType.OAKTREE_LOG:
+                    break;
+                default:
+                    break;
+            }
+
+            //m_uv.AddRange(Block.GetTexture(Blocks[x, y, z]));
+            m_uv.AddRange(Block.GetTexture(map));
         }
     }
 }

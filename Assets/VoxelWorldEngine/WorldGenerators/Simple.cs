@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using VoxelWorldEngine.Enums;
@@ -6,6 +7,7 @@ using VoxelWorldEngine.Noise.RawNoise;
 
 namespace VoxelWorldEngine
 {
+    [Obsolete]
     public class Simple : WorldGenerator
     {
         //[Space()]

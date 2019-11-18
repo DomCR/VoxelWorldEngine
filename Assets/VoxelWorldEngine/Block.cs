@@ -129,6 +129,30 @@ namespace VoxelWorldEngine
         }
         #endregion
         //*********************************************************************************
+
+        public static List<Vector2> GetTexture(BlockTextureMap blockType)
+        {
+            List<Vector2> newUV = new List<Vector2>();
+            Vector2 texturePos = GetTexturePosition(blockType);
+            //float tUnit = 0.0625f;
+            float hUnit = 16f / 384f;
+            float vUnit = 16f / 576f;
+
+            //texturePos = new Vector2(0, 15);
+
+            //hUnit = 32f / 128f;
+            //vUnit = 32f / 128f;
+
+            //hUnit = 0.25f;
+            //vUnit = 0.25f;
+
+            newUV.Add(new Vector2(hUnit * texturePos.x + hUnit, vUnit * texturePos.y));
+            newUV.Add(new Vector2(hUnit * texturePos.x + hUnit, vUnit * texturePos.y + vUnit));
+            newUV.Add(new Vector2(hUnit * texturePos.x, vUnit * texturePos.y + vUnit));
+            newUV.Add(new Vector2(hUnit * texturePos.x, vUnit * texturePos.y));
+
+            return newUV;
+        }
         public static List<Vector2> GetTexture(BlockType blockType)
         {
             List<Vector2> newUV = new List<Vector2>();
@@ -173,17 +197,13 @@ namespace VoxelWorldEngine
             }
             throw new NotImplementedException();
         }
-        public static Color GetColor(BlockType block)
+        public static Vector2 GetTexturePosition(BlockTextureMap block)
         {
-            switch (block)
-            {
-                //case BlockType.NULL:
-                //    break;
-                case BlockType.GRASS_TOP:
-                    return new Color(255, 125, 255);
-                default:
-                    return new Color(255, 255, 255);
-            }
+            int value = ((int)block) - 1;
+            //24, 36
+            Vector2 map = new Vector2(((int)value % 24), ((int)(35 - (value / 24))));
+
+            return map;
         }
         public static Vector2 GetTexturePosition(BlockType block)
         {
@@ -192,16 +212,6 @@ namespace VoxelWorldEngine
             Vector2 map = new Vector2(((int)value % 24), ((int)(35 - (value / 24))));
 
             return map;
-
-            //switch (block)
-            //{
-            //    case BlockType.NULL:
-            //        return new Vector2();
-            //    case BlockType.GRASS_TOP:
-            //        return new Vector2(0, 35);
-            //    default:
-            //        return new Vector2();
-            //}
         }
         public static bool IsTransparent(BlockType id)
         {
