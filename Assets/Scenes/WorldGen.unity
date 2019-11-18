@@ -385,7 +385,7 @@ MonoBehaviour:
     type: 3}
   debug:
     IsActive: 1
-    InitialState: 1
+    InitialState: 5
   Seed: 0
   UseSeed: 1
   ChunksX: 10
