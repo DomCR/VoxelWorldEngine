@@ -21,10 +21,14 @@ namespace VoxelWorldEngine
 
         public ChunkState State = ChunkState.HeightMapGeneration;
 
+        public GameObject[] WorldObjects;
+
         public Vector3 Position { get; private set; }
         //*************************************************************
-        private List<Vector3> m_vertices = new List<Vector3>();
-        private List<int> m_triangles = new List<int>();
+        private List<Vector3> m_mesh_vertices = new List<Vector3>();
+        private List<Vector3> m_collider_vertices = new List<Vector3>();
+        private List<int> m_mesh_triangles = new List<int>();
+        private List<int> m_collider_triangles = new List<int>();
         private List<Color> m_colors = new List<Color>();
         private List<Vector2> m_uv = new List<Vector2>();
         private int m_faceCount = 0;
@@ -56,7 +60,7 @@ namespace VoxelWorldEngine
 
             #region Debug utils
             if (m_parent.debug.IsActive)
-                State = m_parent.debug.InitialState;
+                State = m_parent.debug.ChunkState;
             else
                 State = ChunkState.HeightMapGeneration;
             #endregion
@@ -77,17 +81,17 @@ namespace VoxelWorldEngine
                 case ChunkState.HeightMapGeneration:
                     m_chunkThread = new Thread(new ThreadStart(GenerateHeightMap));
                     //m_chunkThread = new Thread(new ThreadStart(GenerateHeightMap));
-                    m_threadPool.Add(m_chunkThread);
+                    //m_threadPool.Add(m_chunkThread);
                     m_chunkThread.Start();
                     break;
                 case ChunkState.CaveGeneration:
                     m_chunkThread = new Thread(new ThreadStart(GenerateHoles));
-                    m_threadPool.Add(m_chunkThread);
+                    //m_threadPool.Add(m_chunkThread);
                     m_chunkThread.Start();
                     break;
                 case ChunkState.NeedFaceUpdate:
                     m_chunkThread = new Thread(new ThreadStart(UpdateFaces));
-                    m_threadPool.Add(m_chunkThread);
+                    //m_threadPool.Add(m_chunkThread);
                     m_chunkThread.Start();
                     break;
                 case ChunkState.NeedMeshUpdate:
@@ -97,17 +101,24 @@ namespace VoxelWorldEngine
                     break;
                 case ChunkState.StrataGeneration:
                     m_chunkThread = new Thread(new ThreadStart(GenerateStrata));
-                    m_threadPool.Add(m_chunkThread);
+                    //m_threadPool.Add(m_chunkThread);
                     m_chunkThread.Start();
                     break;
                 case ChunkState.DensityMapGeneration:
                     m_chunkThread = new Thread(new ThreadStart(GenerateDensityMap));
-                    m_threadPool.Add(m_chunkThread);
+                    //m_threadPool.Add(m_chunkThread);
                     m_chunkThread.Start();
+                    break;
+                case ChunkState.VegetationGeneration:
+                    //m_chunkThread = new Thread(new ThreadStart(GenerateVegetation));
+                    //m_threadPool.Add(m_chunkThread);
+                    //m_chunkThread.Start();
+                    GenerateVegetation();
                     break;
                 default:
                     break;
             }
+
             #region WIP: Thread Management
             ////Set the active threads limit
             //int tactive;
@@ -280,6 +291,48 @@ namespace VoxelWorldEngine
             State = ChunkState.NeedFaceUpdate;
         }
         /// <summary>
+        /// Spawn vegetation in the game
+        /// </summary>
+        /// <remarks>
+        /// Spawning an object for each plant is not optim enough, consider to implement 2 vertex array
+        /// 1 for the mesh and 1 for the collider, and ignore the plants in the collider
+        /// Block class should be able to set the texture and the plant shape
+        /// </remarks>
+        void GenerateVegetation()
+        {
+            State = ChunkState.Updating;
+
+            for (int x = 0; x < XSize; x++)
+            {
+                for (int z = 0; z < ZSize; z++)
+                {
+                    System.Random rand = new System.Random();
+                    if (0.5 <= Mathf.PerlinNoise((x + Position.x) / 10, (z + Position.z) / 10))
+                        continue;
+
+                    for (int y = YSize - 1; y > 0; y--)
+                    {
+                        if (Block.IsFertile(Blocks[x, y, z]))
+                        {
+                            //Blocks[x, y + 1, z] = BlockType.OAKTREE_LOG;
+                            //Spawn grass
+                            //GameObject.Instantiate(WorldObjects[0], 
+                            //    new Vector3(x + Position.x + 0.5f,
+                            //        y + Position.y,
+                            //        z + Position.z + 0.5f),
+                            //    new Quaternion());
+
+                            //assign blocks
+
+                            break;
+                        }
+                    }
+                }
+            }
+
+            State = ChunkState.NeedFaceUpdate;
+        }
+        /// <summary>
         /// Update the vertices to generate the faces
         /// </summary>
         void UpdateFaces()
@@ -302,43 +355,75 @@ namespace VoxelWorldEngine
                         if (Blocks[x, y, z] == BlockType.NULL)
                             continue;
 
-                        #region Face generation
+                        //TODO: in case isn't a block (grass, spider web, flowers, mushrooms...)
+                        //Implement an spawn method
+                        if (Block.NotBlock(Blocks[x, y, z]))
+                        {
+                            //Check boundaries only need 1 free side to be render
+                            if (Block.IsTransparent(m_parent.GetBlock(currBlockPos.x + 1, currBlockPos.y, currBlockPos.z))
+                               && Block.IsTransparent(m_parent.GetBlock(currBlockPos.x, currBlockPos.y + 1, currBlockPos.z))
+                               && Block.IsTransparent(m_parent.GetBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z + 1))
+                               && Block.IsTransparent(m_parent.GetBlock(currBlockPos.x - 1, currBlockPos.y, currBlockPos.z))
+                               && Block.IsTransparent(m_parent.GetBlock(currBlockPos.x, currBlockPos.y - 1, currBlockPos.z))
+                               && Block.IsTransparent(m_parent.GetBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z - 1)))
+                            {
+                                //Spawn the element and add the vertices to the mesh
+                                addNotBlockToMesh(x, y, z);
+                            }
+                        }
+
+                        #region Check block sides
                         //Set the visible faces
-                        if (m_parent.GetBlock(currBlockPos.x + 1, currBlockPos.y, currBlockPos.z) == BlockType.NULL)
+                        //TODO: Finish cleaning the code
+                        if (Block.IsTransparent(m_parent.GetBlock(currBlockPos.x + 1, currBlockPos.y, currBlockPos.z)))
                         {
-                            Block.EastFace(x, y, z, m_vertices, m_triangles, m_faceCount);
-                            setFaceTexture(x, y, z, FaceType.East);
-                            m_faceCount++;
+                            //Block.EastFace(x, y, z, m_mesh_vertices, m_mesh_triangles, m_faceCount);
+
+                            ////Add the vertices to the mesh and the collider
+                            //if(Block.IsSolid(Blocks[x, y, z]))
+                            //{
+                            //    //Add the vertices to the collider
+                            //}
+                            ////m_vertices.AddRange();
+
+                            //setFaceTexture(x, y, z, FaceType.East);
+                            //m_faceCount++;
+                            addBlockToMesh(x, y, z, FaceType.East);
                         }
-                        if (m_parent.GetBlock(currBlockPos.x, currBlockPos.y + 1, currBlockPos.z) == BlockType.NULL)
+                        if (Block.IsTransparent(m_parent.GetBlock(currBlockPos.x, currBlockPos.y + 1, currBlockPos.z)))
                         {
-                            Block.TopFace(x, y, z, m_vertices, m_triangles, m_faceCount);
-                            setFaceTexture(x, y, z, FaceType.Top);
-                            m_faceCount++;
+                            //Block.TopFace(x, y, z, m_mesh_vertices, m_mesh_triangles, m_faceCount);
+                            //setFaceTexture(x, y, z, FaceType.Top);
+                            //m_faceCount++;
+                            addBlockToMesh(x, y, z, FaceType.Top);
                         }
-                        if (m_parent.GetBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z + 1) == BlockType.NULL)
+                        if (Block.IsTransparent(m_parent.GetBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z + 1)))
                         {
-                            Block.NorthFace(x, y, z, m_vertices, m_triangles, m_faceCount);
-                            setFaceTexture(x, y, z, FaceType.North);
-                            m_faceCount++;
+                            //Block.NorthFace(x, y, z, m_mesh_vertices, m_mesh_triangles, m_faceCount);
+                            //setFaceTexture(x, y, z, FaceType.North);
+                            //m_faceCount++;
+                            addBlockToMesh(x, y, z, FaceType.North);
                         }
-                        if (m_parent.GetBlock(currBlockPos.x - 1, currBlockPos.y, currBlockPos.z) == BlockType.NULL)
+                        if (Block.IsTransparent(m_parent.GetBlock(currBlockPos.x - 1, currBlockPos.y, currBlockPos.z)))
                         {
-                            Block.WestFace(x, y, z, m_vertices, m_triangles, m_faceCount);
-                            setFaceTexture(x, y, z, FaceType.West);
-                            m_faceCount++;
+                            //Block.WestFace(x, y, z, m_mesh_vertices, m_mesh_triangles, m_faceCount);
+                            //setFaceTexture(x, y, z, FaceType.West);
+                            //m_faceCount++;
+                            addBlockToMesh(x, y, z, FaceType.West);
                         }
-                        if (m_parent.GetBlock(currBlockPos.x, currBlockPos.y - 1, currBlockPos.z) == BlockType.NULL)
+                        if (Block.IsTransparent(m_parent.GetBlock(currBlockPos.x, currBlockPos.y - 1, currBlockPos.z)))
                         {
-                            Block.BottomFace(x, y, z, m_vertices, m_triangles, m_faceCount);
-                            setFaceTexture(x, y, z, FaceType.Bottom);
-                            m_faceCount++;
+                            //Block.BottomFace(x, y, z, m_mesh_vertices, m_mesh_triangles, m_faceCount);
+                            //setFaceTexture(x, y, z, FaceType.Bottom);
+                            //m_faceCount++;
+                            addBlockToMesh(x, y, z, FaceType.Bottom);
                         }
-                        if (m_parent.GetBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z - 1) == BlockType.NULL)
+                        if (Block.IsTransparent(m_parent.GetBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z - 1)))
                         {
-                            Block.SouthFace(x, y, z, m_vertices, m_triangles, m_faceCount);
-                            setFaceTexture(x, y, z, FaceType.South);
-                            m_faceCount++;
+                            //Block.SouthFace(x, y, z, m_mesh_vertices, m_mesh_triangles, m_faceCount);
+                            //setFaceTexture(x, y, z, FaceType.South);
+                            //m_faceCount++;
+                            addBlockToMesh(x, y, z, FaceType.South);
                         }
                         #endregion
                     }
@@ -355,25 +440,52 @@ namespace VoxelWorldEngine
         {
             //Reset mesh
             m_mesh.Clear();
-            m_mesh.vertices = m_vertices.ToArray();
+            m_mesh.vertices = m_mesh_vertices.ToArray();
             m_mesh.uv = m_uv.ToArray();
-            m_mesh.triangles = m_triangles.ToArray();
+            m_mesh.triangles = m_mesh_triangles.ToArray();
             m_mesh.RecalculateNormals();
             m_mesh.Optimize();
 
             //Setup the collider
-            m_collider.sharedMesh = m_mesh;
+            //m_collider.sharedMesh = m_mesh;
+
+            m_collider.sharedMesh = new Mesh();
+            m_collider.sharedMesh.vertices = m_collider_vertices.ToArray();
+            m_collider.sharedMesh.triangles = m_collider_triangles.ToArray();
 
             //Clear the memory
-            m_vertices.Clear();
+            m_mesh_vertices.Clear();
             m_uv.Clear();
-            m_triangles.Clear();
+            m_mesh_triangles.Clear();
             m_colors.Clear();
             m_faceCount = 0;
 
             State = ChunkState.Idle;
         }
         //*************************************************************
+        private void addNotBlockToMesh(int x, int y, int z)
+        {
+            throw new NotImplementedException();
+        }
+        private void addBlockToMesh(int x, int y, int z, FaceType face)
+        {
+
+            Block.GetFace(x, y, z, out List<Vector3> tmpVert, out List<int> tmpTri, m_faceCount, face);
+
+            //Add the vertices and triangles to the mesh and the collider
+            if (Block.IsSolid(Blocks[x, y, z]))
+            {
+                //Add the vertices to the collider
+                m_collider_vertices.AddRange(tmpVert);
+                Block.AddTriangles(m_collider_triangles, (m_collider_vertices.Count / 4) - 1);
+            }
+            //render mesh vertex
+            m_mesh_vertices.AddRange(tmpVert);
+            m_mesh_triangles.AddRange(tmpTri);
+
+            setFaceTexture(x, y, z, face);
+            m_faceCount++;
+        }
         private void setFaceTexture(int x, int y, int z, FaceType face)
         {
             BlockTextureMap map = (BlockTextureMap)Blocks[x, y, z];
@@ -403,12 +515,26 @@ namespace VoxelWorldEngine
                 case BlockType.TNT:
                     break;
                 case BlockType.OAKTREE_LOG:
+                    switch (face)
+                    {
+                        case FaceType.North:
+                        case FaceType.East:
+                        case FaceType.South:
+                        case FaceType.West:
+                            map = BlockTextureMap.OAKTREE_SIDE;
+                            break;
+                        case FaceType.Top:
+                        case FaceType.Bottom:
+                            map = BlockTextureMap.OAKTREE_TOP;
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 default:
                     break;
             }
 
-            //m_uv.AddRange(Block.GetTexture(Blocks[x, y, z]));
             m_uv.AddRange(Block.GetTexture(map));
         }
     }

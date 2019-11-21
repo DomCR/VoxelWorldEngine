@@ -38,7 +38,10 @@ namespace VoxelWorldEngine.Enums
         COBBLESTONE,
         BEDROCK = BlockTextureMap.BEDROCK,
         SAND = BlockTextureMap.SAND,
-        GRABEL,
+        GRABEL = BlockTextureMap.GRABEL,
         OAKTREE_LOG,
+
+        //ROW 3
+        GRASS_SPAWN = BlockTextureMap.GRASS,
     }
 }

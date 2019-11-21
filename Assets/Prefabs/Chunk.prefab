@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5230407742907827399}
   - component: {fileID: 4912086258308501785}
   - component: {fileID: 5566674014749845142}
-  - component: {fileID: 4637125550058170005}
+  - component: {fileID: 7455055577232770663}
   - component: {fileID: 5581426924916097625}
   m_Layer: 0
   m_Name: Chunk
@@ -80,7 +80,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &4637125550058170005
+--- !u!64 &7455055577232770663
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -106,3 +106,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ff49b3375934e44da53e6a04a448da9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  State: 1
+  WorldObjects:
+  - {fileID: 7268360843739402795, guid: b90342d026ddbc64fb541c942d72ea84, type: 3}

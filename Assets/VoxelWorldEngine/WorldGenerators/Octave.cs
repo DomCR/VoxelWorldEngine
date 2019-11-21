@@ -81,15 +81,18 @@ namespace VoxelWorldEngine
         }
         protected override BlockType[] StrataNoise(Vector3 pos)
         {
-            //TODO: fix the future problem with multiple chunks in Y
+            //TODO: NEED FIX, crash if there are multiple chunks in Y
             BlockType[] arr = new BlockType[(int)pos.y + 1];
 
             //Apply a simple noise
-            float range = (Mathf.PerlinNoise(pos.x, pos.z) + 1) * 5;
+            float range = (Mathf.PerlinNoise(pos.x, pos.z) /*+ 1*/) * 5;
 
             for (int i = 0; i < (int)range; i++)
             {
-                arr[(int)pos.y - i] = BlockType.DIRT;
+                if (i == 0)
+                    arr[(int)pos.y - i] = BlockType.GRASS;
+                else
+                    arr[(int)pos.y - i] = BlockType.DIRT;
             }
 
             return arr;

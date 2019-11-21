@@ -11,7 +11,20 @@ namespace VoxelWorldEngine.Utils
     public class WGDebugOptions
     {
         public bool IsActive;
-        public ChunkState InitialState;
+        public ChunkState ChunkState;
+        private ChunkState m_currState;
 
+        public bool StateHasChanged()
+        {
+            if(ChunkState != m_currState)
+            {
+                m_currState = ChunkState;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

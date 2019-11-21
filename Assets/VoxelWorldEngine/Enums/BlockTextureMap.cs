@@ -42,6 +42,38 @@ namespace VoxelWorldEngine.Enums
         SAND,
         GRABEL,
         OAKTREE_SIDE,
-        OAKTREE_TOP
+        OAKTREE_TOP,
+        IRON,
+        GOLD,
+        DIAMOND,
+        EMERALD,
+        REDSTONE,
+        FORBBIDEN_SIGN,
+        RED_MUSHROOM,
+        BROWN_MUSHROOM,
+        SAPLING_JUNGLE,
+        SQUARE,
+        STONE_BRICK_HALF,
+        WOOD_TILES_HALF,
+        STONE_PAVMENT_HALF,
+        
+        ICON_CAKE,
+        IPHNO,
+        FENCE_WOOD,
+        FENCE_NETHER,
+        NETHER_HALF,
+
+        //ROW 3
+        ORE_GOLD,
+        ORE_IRON,
+        ORE_COAL,
+        BOOCK_SHELF,
+        COOBLESTONE_OLD,
+        OBSIDIAN,
+        BLUE_CROSS,
+        
+        GRASS_DEAD,
+        GRASS,
+        FLOWER_RED_02
     }
 }

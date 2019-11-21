@@ -55,20 +55,34 @@ namespace VoxelWorldEngine
         // Update is called once per frame
         void Update()
         {
-
+            if (debug.IsActive)
+            {
+                debugActions();
+            }
         }
         #endregion
+        //****************************************************************
+        void debugActions()
+        {
+            if (debug.StateHasChanged())
+            {
+                foreach (Chunk chunk in m_chunks.Values)
+                {
+                    chunk.State = debug.ChunkState;
+                }
+            }
+        }
         //****************************************************************
         /// <summary>
         /// Create the world chunks 
         /// </summary>
         /// <remarks>
         /// World generation steps:
-        /// Height map
-        /// Strata
-        /// Caves (holes by now)
-        /// Ores
-        /// Vegetation
+        /// * Height map
+        /// * Strata
+        /// * Caves (holes by now)
+        /// * Ores
+        /// * Vegetation
         /// </remarks>
         void GenerateWorld()
         {
