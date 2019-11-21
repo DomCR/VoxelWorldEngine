@@ -25,10 +25,6 @@ namespace VoxelWorldEngine
         [Range(0, 1.0f)]
         public float Density = 0.45f;
         //****************************************************************
-        protected override BlockType DensityNoise(Vector3 pos)
-        {
-            throw new NotImplementedException();
-        }
         /// <summary>
         /// Classic height map nosie
         /// </summary>
@@ -65,6 +61,14 @@ namespace VoxelWorldEngine
             if (pos.y <= Mathf.Abs(stoneTransition)) return BlockType.STONE;
             else if (pos.y <= Mathf.Abs(dirtTransition)) return BlockType.DIRT;
             else return BlockType.NULL;
+        }
+        protected override BlockType[] StrataNoise(Vector3 pos)
+        {
+            throw new NotImplementedException();
+        }
+        protected override BlockType DensityNoise(Vector3 pos)
+        {
+            throw new NotImplementedException();
         }
         //****************************************************************
         private float noise1(float x, float z)

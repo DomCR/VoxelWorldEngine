@@ -27,17 +27,6 @@ namespace VoxelWorldEngine
         [Range(0, 1.0f)]
         public float Density = 0.45f;
         //****************************************************************
-        protected override BlockType DensityNoise(Vector3 pos)
-        {
-            //Generate a 3D noise to create, holes and irregularities in the terrain
-            if (PerlinNoise3D.Generate_01(
-                (int)pos.x / NoiseScale,
-                (int)pos.y / NoiseScale,
-                (int)pos.z / NoiseScale) <= Density)
-                return BlockType.STONE;
-            else
-                return BlockType.NULL;
-        }
         /// <summary>
         /// Simple noise with only 1 layer
         /// </summary>
@@ -77,6 +66,21 @@ namespace VoxelWorldEngine
             //    return BlockType.NULL;
             //}
             #endregion
+        }
+        protected override BlockType[] StrataNoise(Vector3 pos)
+        {
+            throw new NotImplementedException();
+        }
+        protected override BlockType DensityNoise(Vector3 pos)
+        {
+            //Generate a 3D noise to create, holes and irregularities in the terrain
+            if (PerlinNoise3D.Generate_01(
+                (int)pos.x / NoiseScale,
+                (int)pos.y / NoiseScale,
+                (int)pos.z / NoiseScale) <= Density)
+                return BlockType.STONE;
+            else
+                return BlockType.NULL;
         }
     }
 }

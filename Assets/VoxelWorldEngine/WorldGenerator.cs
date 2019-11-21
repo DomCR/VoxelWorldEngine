@@ -62,6 +62,14 @@ namespace VoxelWorldEngine
         /// <summary>
         /// Create the world chunks 
         /// </summary>
+        /// <remarks>
+        /// World generation steps:
+        /// Height map
+        /// Strata
+        /// Caves (holes by now)
+        /// Ores
+        /// Vegetation
+        /// </remarks>
         void GenerateWorld()
         {
             for (int x = 0; x < ChunksX; x++)
@@ -137,6 +145,10 @@ namespace VoxelWorldEngine
 
             return block;
         }
+        public BlockType[] ComputeStrataNoise(Vector3 pos)
+        {
+            return StrataNoise(pos);
+        }
         public BlockType ComputeDensityNoise(Vector3 pos)
         {
             return DensityNoise(pos);
@@ -171,6 +183,7 @@ namespace VoxelWorldEngine
             return false;
         }
         //****************************************************************
+        protected abstract BlockType[] StrataNoise(Vector3 pos);
         protected abstract BlockType HeightNoise(Vector3 pos);
         protected abstract BlockType DensityNoise(Vector3 pos);
     }

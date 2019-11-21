@@ -58,6 +58,42 @@ namespace VoxelWorldEngine
 
         //public Dictionary<string, string> NoiseLayers;
         //****************************************************************
+        protected override BlockType HeightNoise(Vector3 pos)
+        {
+            NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)NoiseType][Dimensions - 1];
+            float sample = (NoiseMap.Sum(method, pos / WidthMagnitude, Frequency, Octaves, Lacunarity, Persistence) + 1) / 2;
+
+            //Apply the height magnitude
+            float h = Mathf.PerlinNoise(pos.x / (WidthMagnitude), pos.z / (WidthMagnitude)) * 200;
+            //Debug.Log(h);
+            sample *= HeightMagnitude;
+            //sample *= h;
+
+            //Set the minimum height of the world
+            sample += MinHeight;
+
+            if (pos.y < MinHeight)
+                return BlockType.SAND;
+            if (pos.y < sample)
+                return BlockType.STONE;
+
+            return BlockType.NULL;
+        }
+        protected override BlockType[] StrataNoise(Vector3 pos)
+        {
+            //TODO: fix the future problem with multiple chunks in Y
+            BlockType[] arr = new BlockType[(int)pos.y + 1];
+
+            //Apply a simple noise
+            float range = (Mathf.PerlinNoise(pos.x, pos.z) + 1) * 5;
+
+            for (int i = 0; i < (int)range; i++)
+            {
+                arr[(int)pos.y - i] = BlockType.DIRT;
+            }
+
+            return arr;
+        }
         protected override BlockType DensityNoise(Vector3 pos)
         {
             //TEST ORE GENERATION: Using to test the ores
@@ -80,28 +116,6 @@ namespace VoxelWorldEngine
                     return BlockType.STONE;
                 }
             }
-
-            return BlockType.NULL;
-        }
-
-        protected override BlockType HeightNoise(Vector3 pos)
-        {
-            NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)NoiseType][Dimensions - 1];
-            float sample = (NoiseMap.Sum(method, pos / WidthMagnitude, Frequency, Octaves, Lacunarity, Persistence) + 1) / 2;
-
-            //Apply the height magnitude
-            float h = Mathf.PerlinNoise(pos.x / (WidthMagnitude), pos.z / (WidthMagnitude)) * 200;
-            //Debug.Log(h);
-            sample *= HeightMagnitude;
-            //sample *= h;
-
-            //Set the minimum height of the world
-            sample += MinHeight;
-
-            if (pos.y < MinHeight)
-                return BlockType.SAND;
-            if (pos.y < sample)
-                return BlockType.STONE;
 
             return BlockType.NULL;
         }

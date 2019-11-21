@@ -34,7 +34,7 @@ namespace VoxelWorldEngine
 
         //TODO: implement the world class
         private WorldGenerator m_parent;
-        
+
         //Thread variables
         Thread m_chunkThread;
         //TODO: implement thread pool to control the pc resources
@@ -63,7 +63,7 @@ namespace VoxelWorldEngine
 
             //THREAD TEST: Generate the current chunk
             #region Thread variable ref
-            Position = transform.position; 
+            Position = transform.position;
             #endregion
         }
         void Update()
@@ -96,6 +96,9 @@ namespace VoxelWorldEngine
                 case ChunkState.OreGeneration:
                     break;
                 case ChunkState.StrataGeneration:
+                    m_chunkThread = new Thread(new ThreadStart(GenerateStrata));
+                    m_threadPool.Add(m_chunkThread);
+                    m_chunkThread.Start();
                     break;
                 case ChunkState.DensityMapGeneration:
                     m_chunkThread = new Thread(new ThreadStart(GenerateDensityMap));
@@ -105,6 +108,7 @@ namespace VoxelWorldEngine
                 default:
                     break;
             }
+            #region WIP: Thread Management
             ////Set the active threads limit
             //int tactive;
             //if ((tactive = m_threadPool.Where(o => o.IsAlive).Count()) < k_threadLimit)
@@ -140,7 +144,8 @@ namespace VoxelWorldEngine
             //                    break;
             //            }
             //        }
-            //    }
+            //    } 
+            #endregion
         }
         #endregion
         //*************************************************************
@@ -171,6 +176,12 @@ namespace VoxelWorldEngine
             //Update the chunk state
             State = ChunkState.NeedFaceUpdate;
         }
+        /// <summary>
+        /// Generate the strata of the terrain (superficial dirt and grass)
+        /// </summary>
+        /// <remarks>
+        /// WIP: by now only generates 1 block of grass at the top
+        /// </remarks>
         void GenerateStrata()
         {
             //Update the chunk state
@@ -178,15 +189,33 @@ namespace VoxelWorldEngine
 
             for (int x = 0; x < XSize; x++)
             {
-                for (int y = 0; y < YSize; y++)
+                for (int z = 0; z < ZSize; z++)
                 {
-                    for (int z = 0; z < ZSize; z++)
+                    bool grassOnTop = false;
+
+                    for (int y = YSize - 1; y >= 0; y--)
                     {
+                        //Guard: not the top block
+                        if (Blocks[x, y, z] == BlockType.NULL)
+                            continue;
+
+                        //Blocks[x, y, z] = BlockType.GRASS;
+
                         Vector3 currBlockPos = new Vector3(
                             x + Position.x,
                             y + Position.y,
                             z + Position.z);
 
+                        BlockType[] arr = m_parent.ComputeStrataNoise(currBlockPos);
+
+
+                        for (int i = arr.Length - 1; i > 0; i--)
+                        {
+                            if (arr[i] != BlockType.NULL)
+                                Blocks[x, i, z] = arr[i];
+                        }
+
+                        break;
                     }
                 }
             }
