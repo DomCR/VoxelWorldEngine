@@ -141,10 +141,10 @@ namespace VoxelWorldEngine
         {
             int faceCount = (vertices.Count / 4) - 1;
 
-            vertices.Add(new Vector3(x + 1f, y - 1, z + 0.5f));
-            vertices.Add(new Vector3(x + 1f, y, z + 0.5f));
-            vertices.Add(new Vector3(x, y, z + 0.5f));
-            vertices.Add(new Vector3(x, y - 1, z + 0.5f));
+            vertices.Add(new Vector3(x + 1f,   y - 1, z + 0.5f));
+            vertices.Add(new Vector3(x + 1f,   y, z + 0.5f));
+            vertices.Add(new Vector3(x,        y, z + 0.5f));
+            vertices.Add(new Vector3(x,        y - 1, z + 0.5f));
 
             //Add the new triangles
             AddTriangles(triangles, faceCount);

@@ -74,6 +74,27 @@ namespace VoxelWorldEngine.Enums
         
         GRASS_DEAD,
         GRASS,
-        FLOWER_RED_02
+        REDSTONE_CORNER,
+        LIGHT_DETECTOR_OFF,
+        CRAFT_TABLE_TOP,
+        FURNACE_OFF,
+        FURNACE_SIDE,
+        DISPENSER_FACE,
+        DISPENSER_BACK,
+        REDSTONE_TORCH_ON,
+        REDSTONE_TORCH_OFF,
+        COMUTATOR_1_ON,
+        BUTTON,
+        TORCH,
+        LEVER,
+        GEAR,
+        COMUTATOR_2_ON,
+
+        //ROW 4
+        SPONGE,
+        GLASS,
+        ORE_DIAMOND,
+        ORE_REDSTONE,
+
     }
 }

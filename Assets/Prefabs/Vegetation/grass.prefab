@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 8020817192762328920}
   - component: {fileID: 6757969761257442871}
   - component: {fileID: 6673383683153942742}
-  - component: {fileID: 6347608471954437125}
   m_Layer: 0
   m_Name: EastWest
   m_TagString: Untagged
@@ -79,20 +78,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &6347608471954437125
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3552854918091903493}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &7268360843739402795
 GameObject:
   m_ObjectHideFlags: 0

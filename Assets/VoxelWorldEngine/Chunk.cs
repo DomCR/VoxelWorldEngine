@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using VoxelWorldEngine.Vegetation;
 using VoxelWorldEngine.Enums;
 using VoxelWorldEngine.Noise;
 
@@ -190,9 +191,6 @@ namespace VoxelWorldEngine
         /// <summary>
         /// Generate the strata of the terrain (superficial dirt and grass)
         /// </summary>
-        /// <remarks>
-        /// WIP: by now only generates 1 block of grass at the top
-        /// </remarks>
         void GenerateStrata()
         {
             //Update the chunk state
@@ -202,16 +200,23 @@ namespace VoxelWorldEngine
             {
                 for (int z = 0; z < ZSize; z++)
                 {
-                    bool grassOnTop = false;
-
+                    BlockType upperBlock = BlockType.NULL;
                     for (int y = YSize - 1; y >= 0; y--)
                     {
-                        //Guard: not the top block
-                        if (Blocks[x, y, z] == BlockType.NULL)
+                        //Guard: Check if is empty
+                        if (Blocks[x, y, z] != BlockType.STONE)
+                        {
+                            upperBlock = Blocks[x, y, z];
                             continue;
+                        }
+                        //The block above isn't air 
+                        if (upperBlock != BlockType.NULL)
+                        {
+                            upperBlock = Blocks[x, y, z];
+                            continue;
+                        }
 
-                        //Blocks[x, y, z] = BlockType.GRASS;
-
+                        //If the block above is air compute the dirt
                         Vector3 currBlockPos = new Vector3(
                             x + Position.x,
                             y + Position.y,
@@ -219,14 +224,11 @@ namespace VoxelWorldEngine
 
                         BlockType[] arr = m_parent.ComputeStrataNoise(currBlockPos);
 
-
                         for (int i = arr.Length - 1; i > 0; i--)
                         {
                             if (arr[i] != BlockType.NULL)
                                 Blocks[x, i, z] = arr[i];
                         }
-
-                        break;
                     }
                 }
             }
@@ -302,35 +304,38 @@ namespace VoxelWorldEngine
         {
             State = ChunkState.Updating;
 
+            
+
             for (int x = 0; x < XSize; x++)
             {
                 for (int z = 0; z < ZSize; z++)
                 {
-                    System.Random rand = new System.Random();
-                    if (0.5 <= Mathf.PerlinNoise((x + Position.x) / 10, (z + Position.z) / 10))
-                        continue;
+                    //System.Random rand = new System.Random();
+                    //if (0.5 <= Mathf.PerlinNoise((x + Position.x) / 10f, (z + Position.z) / 10f))
+                    //    if (0.5 <= Mathf.PerlinNoise((x + Position.x + rand.Next(200)) / 10f, (z + Position.z + rand.Next(200)) / 10f))
+                    //        continue;
 
-                    for (int y = YSize - 1; y > 0; y--)
-                    {
-                        if (Block.IsFertile(Blocks[x, y, z]))
-                        {
-                            //Blocks[x, y + 1, z] = BlockType.OAKTREE_LOG;
-                            //Spawn grass
-                            //GameObject.Instantiate(WorldObjects[0], 
-                            //    new Vector3(x + Position.x + 0.5f,
-                            //        y + Position.y,
-                            //        z + Position.z + 0.5f),
-                            //    new Quaternion());
+                    //for (int y = YSize - 1; y > 0; y--)
+                    //{
+                    //    if (Block.IsFertile(Blocks[x, y, z]))
+                    //    {
+                    //        Blocks[x, y + 1, z] = BlockType.OAKTREE_LOG;
+                    //        //Spawn grass
+                    //        //GameObject.Instantiate(WorldObjects[0], 
+                    //        //    new Vector3(x + Position.x + 0.5f,
+                    //        //        y + Position.y,
+                    //        //        z + Position.z + 0.5f),
+                    //        //    new Quaternion());
 
-                            //assign blocks
-                            //Replace for PlantGrass() or PlantTree()
-                            //Allow to grow different levels of gras and different trees
-                            Blocks[x, y + 1, z] = BlockType.GRASS_SPAWN;
-                            //Blocks[x, y + 1, z] = BlockType.SAPLING_OAK;
+                    //        //TODO: work with the grass texture to get the light like the terrain
+                    //        //Replace for PlantGrass() or PlantTree()
+                    //        //Allow to grow different levels of gras and different trees
+                    //        //Blocks[x, y + 1, z] = BlockType.GRASS_SPAWN;
+                    //        //Blocks[x, y + 1, z] = BlockType.SAPLING_OAK;
 
-                            break;
-                        }
-                    }
+                    //        break;
+                    //    }
+                    //}
                 }
             }
 
