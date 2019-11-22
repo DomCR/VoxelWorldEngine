@@ -139,15 +139,23 @@ namespace VoxelWorldEngine
         //*********************************************************************************
         public static void PlaceNotBlock(int x, int y, int z, List<Vector3> vertices, List<int> triangles)
         {
+            int faceCount = (vertices.Count / 4) - 1;
+
             vertices.Add(new Vector3(x + 1f, y - 1, z + 0.5f));
             vertices.Add(new Vector3(x + 1f, y, z + 0.5f));
             vertices.Add(new Vector3(x, y, z + 0.5f));
             vertices.Add(new Vector3(x, y - 1, z + 0.5f));
 
+            //Add the new triangles
+            AddTriangles(triangles, faceCount);
+
             vertices.Add(new Vector3(x + 0.5f, y - 1, z));
             vertices.Add(new Vector3(x + 0.5f, y, z));
             vertices.Add(new Vector3(x + 0.5f, y, z + 1));
             vertices.Add(new Vector3(x + 0.5f, y - 1, z + 1));
+
+            //Add the new triangles
+            AddTriangles(triangles, faceCount + 1);
         }
         //*********************************************************************************
         public static List<Vector2> GetTexture(BlockTextureMap blockType)
@@ -212,6 +220,10 @@ namespace VoxelWorldEngine
             {
                 //AIR, TRANSPARENT, FLUID ...
                 case BlockType.NULL:
+                case BlockType.SAPLING_OAK:
+                case BlockType.FLOWER_RED:
+                case BlockType.FLOWER_YELLOW:
+                case BlockType.GRASS_SPAWN:
                     return true;
                 //All the solids
                 default:

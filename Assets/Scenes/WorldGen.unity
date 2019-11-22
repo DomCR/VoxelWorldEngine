@@ -388,21 +388,21 @@ MonoBehaviour:
     ChunkState: 1
   Seed: 0
   UseSeed: 1
-  ChunksX: 10
+  ChunksX: 1
   ChunksY: 1
-  ChunksZ: 10
+  ChunksZ: 1
   WidthMagnitude: 100
   HeightMagnitude: 50
   MinHeight: 20
-  Frequency: 3
-  Octaves: 4
+  Frequency: 2
+  Octaves: 8
   Lacunarity: 2
   Persistence: 0.5
   Dimensions: 3
-  NoiseType: 1
+  NoiseType: 0
   Density: 0.55
   Inverted: 0
-  Frequency3D: 6
+  Frequency3D: 4
   Octaves3D: 2
   Lacunarity3D: 4
   Persistence3D: 1

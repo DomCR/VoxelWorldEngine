@@ -64,8 +64,9 @@ namespace VoxelWorldEngine
             float sample = (NoiseMap.Sum(method, pos / WidthMagnitude, Frequency, Octaves, Lacunarity, Persistence) + 1) / 2;
 
             //Apply the height magnitude
-            float h = Mathf.PerlinNoise(pos.x / (WidthMagnitude), pos.z / (WidthMagnitude)) * 200;
+            //float h = Mathf.PerlinNoise(pos.x / (WidthMagnitude), pos.z / (WidthMagnitude)) * 200;
             //Debug.Log(h);
+            //TODO: Control the height, cannot generate mountains without increase the depht
             sample *= HeightMagnitude;
             //sample *= h;
 
@@ -97,6 +98,11 @@ namespace VoxelWorldEngine
 
             return arr;
         }
+        /// <summary>
+        /// Use to test the noise 3D generation, for ores and caves
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <returns></returns>
         protected override BlockType DensityNoise(Vector3 pos)
         {
             //TEST ORE GENERATION: Using to test the ores
@@ -109,14 +115,14 @@ namespace VoxelWorldEngine
             {
                 if (sample > Density)
                 {
-                    return BlockType.STONE;
+                    return BlockType.BRICK;
                 }
             }
             else
             {
                 if (sample < Density)
                 {
-                    return BlockType.STONE;
+                    return BlockType.BRICK;
                 }
             }
 

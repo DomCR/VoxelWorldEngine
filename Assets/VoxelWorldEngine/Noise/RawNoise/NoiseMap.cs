@@ -302,10 +302,10 @@ namespace VoxelWorldEngine.Noise.RawNoise
         /// </summary>
         /// <param name="method">Method to combine.</param>
         /// <param name="point">Point to compute the noise</param>
-        /// <param name="frequency"></param>
+        /// <param name="frequency">Higher the value, closer the waves.</param>
         /// <param name="octaves">Number of noise combinations</param>
-        /// <param name="lacunarity"></param>
-        /// <param name="persistence"></param>
+        /// <param name="lacunarity">Frequency multiplier for each combination</param>
+        /// <param name="persistence">Multiplies the amplitude (wave height) in each iteration</param>
         /// <returns>Value between -1, 1</returns>
         public static float Sum(NoiseMethod_delegate method, Vector3 point, float frequency, int octaves, float lacunarity, float persistence)
         {
