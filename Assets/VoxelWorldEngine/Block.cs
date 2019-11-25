@@ -190,7 +190,8 @@ namespace VoxelWorldEngine
             return map;
         }
         //*********************************************************************************
-        public static bool IsSolid(BlockType id)
+        #region Block extensions
+        public static bool IsSolid(this BlockType id)
         {
             switch (id)
             {
@@ -204,17 +205,20 @@ namespace VoxelWorldEngine
 
             return true;
         }
-        public static bool NotBlock(BlockType id)
+        public static bool NotBlock(this BlockType id)
         {
             switch (id)
             {
                 case BlockType.GRASS_SPAWN:
+                case BlockType.SAPLING_OAK:
+                case BlockType.FLOWER_YELLOW:
+                case BlockType.FLOWER_RED:
                     return true;
                 default:
                     return false;
             }
         }
-        public static bool IsTransparent(BlockType id)
+        public static bool IsTransparent(this BlockType id)
         {
             switch (id)
             {
@@ -230,7 +234,7 @@ namespace VoxelWorldEngine
                     return false;
             }
         }
-        public static bool IsFertile(BlockType id)
+        public static bool IsFertile(this BlockType id)
         {
             switch (id)
             {
@@ -240,6 +244,7 @@ namespace VoxelWorldEngine
                 default:
                     return false;
             }
-        }
+        } 
+        #endregion
     }
 }

@@ -304,38 +304,36 @@ namespace VoxelWorldEngine
         {
             State = ChunkState.Updating;
 
-            
-
             for (int x = 0; x < XSize; x++)
             {
                 for (int z = 0; z < ZSize; z++)
                 {
-                    //System.Random rand = new System.Random();
-                    //if (0.5 <= Mathf.PerlinNoise((x + Position.x) / 10f, (z + Position.z) / 10f))
-                    //    if (0.5 <= Mathf.PerlinNoise((x + Position.x + rand.Next(200)) / 10f, (z + Position.z + rand.Next(200)) / 10f))
-                    //        continue;
+                    System.Random rand = new System.Random();
+                    if (0.5 <= Mathf.PerlinNoise((x + Position.x) / 10f, (z + Position.z) / 10f))
+                        if (0.5 <= Mathf.PerlinNoise((x + Position.x + rand.Next(200)) / 10f, (z + Position.z + rand.Next(200)) / 10f))
+                            continue;
 
-                    //for (int y = YSize - 1; y > 0; y--)
-                    //{
-                    //    if (Block.IsFertile(Blocks[x, y, z]))
-                    //    {
-                    //        Blocks[x, y + 1, z] = BlockType.OAKTREE_LOG;
-                    //        //Spawn grass
-                    //        //GameObject.Instantiate(WorldObjects[0], 
-                    //        //    new Vector3(x + Position.x + 0.5f,
-                    //        //        y + Position.y,
-                    //        //        z + Position.z + 0.5f),
-                    //        //    new Quaternion());
+                    for (int y = YSize - 1; y > 0; y--)
+                    {
+                        if (Blocks[x, y, z].IsFertile())
+                        {
+                            //Blocks[x, y + 1, z] = BlockType.OAKTREE_LOG;
+                            //Spawn grass
+                            //GameObject.Instantiate(WorldObjects[0],
+                            //    new Vector3(x + Position.x + 0.5f,
+                            //        y + Position.y,
+                            //        z + Position.z + 0.5f),
+                            //    new Quaternion(), this.transform);
 
-                    //        //TODO: work with the grass texture to get the light like the terrain
-                    //        //Replace for PlantGrass() or PlantTree()
-                    //        //Allow to grow different levels of gras and different trees
-                    //        //Blocks[x, y + 1, z] = BlockType.GRASS_SPAWN;
-                    //        //Blocks[x, y + 1, z] = BlockType.SAPLING_OAK;
+                            //TODO: work with the grass texture to get the light like the terrain
+                            //Replace for PlantGrass() or PlantTree()
+                            //Allow to grow different levels of gras and different trees
+                            //Blocks[x, y + 1, z] = BlockType.GRASS_SPAWN;
+                            Blocks[x, y + 1, z] = BlockType.SAPLING_OAK;
 
-                    //        break;
-                    //    }
-                    //}
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -366,15 +364,15 @@ namespace VoxelWorldEngine
 
                         //TODO: in case isn't a block (grass, spider web, flowers, mushrooms...)
                         //Implement an spawn method
-                        if (Block.NotBlock(Blocks[x, y, z]))
+                        if (Blocks[x, y, z].NotBlock())
                         {
                             //Check boundaries only need 1 free side to be render
-                            if (Block.IsTransparent(m_parent.GetBlock(currBlockPos.x + 1, currBlockPos.y, currBlockPos.z))
-                               || Block.IsTransparent(m_parent.GetBlock(currBlockPos.x, currBlockPos.y + 1, currBlockPos.z))
-                               || Block.IsTransparent(m_parent.GetBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z + 1))
-                               || Block.IsTransparent(m_parent.GetBlock(currBlockPos.x - 1, currBlockPos.y, currBlockPos.z))
-                               || Block.IsTransparent(m_parent.GetBlock(currBlockPos.x, currBlockPos.y - 1, currBlockPos.z))
-                               || Block.IsTransparent(m_parent.GetBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z - 1)))
+                            if (m_parent.GetBlock(currBlockPos.x + 1, currBlockPos.y, currBlockPos.z).IsTransparent()
+                               || m_parent.GetBlock(currBlockPos.x, currBlockPos.y + 1, currBlockPos.z).IsTransparent()
+                               || m_parent.GetBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z + 1).IsTransparent()
+                               || m_parent.GetBlock(currBlockPos.x - 1, currBlockPos.y, currBlockPos.z).IsTransparent()
+                               || m_parent.GetBlock(currBlockPos.x, currBlockPos.y - 1, currBlockPos.z).IsTransparent()
+                               || m_parent.GetBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z - 1).IsTransparent())
                             {
                                 //Spawn the element and add the vertices to the mesh
                                 addNotBlockToMesh(x, y, z);
@@ -385,27 +383,27 @@ namespace VoxelWorldEngine
 
                         #region Check block sides
                         //Set the visible faces
-                        if (Block.IsTransparent(m_parent.GetBlock(currBlockPos.x + 1, currBlockPos.y, currBlockPos.z)))
+                        if (m_parent.GetBlock(currBlockPos.x + 1, currBlockPos.y, currBlockPos.z).IsTransparent())
                         {
                             addBlockToMesh(x, y, z, FaceType.East);
                         }
-                        if (Block.IsTransparent(m_parent.GetBlock(currBlockPos.x, currBlockPos.y + 1, currBlockPos.z)))
+                        if (m_parent.GetBlock(currBlockPos.x, currBlockPos.y + 1, currBlockPos.z).IsTransparent())
                         {
                             addBlockToMesh(x, y, z, FaceType.Top);
                         }
-                        if (Block.IsTransparent(m_parent.GetBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z + 1)))
+                        if (m_parent.GetBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z + 1).IsTransparent())
                         {
                             addBlockToMesh(x, y, z, FaceType.North);
                         }
-                        if (Block.IsTransparent(m_parent.GetBlock(currBlockPos.x - 1, currBlockPos.y, currBlockPos.z)))
+                        if (m_parent.GetBlock(currBlockPos.x - 1, currBlockPos.y, currBlockPos.z).IsTransparent())
                         {
                             addBlockToMesh(x, y, z, FaceType.West);
                         }
-                        if (Block.IsTransparent(m_parent.GetBlock(currBlockPos.x, currBlockPos.y - 1, currBlockPos.z)))
+                        if (m_parent.GetBlock(currBlockPos.x, currBlockPos.y - 1, currBlockPos.z).IsTransparent())
                         {
                             addBlockToMesh(x, y, z, FaceType.Bottom);
                         }
-                        if (Block.IsTransparent(m_parent.GetBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z - 1)))
+                        if (m_parent.GetBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z - 1).IsTransparent())
                         {
                             addBlockToMesh(x, y, z, FaceType.South);
                         }
@@ -427,8 +425,14 @@ namespace VoxelWorldEngine
             m_mesh.vertices = m_mesh_vertices.ToArray();
             m_mesh.uv = m_uv.ToArray();
             m_mesh.triangles = m_mesh_triangles.ToArray();
+            
             m_mesh.RecalculateNormals();
+
+            //Realize optimizations
             m_mesh.Optimize();
+            m_mesh.OptimizeIndexBuffers();
+            m_mesh.OptimizeReorderVertexBuffer();
+            m_mesh.MarkDynamic();
 
             //Setup the collider
             m_collider.sharedMesh = new Mesh();
@@ -459,7 +463,7 @@ namespace VoxelWorldEngine
             Block.GetFace(x, y, z, out List<Vector3> tmpVert, out List<int> tmpTri, m_faceCount, face);
 
             //Add the vertices and triangles to the mesh and the collider
-            if (Block.IsSolid(Blocks[x, y, z]))
+            if (Blocks[x, y, z].IsSolid())
             {
                 //Add the vertices to the collider
                 m_collider_vertices.AddRange(tmpVert);
