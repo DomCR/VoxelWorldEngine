@@ -71,9 +71,9 @@ namespace VoxelWorldEngine
             //sample *= h;
 
             //Set the minimum height of the world
-            sample += MinHeight;
+            sample += WorldHeight;
 
-            if (pos.y < MinHeight)
+            if (pos.y < WorldHeight)
                 return BlockType.SAND;
             if (pos.y < sample)
                 return BlockType.STONE;

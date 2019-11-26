@@ -38,7 +38,7 @@ namespace VoxelWorldEngine
             //Get the height map
             int height = (int)(Mathf.PerlinNoise(
                 (int)pos.x / WidthMagnitude,
-                (int)pos.z / WidthMagnitude) * (HeightMagnitude)) + MinHeight;
+                (int)pos.z / WidthMagnitude) * (HeightMagnitude)) + WorldHeight;
 
             if ((int)pos.y > height)
                 return BlockType.NULL;

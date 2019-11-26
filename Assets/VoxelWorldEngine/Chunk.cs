@@ -317,6 +317,7 @@ namespace VoxelWorldEngine
                     {
                         if (Blocks[x, y, z].IsFertile())
                         {
+                            #region Garbage
                             //Blocks[x, y + 1, z] = BlockType.OAKTREE_LOG;
                             //Spawn grass
                             //GameObject.Instantiate(WorldObjects[0],
@@ -329,7 +330,8 @@ namespace VoxelWorldEngine
                             //Replace for PlantGrass() or PlantTree()
                             //Allow to grow different levels of gras and different trees
                             //Blocks[x, y + 1, z] = BlockType.GRASS_SPAWN;
-                            Blocks[x, y + 1, z] = BlockType.SAPLING_OAK;
+                            //Blocks[x, y + 1, z] = BlockType.SAPLING_OAK; 
+                            #endregion
 
                             break;
                         }

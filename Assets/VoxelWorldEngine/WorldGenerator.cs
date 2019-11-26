@@ -28,6 +28,10 @@ namespace VoxelWorldEngine
         public int ChunksZ;
 
         [Space()]
+        //Array of all the world biomes available
+        //public Biomes.Biome[] WorldBiomes;
+        
+        #region Goes to the biome
         [Header("Generic noise properties")]
         [Range(0, 999f)]
         [Tooltip("Wave length of the noise")]
@@ -35,8 +39,10 @@ namespace VoxelWorldEngine
         [Range(0, 999f)]
         [Tooltip("Wave height of the noise")]
         public float HeightMagnitude = 200;
-        [Tooltip("Minimum height under the noise")]
-        public int MinHeight = 0;
+        #endregion
+        
+        [Tooltip("Minimum world height")]
+        public int WorldHeight = 0;
 
         protected Vector3 m_position;
         protected Dictionary<Vector3, Chunk> m_chunks;
@@ -155,6 +161,8 @@ namespace VoxelWorldEngine
             if (block == BlockType.BEDROCK)
                 return block;
 
+            //TODO: Calculate the biomes present in the current point
+            //TODO: Solve the biome lerp by quantifing the biome presence
             block = HeightNoise(seedPos);
 
             return block;
