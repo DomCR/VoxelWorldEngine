@@ -80,6 +80,7 @@ namespace VoxelWorldEngine
                 case ChunkState.Updating:
                     break;
                 case ChunkState.HeightMapGeneration:
+                    //GenerateHeightMap();
                     m_chunkThread = new Thread(new ThreadStart(GenerateHeightMap));
                     //m_chunkThread = new Thread(new ThreadStart(GenerateHeightMap));
                     //m_threadPool.Add(m_chunkThread);
