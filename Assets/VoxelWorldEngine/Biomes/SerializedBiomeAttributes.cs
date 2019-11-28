@@ -41,6 +41,13 @@ namespace VoxelWorldEngine.Biomes
         [Tooltip("Method to apply.")]
         public NoiseMethodType NoiseType;
 
+        [Space]
+        [Header("Biome spawn qualifications")]
+        [Range(0f, 1f)]
+        public float Temperature;
+        [Range(0f, 1f)]
+        public float Height;
+
         [Space(10)]
         [Header("Density noise properties")]
         [Range(0, 1.0f)]

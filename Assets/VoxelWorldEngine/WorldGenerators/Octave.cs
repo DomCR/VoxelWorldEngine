@@ -47,7 +47,7 @@ namespace VoxelWorldEngine
             //float h = Mathf.PerlinNoise(pos.x / (WidthMagnitude), pos.z / (WidthMagnitude)) * 200;
             //Debug.Log(h);
             //TODO: Control the height, cannot generate mountains without increase the depht
-            sample *= HeightMagnitude;
+            //sample *= HeightMagnitude;
             //sample *= h;
 
             //Set the minimum height of the world
@@ -64,16 +64,10 @@ namespace VoxelWorldEngine
         {
             NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)attr.NoiseType][attr.Dimensions - 1];
             float sample = (NoiseMap.Sum(method, pos / attr.WidthMagnitude, attr.Frequency, attr.Octaves, attr.Lacunarity, attr.Persistence) + 1) / 2;
-
-            //Apply the height magnitude
-            //float h = Mathf.PerlinNoise(pos.x / (WidthMagnitude), pos.z / (WidthMagnitude)) * 200;
-            //Debug.Log(h);
-            //TODO: Control the height, cannot generate mountains without increase the depht
             sample *= attr.HeightMagnitude;
-            //sample *= h;
 
             //Set the minimum height of the world
-            sample += attr.HeightMagnitude;
+            sample += WorldHeight;
 
             if (pos.y < WorldHeight)
                 return BlockType.SAND;

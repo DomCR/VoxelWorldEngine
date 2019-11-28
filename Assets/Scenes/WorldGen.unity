@@ -175,8 +175,9 @@ MonoBehaviour:
   ChunksZ: 5
   BiomeData: []
   WidthMagnitude: 80
-  HeightMagnitude: 100
   WorldHeight: 0
+  HeightXNoiseGap: 0
+  HeightZNoiseGap: 0
   Frequency: 4
   Octaves: 1
   Lacunarity: 2
@@ -395,17 +396,22 @@ MonoBehaviour:
     ChunkState: 1
   Seed: 0
   UseSeed: 1
-  ChunksX: 20
+  ChunksX: 25
   ChunksY: 1
-  ChunksZ: 20
+  ChunksZ: 25
   BiomeData:
   - {fileID: 11400000, guid: 2406e2b93a03aa748b5186656fff86d0, type: 2}
   - {fileID: 11400000, guid: 5d3eb6e0339d98045b54698ec8e34fa8, type: 2}
+  - {fileID: 11400000, guid: 1a8fd509c38b7d04c91d11a7d709e249, type: 2}
+  - {fileID: 11400000, guid: f1b53da96fffab3488414ef3b80361c5, type: 2}
+  - {fileID: 11400000, guid: 6ba4b79e8c92fe441be3f0d18a30fed4, type: 2}
+  - {fileID: 11400000, guid: 96e5e44532833ae45b6efbe051b6d83e, type: 2}
   WidthMagnitude: 750
-  HeightMagnitude: 100
   WorldHeight: 10
-  Frequency: 4
-  Octaves: 5
+  HeightXNoiseGap: 0
+  HeightZNoiseGap: 0
+  Frequency: 2
+  Octaves: 2
   Lacunarity: 2
   Persistence: 0.5
   Dimensions: 2
@@ -474,8 +480,9 @@ MonoBehaviour:
   ChunksZ: 5
   BiomeData: []
   WidthMagnitude: 125
-  HeightMagnitude: 200
   WorldHeight: 0
+  HeightXNoiseGap: 0
+  HeightZNoiseGap: 0
   Frequency: 4
   Octaves: 1
   Lacunarity: 2

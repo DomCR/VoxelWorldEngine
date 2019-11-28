@@ -36,17 +36,17 @@ namespace VoxelWorldEngine
         protected override BlockType HeightNoise(Vector3 pos)
         {
             #region Height layer
-            //Get the height map
-            int height = (int)(Mathf.PerlinNoise(
-                (int)pos.x / WidthMagnitude,
-                (int)pos.z / WidthMagnitude) * (HeightMagnitude)) + WorldHeight;
+            ////Get the height map
+            //int height = (int)(Mathf.PerlinNoise(
+            //    (int)pos.x / WidthMagnitude,
+            //    (int)pos.z / WidthMagnitude) * (HeightMagnitude)) + WorldHeight;
 
-            if ((int)pos.y > height)
-                return BlockType.NULL;
-            else
-            {
-                return BlockType.STONE;
-            }
+            //if ((int)pos.y > height)
+            //    return BlockType.NULL;
+            //else
+            //{
+            //    return BlockType.STONE;
+            //}
             #endregion
 
             #region Test 2
@@ -67,6 +67,8 @@ namespace VoxelWorldEngine
             //    return BlockType.NULL;
             //}
             #endregion
+
+            return BlockType.NULL;
         }
         protected override BlockType[] StrataNoise(Vector3 pos)
         {

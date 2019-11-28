@@ -8,6 +8,8 @@ namespace VoxelWorldEngine.Biomes
 {
     public class BiomeAttributes
     {
+        public const float MaxHeight = 256f;
+
         public string Name { get; set; }
         public BlockType DebugBlock { get; set; }
 
@@ -29,12 +31,14 @@ namespace VoxelWorldEngine.Biomes
         public int DimensionsDensity { get; set; }
         public NoiseMethodType NoiseTypeDensity { get; set; }
 
+        public float Temperature { get; set; }
+        public float Height { get; set; }
+
         public BiomeAttributes()
         {
             Dimensions = 1;
             DimensionsDensity = 1;
         }
-
         public BiomeAttributes(BiomeAttributes att)
         {
             Name = att.Name;
@@ -58,7 +62,6 @@ namespace VoxelWorldEngine.Biomes
             DimensionsDensity = att.DimensionsDensity;
             NoiseTypeDensity = att.NoiseTypeDensity;
         }
-
         public BiomeAttributes(SerializedBiomeAttributes att)
         {
             Name = att.Name;
@@ -82,7 +85,30 @@ namespace VoxelWorldEngine.Biomes
             DimensionsDensity = att.DimensionsDensity;
             NoiseTypeDensity = att.NoiseTypeDensity;
         }
+        //**************************************************************************
+        public float Presence(float height, float temperature, float spawnRange)
+        {
+            float hDif = Mathf.Abs(height - Height);
+            float tDif = Mathf.Abs(temperature - Temperature);
 
+            float dif = (hDif + tDif) / 2f;
+
+            if (dif < spawnRange)
+                return dif;
+
+            return 0;
+        }
+        public float PresenceByHeight()
+        {
+            throw new NotImplementedException();
+        }
+        public void GetBase(BiomeAttributes att)
+        {
+            this.DebugBlock = att.DebugBlock;
+            this.Octaves = att.Octaves;
+            this.Dimensions = att.Dimensions;
+            this.NoiseType = att.NoiseType;
+        }
         //**************************************************************************
         public static BiomeAttributes operator +(BiomeAttributes att1, BiomeAttributes att2)
         {

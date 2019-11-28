@@ -32,20 +32,23 @@ namespace VoxelWorldEngine
         //Array of all the world biomes available
         public SerializedBiomeAttributes[] BiomeData;
 
-        [Header("Biomes noise properties")]
-        [Range(1, 999f)]
+        [Header("Generic biome noise properties")]
+        [Range(0f, 999f)]
         [Tooltip("Wave length of the biome noise")]
         public float WidthMagnitude = 125;
-        [Range(1, 999f)]
-        [Tooltip("Wave height of the biome noise")]
-        [Obsolete("The biome noise is 2D, no need for height")]
-        public float HeightMagnitude = 200;
+
+        //[Range(0f, 999f)]
+        //[Tooltip("Wave height of the biome noise")]
+        //[Obsolete("The biome noise is 2D, no need for height")]
+        //public float HeightMagnitude = 200;
 
         [Tooltip("Minimum world height")]
         public int WorldHeight = 0;
+        public float HeightXNoiseGap;
+        public float HeightZNoiseGap;
 
         [Space]
-        [Header("Height map noise properties")]
+        [Header("Temperature noise map properties")]
         [Tooltip("Stablish the noise frequency by each point.")]
         public float Frequency = 4;
         [Range(1, 8)]
@@ -192,32 +195,42 @@ namespace VoxelWorldEngine
             BlockType[] col = new BlockType[Chunk.YSize];
 
             NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)NoiseType][Dimensions - 1];
-            float bioNoise = (NoiseMap.Sum(method, new Vector3(basePos.x, 0, basePos.y) / WidthMagnitude, Frequency, Octaves, Lacunarity, Persistence) + 1) / 2;
+            float temperatureNoise = (NoiseMap.Sum(method, new Vector3(basePos.x, 0, basePos.y) / WidthMagnitude, Frequency, Octaves, Lacunarity, Persistence) + 1) / 2;
+            float heightNoise = (NoiseMap.Sum(method, new Vector3(basePos.x + HeightXNoiseGap, 0, basePos.y + HeightZNoiseGap) / WidthMagnitude, Frequency, Octaves, Lacunarity, Persistence) + 1) / 2;
 
             BiomeAttributes bioAtt = new BiomeAttributes();
-            if (bioNoise > 0.5f)
+            bioAtt.GetBase(m_worldBiomes.OrderBy(o => o.Presence(heightNoise, temperatureNoise, 0.1f)).First());
+            int nbiomes = 0;
+            foreach (BiomeAttributes b in m_worldBiomes)
             {
-                bioAtt.DebugBlock = m_worldBiomes[0].DebugBlock;
-                bioAtt.Octaves = m_worldBiomes[0].Octaves;
-                bioAtt.Dimensions = m_worldBiomes[0].Dimensions;
-                bioAtt.NoiseType = m_worldBiomes[0].NoiseType;
-            }
-            else
-            {
-                bioAtt.DebugBlock = m_worldBiomes[1].DebugBlock;
-                bioAtt.Octaves = m_worldBiomes[1].Octaves;
-                bioAtt.Dimensions = m_worldBiomes[1].Dimensions;
-                bioAtt.NoiseType = m_worldBiomes[1].NoiseType;
+                float presence = b.Presence(heightNoise, temperatureNoise, 0.7f);
+
+                if (presence == 0)
+                    continue;
+
+                bioAtt += b * presence;
+                nbiomes++;
             }
 
-            float n = (1 - bioNoise);
+            bioAtt /= nbiomes;
 
-            //if (bio > 0.5f)
-            bioAtt += (m_worldBiomes[0] * bioNoise);
+            //if (temperatureNoise > 0.5f)
+            //{
+            //    bioAtt.DebugBlock = m_worldBiomes[0].DebugBlock;
+            //    bioAtt.Octaves = m_worldBiomes[0].Octaves;
+            //    bioAtt.Dimensions = m_worldBiomes[0].Dimensions;
+            //    bioAtt.NoiseType = m_worldBiomes[0].NoiseType;
+            //}
             //else
-            bioAtt += (m_worldBiomes[1] * (1 - bioNoise));
+            //{
+            //    bioAtt.DebugBlock = m_worldBiomes[1].DebugBlock;
+            //    bioAtt.Octaves = m_worldBiomes[1].Octaves;
+            //    bioAtt.Dimensions = m_worldBiomes[1].Dimensions;
+            //    bioAtt.NoiseType = m_worldBiomes[1].NoiseType;
+            //}
 
-            bioAtt /= 2;
+            //bioAtt += (m_worldBiomes[0] * temperatureNoise);
+            //bioAtt += (m_worldBiomes[1] * (1 - temperatureNoise));
 
             for (int y = 0; y < Chunk.YSize; y++)
             {
@@ -258,9 +271,9 @@ namespace VoxelWorldEngine
             //*****************************************************************
             //TODO: Calculate the biomes present in the current point
             //TODO: Solve the biome lerp by quantifing the biome presence
-            
+
             //float bioNoise = Mathf.PerlinNoise(pos.x / 100, pos.z / 100);
-            
+
             NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)NoiseMethodType.Perlin][2 - 1];
             float bioNoise = (NoiseMap.Sum(method, pos / WidthMagnitude, 4, 4, 2, 0.5f) + 1) / 2;
 

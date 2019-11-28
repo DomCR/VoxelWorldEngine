@@ -14,14 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Default
   DebugBlock: 2
-  WidthMagnitude: 500
+  WidthMagnitude: 300
   HeightMagnitude: 1
   Frequency: 4
-  Octaves: 2
-  Lacunarity: 3
+  Octaves: 6
+  Lacunarity: 2
   Persistence: 0.5
   Dimensions: 3
   NoiseType: 1
+  Temperature: 0.1
+  Height: 0.1
   Density: 0.45
   Inverted: 0
   Frequency3D: 2
