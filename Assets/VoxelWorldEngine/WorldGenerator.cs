@@ -32,23 +32,43 @@ namespace VoxelWorldEngine
         //Array of all the world biomes available
         public SerializedBiomeAttributes[] BiomeData;
 
-        #region Goes to the biome
-        [Header("Generic noise properties")]
-        [Range(0, 999f)]
-        [Tooltip("Wave length of the noise")]
+        [Header("Biomes noise properties")]
+        [Range(1, 999f)]
+        [Tooltip("Wave length of the biome noise")]
         public float WidthMagnitude = 125;
-        [Range(0, 999f)]
-        [Tooltip("Wave height of the noise")]
+        [Range(1, 999f)]
+        [Tooltip("Wave height of the biome noise")]
+        [Obsolete("The biome noise is 2D, no need for height")]
         public float HeightMagnitude = 200;
-        #endregion
 
         [Tooltip("Minimum world height")]
         public int WorldHeight = 0;
 
+        [Space]
+        [Header("Height map noise properties")]
+        [Tooltip("Stablish the noise frequency by each point.")]
+        public float Frequency = 4;
+        [Range(1, 8)]
+        [Tooltip("Number of iterations for the noise, each octave is a new noise sum.")]
+        public int Octaves = 1;
+        [Range(1f, 4f)]
+        [Tooltip("Phase between the different noise frequencies when the sum is applied.")]
+        public float Lacunarity = 2f;
+        [Range(0f, 1f)]
+        [Tooltip("Multiplier for the noise sum, decrease each noise sum")]
+        public float Persistence = 0.5f;
+        [Space]
+        [Range(1, 3)]
+
+        [Tooltip("Noise dimensions, (x,z) as a 2Dplane, y is the up axis.")]
+        public int Dimensions = 3;
+        [Tooltip("Method to apply.")]
+        public NoiseMethodType NoiseType;
+        //****************************************************************
         protected Vector3 m_position;
         protected Dictionary<Vector3, Chunk> m_chunks;
         protected BiomeAttributes[] m_worldBiomes;
-
+        //****************************************************************
         #region Behaviour methods
         // Start is called before the first frame update
         void Start()
@@ -132,9 +152,15 @@ namespace VoxelWorldEngine
         {
             return GetBlock(pos.x + x, pos.y + y, pos.z + z);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        /// <returns></returns>
         public BlockType GetBlock(float x, float y, float z)
         {
-
             if (isWorldEdge(new Vector3(x, y, z)))
                 return BlockType.NULL;
 
@@ -155,6 +181,63 @@ namespace VoxelWorldEngine
                 //There is no chunk, limit found
                 return BlockType.NULL;
         }
+        /// <summary>
+        /// Apply the bedrock to all the world generators.
+        /// </summary>
+        /// <param name="basePos"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
+        public BlockType[] ComputeHeightNoise(Vector2 basePos, int height)
+        {
+            BlockType[] col = new BlockType[Chunk.YSize];
+
+            NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)NoiseType][Dimensions - 1];
+            float bioNoise = (NoiseMap.Sum(method, new Vector3(basePos.x, 0, basePos.y) / WidthMagnitude, Frequency, Octaves, Lacunarity, Persistence) + 1) / 2;
+
+            BiomeAttributes bioAtt = new BiomeAttributes();
+            if (bioNoise > 0.5f)
+            {
+                bioAtt.DebugBlock = m_worldBiomes[0].DebugBlock;
+                bioAtt.Octaves = m_worldBiomes[0].Octaves;
+                bioAtt.Dimensions = m_worldBiomes[0].Dimensions;
+                bioAtt.NoiseType = m_worldBiomes[0].NoiseType;
+            }
+            else
+            {
+                bioAtt.DebugBlock = m_worldBiomes[1].DebugBlock;
+                bioAtt.Octaves = m_worldBiomes[1].Octaves;
+                bioAtt.Dimensions = m_worldBiomes[1].Dimensions;
+                bioAtt.NoiseType = m_worldBiomes[1].NoiseType;
+            }
+
+            float n = (1 - bioNoise);
+
+            //if (bio > 0.5f)
+            bioAtt += (m_worldBiomes[0] * bioNoise);
+            //else
+            bioAtt += (m_worldBiomes[1] * (1 - bioNoise));
+
+            bioAtt /= 2;
+
+            for (int y = 0; y < Chunk.YSize; y++)
+            {
+                BlockType block = BlockType.NULL;
+                Vector3 pos = new Vector3(basePos.x, y + height, basePos.y);
+
+                //Set the bottom edge blocks 
+                block = setBedRock(pos);
+                if (block == BlockType.BEDROCK)
+                {
+                    col[y] = block;
+                    continue;
+                }
+
+                col[y] = HeightNoise(pos, bioAtt);
+            }
+
+            return col;
+        }
+        [Obsolete]
         public BlockType ComputeHeightNoise(Vector3 pos)
         {
             BlockType block = BlockType.NULL;
@@ -175,9 +258,14 @@ namespace VoxelWorldEngine
             //*****************************************************************
             //TODO: Calculate the biomes present in the current point
             //TODO: Solve the biome lerp by quantifing the biome presence
-            float bioNoise = Mathf.PerlinNoise(pos.x / 100, pos.z / 100);
-            BiomeAttributes bioAtt = new BiomeAttributes();
+            
+            //float bioNoise = Mathf.PerlinNoise(pos.x / 100, pos.z / 100);
+            
+            NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)NoiseMethodType.Perlin][2 - 1];
+            float bioNoise = (NoiseMap.Sum(method, pos / WidthMagnitude, 4, 4, 2, 0.5f) + 1) / 2;
 
+
+            BiomeAttributes bioAtt = new BiomeAttributes();
             if (bioNoise > 0.5f)
             {
                 bioAtt.DebugBlock = m_worldBiomes[0].DebugBlock;
@@ -208,7 +296,7 @@ namespace VoxelWorldEngine
             //    bioAtt = m_worldBiomes[1];
             //*****************************************************************
 
-            return heightNoise(pos, bioAtt);
+            return HeightNoise(pos, bioAtt);
 
             //block = HeightNoise(seedPos);
 
@@ -252,34 +340,10 @@ namespace VoxelWorldEngine
             return false;
         }
         //****************************************************************
-        protected BlockType heightNoise(Vector3 pos, BiomeAttributes attr)
-        {
-            NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)attr.NoiseType][attr.Dimensions - 1];
-            float sample = (NoiseMap.Sum(method, pos / WidthMagnitude, attr.Frequency, attr.Octaves, attr.Lacunarity, attr.Persistence) + 1) / 2;
-
-            //Apply the height magnitude
-            //float h = Mathf.PerlinNoise(pos.x / (WidthMagnitude), pos.z / (WidthMagnitude)) * 200;
-            //Debug.Log(h);
-            //TODO: Control the height, cannot generate mountains without increase the depht
-            sample *= HeightMagnitude;
-            //sample *= h;
-
-            //Set the minimum height of the world
-            sample += WorldHeight;
-
-            if (pos.y < WorldHeight)
-                return BlockType.SAND;
-            if (pos.y < sample)
-                if (debug.IsActive)
-                    return attr.DebugBlock;
-                else
-                    return BlockType.STONE;
-
-            return BlockType.NULL;
-        }
-        //****************************************************************
         protected abstract BlockType[] StrataNoise(Vector3 pos);
+        [Obsolete]
         protected abstract BlockType HeightNoise(Vector3 pos);
+        protected abstract BlockType HeightNoise(Vector3 pos, BiomeAttributes attr);
         protected abstract BlockType DensityNoise(Vector3 pos);
     }
 }

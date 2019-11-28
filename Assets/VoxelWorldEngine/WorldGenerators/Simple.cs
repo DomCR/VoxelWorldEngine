@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VoxelWorldEngine.Biomes;
 using VoxelWorldEngine.Enums;
 using VoxelWorldEngine.Noise.RawNoise;
 
@@ -81,6 +82,11 @@ namespace VoxelWorldEngine
                 return BlockType.STONE;
             else
                 return BlockType.NULL;
+        }
+
+        protected override BlockType HeightNoise(Vector3 pos, BiomeAttributes attr)
+        {
+            throw new NotImplementedException();
         }
     }
 }

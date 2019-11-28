@@ -4,6 +4,7 @@ using System.Collections;
 using UnityEngine;
 using VoxelWorldEngine.Enums;
 using VoxelWorldEngine.Noise.RawNoise;
+using VoxelWorldEngine.Biomes;
 
 namespace VoxelWorldEngine
 {
@@ -82,6 +83,11 @@ namespace VoxelWorldEngine
         private float noise3(float x, float z)
         {
             return Mathf.Pow(Mathf.PerlinNoise(x + noise2(x, z), z + noise2(x, z)), 2);
+        }
+
+        protected override BlockType HeightNoise(Vector3 pos, BiomeAttributes attr)
+        {
+            throw new NotImplementedException();
         }
     }
 }

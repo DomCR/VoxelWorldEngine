@@ -15,7 +15,14 @@ namespace VoxelWorldEngine
 {
     public class Chunk : MonoBehaviour
     {
+        /// <summary>
+        /// Faster to initialize but slower when it comes to calculate noise and biomes
+        /// </summary>
         public BlockType[,,] Blocks;
+        /// <summary>
+        /// Slower to initialize but faster when it comes to calculate noise and biomes
+        /// </summary>
+        public BlockType[][][] ArrBlocks;
         public const int XSize = 16;
         public const int YSize = 256;
         public const int ZSize = 16;
@@ -172,17 +179,32 @@ namespace VoxelWorldEngine
 
             for (int x = 0; x < XSize; x++)
             {
-                for (int y = 0; y < YSize; y++)
+                for (int z = 0; z < ZSize; z++)
                 {
-                    for (int z = 0; z < ZSize; z++)
-                    {
-                        Vector3 currBlockPos = new Vector3(
-                            x + Position.x,
-                            y + Position.y,
-                            z + Position.z);
+                    #region FASTER: needs code cleaning
+                    //TODO: compute noise by the height all at once
+                    Vector2 currCol = new Vector2(
+                        x + Position.x,
+                        z + Position.z);
+                    BlockType[] col = m_parent.ComputeHeightNoise(currCol, (int)Position.y);
 
-                        Blocks[x, y, z] = m_parent.ComputeHeightNoise(currBlockPos);
+                    for (int y = 0; y < YSize; y++)
+                    {
+                        Blocks[x, y, z] = col[y];
                     }
+                    #endregion
+
+                    #region SLOWER: consider the methods obsolete (code cleaning)
+                    //for (int y = 0; y < YSize; y++)
+                    //{
+                    //    Vector3 currBlockPos = new Vector3(
+                    //        x + Position.x,
+                    //        y + Position.y,
+                    //        z + Position.z);
+
+                    //    Blocks[x, y, z] = m_parent.ComputeHeightNoise(currBlockPos);
+                    //} 
+                    #endregion
                 }
             }
 
