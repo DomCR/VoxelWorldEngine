@@ -21,7 +21,7 @@ MonoBehaviour:
   Lacunarity: 2
   Persistence: 0.5
   Dimensions: 3
-  NoiseType: 0
+  NoiseType: 1
   Density: 0.45
   Inverted: 0
   Frequency3D: 2
@@ -30,4 +30,4 @@ MonoBehaviour:
   Persistence3D: 0.5
   Width3D: 50
   DimensionsDensity: 3
-  NoiseTypeDensity: 0
+  NoiseTypeDensity: 1

@@ -172,16 +172,43 @@ namespace VoxelWorldEngine
             if (block == BlockType.BEDROCK)
                 return block;
 
+            //*****************************************************************
             //TODO: Calculate the biomes present in the current point
             //TODO: Solve the biome lerp by quantifing the biome presence
-            float bio = Mathf.PerlinNoise(pos.x / 100, pos.z / 100);
+            float bioNoise = Mathf.PerlinNoise(pos.x / 100, pos.z / 100);
             BiomeAttributes bioAtt = new BiomeAttributes();
-            if (bio > 0.5f)
-                bioAtt = m_worldBiomes[0];
-            else
-                bioAtt = m_worldBiomes[1];
 
-            return HeightNoise(pos, bioAtt);
+            if (bioNoise > 0.5f)
+            {
+                bioAtt.DebugBlock = m_worldBiomes[0].DebugBlock;
+                bioAtt.Octaves = m_worldBiomes[0].Octaves;
+                bioAtt.Dimensions = m_worldBiomes[0].Dimensions;
+                bioAtt.NoiseType = m_worldBiomes[0].NoiseType;
+            }
+            else
+            {
+                bioAtt.DebugBlock = m_worldBiomes[1].DebugBlock;
+                bioAtt.Octaves = m_worldBiomes[1].Octaves;
+                bioAtt.Dimensions = m_worldBiomes[1].Dimensions;
+                bioAtt.NoiseType = m_worldBiomes[1].NoiseType;
+            }
+
+            float n = (1 - bioNoise);
+
+            //if (bio > 0.5f)
+            bioAtt += (m_worldBiomes[0] * bioNoise);
+            //else
+            bioAtt += (m_worldBiomes[1] * (1 - bioNoise));
+
+            //bioAtt = bioAtt / 2;
+
+            //if (bioNoise > 0.5f)
+            //    bioAtt = m_worldBiomes[0];
+            //else
+            //    bioAtt = m_worldBiomes[1];
+            //*****************************************************************
+
+            return heightNoise(pos, bioAtt);
 
             //block = HeightNoise(seedPos);
 
@@ -225,7 +252,7 @@ namespace VoxelWorldEngine
             return false;
         }
         //****************************************************************
-        protected BlockType HeightNoise(Vector3 pos, BiomeAttributes attr)
+        protected BlockType heightNoise(Vector3 pos, BiomeAttributes attr)
         {
             NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)attr.NoiseType][attr.Dimensions - 1];
             float sample = (NoiseMap.Sum(method, pos / WidthMagnitude, attr.Frequency, attr.Octaves, attr.Lacunarity, attr.Persistence) + 1) / 2;

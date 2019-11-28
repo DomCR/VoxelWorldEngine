@@ -389,9 +389,9 @@ MonoBehaviour:
     ChunkState: 1
   Seed: 0
   UseSeed: 1
-  ChunksX: 20
+  ChunksX: 10
   ChunksY: 1
-  ChunksZ: 20
+  ChunksZ: 10
   BiomeData:
   - {fileID: 11400000, guid: 2406e2b93a03aa748b5186656fff86d0, type: 2}
   - {fileID: 11400000, guid: 5d3eb6e0339d98045b54698ec8e34fa8, type: 2}
