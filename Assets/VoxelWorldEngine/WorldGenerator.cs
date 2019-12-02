@@ -25,9 +25,10 @@ namespace VoxelWorldEngine
         public bool UseSeed;
 
         [Space()]
-        public bool UseThreading;
+        public bool UseThreadControl;
+        [Range(1, 256)]
         public int MaxThreads = 8;
-        
+
         [Space()]
         public int ChunksX;
         public int ChunksY;
@@ -76,8 +77,8 @@ namespace VoxelWorldEngine
         protected Vector3 m_position;
         protected Dictionary<Vector3, Chunk> m_chunks;
         protected BiomeAttributes[] m_worldBiomes;
-
-        protected bool firstTime = true;
+        //****************************************************************
+        public List<Thread> ActiveThreads;
         //****************************************************************
         #region Behaviour methods
         // Start is called before the first frame update
@@ -86,6 +87,7 @@ namespace VoxelWorldEngine
             //Initialize variables
             m_position = this.transform.position;
             m_chunks = new Dictionary<Vector3, Chunk>();
+            ActiveThreads = new List<Thread>();
 
             //Feed the world biome attributes to be used outside the main thread
             m_worldBiomes = new BiomeAttributes[BiomeData.Length];
@@ -96,7 +98,8 @@ namespace VoxelWorldEngine
             //Clear the none needed data
             Array.Clear(BiomeData, 0, BiomeData.Length);
 
-            
+            //Generate the world
+            GenerateWorld();
         }
         // Update is called once per frame
         void Update()
@@ -106,11 +109,10 @@ namespace VoxelWorldEngine
                 debugActions();
             }
 
-            //Generate the world
-            if (firstTime)
+            if (UseThreadControl)
             {
-                GenerateWorld();
-                firstTime = false;
+                //Chunk thread control
+                threadControl();
             }
         }
         #endregion
@@ -122,6 +124,65 @@ namespace VoxelWorldEngine
                 foreach (Chunk chunk in m_chunks.Values)
                 {
                     chunk.State = debug.ChunkState;
+                }
+            }
+        }
+        void threadControl()
+        {
+            //Set the active threads limit
+            int tactive;
+            if ((tactive = ActiveThreads.Where(o => o.IsAlive).Count()) < this.MaxThreads)
+            {
+                List<Thread> threadsToRemove = new List<Thread>();
+
+                foreach (Thread th in ActiveThreads)
+                {
+                    if (tactive < this.MaxThreads)
+                    {
+                        switch (th.ThreadState)
+                        {
+                            case System.Threading.ThreadState.Aborted:
+                                Debug.Log("Thread aborted");
+                                break;
+                            case System.Threading.ThreadState.AbortRequested:
+                                break;
+                            case System.Threading.ThreadState.Background:
+                                Debug.Log("Thread background running");
+                                break;
+                            case System.Threading.ThreadState.Running:
+                                //Debug.Log("Thread running");
+                                break;
+                            case System.Threading.ThreadState.Stopped:
+                                threadsToRemove.Add(th);
+                                Debug.Log("Thread stopped");
+                                break;
+                            case System.Threading.ThreadState.StopRequested:
+                                break;
+                            case System.Threading.ThreadState.Suspended:
+                                break;
+                            case System.Threading.ThreadState.SuspendRequested:
+                                break;
+                            case System.Threading.ThreadState.Unstarted:
+                                th.Start();
+                                tactive++;
+                                Debug.Log("Generation started");
+                                break;
+                            case System.Threading.ThreadState.WaitSleepJoin:
+                                Debug.Log("Thread waiting");
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                //Remove finished threads
+                foreach (Thread item in threadsToRemove)
+                {
+                    ActiveThreads.Remove(item);
                 }
             }
         }
@@ -212,7 +273,7 @@ namespace VoxelWorldEngine
             float heightNoise = (NoiseMap.Sum(method, new Vector3(basePos.x + HeightXNoiseGap, 0, basePos.y + HeightZNoiseGap) / WidthMagnitude, Frequency, Octaves, Lacunarity, Persistence) + 1) / 2;
 
             BiomeAttributes bioAtt = new BiomeAttributes();
-            bioAtt.GetBase(m_worldBiomes.OrderBy(o => o.Presence(heightNoise, temperatureNoise, 0.1f)).First());
+            bioAtt.CopyBase(m_worldBiomes.OrderBy(o => o.Presence(heightNoise, temperatureNoise, 0.1f)).First());
             int nbiomes = 0;
             foreach (BiomeAttributes b in m_worldBiomes)
             {
@@ -226,24 +287,6 @@ namespace VoxelWorldEngine
             }
 
             bioAtt /= nbiomes;
-
-            //if (temperatureNoise > 0.5f)
-            //{
-            //    bioAtt.DebugBlock = m_worldBiomes[0].DebugBlock;
-            //    bioAtt.Octaves = m_worldBiomes[0].Octaves;
-            //    bioAtt.Dimensions = m_worldBiomes[0].Dimensions;
-            //    bioAtt.NoiseType = m_worldBiomes[0].NoiseType;
-            //}
-            //else
-            //{
-            //    bioAtt.DebugBlock = m_worldBiomes[1].DebugBlock;
-            //    bioAtt.Octaves = m_worldBiomes[1].Octaves;
-            //    bioAtt.Dimensions = m_worldBiomes[1].Dimensions;
-            //    bioAtt.NoiseType = m_worldBiomes[1].NoiseType;
-            //}
-
-            //bioAtt += (m_worldBiomes[0] * temperatureNoise);
-            //bioAtt += (m_worldBiomes[1] * (1 - temperatureNoise));
 
             for (int y = 0; y < Chunk.YSize; y++)
             {

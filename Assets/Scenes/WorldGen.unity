@@ -170,7 +170,7 @@ MonoBehaviour:
     ChunkState: 0
   Seed: 0
   UseSeed: 0
-  UseThreading: 0
+  UseThreadControl: 0
   MaxThreads: 0
   ChunksX: 5
   ChunksY: 1
@@ -398,8 +398,8 @@ MonoBehaviour:
     ChunkState: 1
   Seed: 0
   UseSeed: 1
-  UseThreading: 1
-  MaxThreads: 10
+  UseThreadControl: 1
+  MaxThreads: 16
   ChunksX: 10
   ChunksY: 1
   ChunksZ: 10
@@ -479,7 +479,7 @@ MonoBehaviour:
     ChunkState: 0
   Seed: 0
   UseSeed: 0
-  UseThreading: 0
+  UseThreadControl: 0
   MaxThreads: 0
   ChunksX: 5
   ChunksY: 1

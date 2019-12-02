@@ -42,7 +42,7 @@ namespace VoxelWorldEngine
         private MeshCollider m_collider;
 
         /// <summary>
-        /// Guard to detect changes in the chunk state
+        /// Guard to detect changes in the chunk state and execute the change only once.
         /// </summary>
         private ChunkState m_state = ChunkState.Idle;
 
@@ -50,15 +50,11 @@ namespace VoxelWorldEngine
         private WorldGenerator m_parent;
 
         //Thread variables
-        Thread m_chunkThread;
-        //TODO: implement thread pool to control the pc resources
-        private static List<Thread> m_activatedThreads = new List<Thread>();
-        private const int k_threadLimit = 1;
+        private Thread m_chunkThread;
         //*************************************************************
         #region Behaviour methods
         void Awake()
         {
-            ThreadPool.SetMaxThreads(k_threadLimit, 0);
             //Initialize the block array
             Blocks = new BlockType[XSize, YSize, ZSize];
 
@@ -85,11 +81,11 @@ namespace VoxelWorldEngine
         {
             if(State != m_state)
             {
-                StateBehaviour();
                 m_state = State;
+                StateBehaviour();
             }
 
-            ThreadControl();
+            //ThreadControl();
         }
         private void OnDisable()
         {
@@ -97,6 +93,9 @@ namespace VoxelWorldEngine
         }
         #endregion
         //*************************************************************
+        /// <summary>
+        /// 
+        /// </summary>
         void StateBehaviour()
         {
             switch (State)
@@ -106,10 +105,10 @@ namespace VoxelWorldEngine
                     //No action taken states
                     break;
                 case ChunkState.HeightMapGeneration:
-                    if (m_parent.UseThreading)
+                    if (m_parent.UseThreadControl)
                     {
                         m_chunkThread = new Thread(new ThreadStart(GenerateHeightMap));
-                        m_activatedThreads.Add(m_chunkThread);
+                        m_parent.ActiveThreads.Add(m_chunkThread);
                     }
                     else
                     {
@@ -123,10 +122,10 @@ namespace VoxelWorldEngine
                     m_chunkThread.Start();
                     break;
                 case ChunkState.NeedFaceUpdate:
-                    if (m_parent.UseThreading)
+                    if (m_parent.UseThreadControl)
                     {
                         m_chunkThread = new Thread(new ThreadStart(UpdateFaces));
-                        m_activatedThreads.Add(m_chunkThread);
+                        m_parent.ActiveThreads.Add(m_chunkThread);
                     }
                     else
                     {
@@ -157,57 +156,6 @@ namespace VoxelWorldEngine
                     break;
                 default:
                     break;
-            }
-        }
-        //TODO: set the thread control to the game manager (World generator by now)
-        void ThreadControl()
-        {
-            //Set the active threads limit
-            int tactive;
-            if ((tactive = m_activatedThreads.Where(o => o.IsAlive).Count()) < m_parent.MaxThreads)
-            {
-                foreach (Thread th in m_activatedThreads)
-                {
-                    if (tactive < m_parent.MaxThreads)
-                    {
-                        switch (th.ThreadState)
-                        {
-                            case System.Threading.ThreadState.Aborted:
-                                //Debug.Log("Thread aborted");
-                                break;
-                            case System.Threading.ThreadState.AbortRequested:
-                                break;
-                            case System.Threading.ThreadState.Background:
-                                break;
-                            case System.Threading.ThreadState.Running:
-                                //Debug.Log("Thread running");
-                                break;
-                            case System.Threading.ThreadState.Stopped:
-                                //Debug.Log("Thread stopped");
-                                break;
-                            case System.Threading.ThreadState.StopRequested:
-                                break;
-                            case System.Threading.ThreadState.Suspended:
-                                break;
-                            case System.Threading.ThreadState.SuspendRequested:
-                                break;
-                            case System.Threading.ThreadState.Unstarted:
-                                th.Start();
-                                tactive++;
-                                Debug.Log("Generation started");
-                                break;
-                            case System.Threading.ThreadState.WaitSleepJoin:
-                                Debug.Log("Thread waiting");
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
             }
         }
         /// <summary>

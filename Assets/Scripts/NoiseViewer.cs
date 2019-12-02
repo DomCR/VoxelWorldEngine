@@ -1,18 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using VoxelWorldEngine.Noise;
 using VoxelWorldEngine.Noise.RawNoise;
 
-//[ExecuteInEditMode]
-public enum NoiseMethodType
+[ExecuteInEditMode]
+public class NoiseViewer : MonoBehaviour
 {
-    Value,
-    Perlin
-}
-public class HeightMapVisualizer : MonoBehaviour
-{
+    [Space()]
+    [Range(2, 1024)]
+    public int Resolution = 256;
     public int Seed;
+
+    [Range(1, 999)]
+    public float WidthAmplitude;
+
     public float Frequency;
     [Range(1, 8)]
     public int octaves = 1;
@@ -25,15 +26,11 @@ public class HeightMapVisualizer : MonoBehaviour
     public int dimensions = 3;
     public NoiseMethodType NoiseType;
 
-    [Space()]
-    [Range(2, 1024)]
-    public int Resolution = 256;
-
     public Gradient coloring;
 
+    public bool Refresh;
+    //******************************************************
     private Texture2D m_texture;
-
-    public bool Refresh = false;
     //******************************************************
     private void OnEnable()
     {
@@ -44,7 +41,14 @@ public class HeightMapVisualizer : MonoBehaviour
 
         FillTexture();
     }
-    private void Update()
+    // Start is called before the first frame update
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
     {
         if (true)
         {
@@ -60,33 +64,30 @@ public class HeightMapVisualizer : MonoBehaviour
             m_texture.Resize(Resolution, Resolution);
         }
 
-        Vector3 point00 = transform.TransformPoint(new Vector3(-0.5f, -0.5f));
-        Vector3 point10 = transform.TransformPoint(new Vector3(0.5f, -0.5f));
-        Vector3 point01 = transform.TransformPoint(new Vector3(-0.5f, 0.5f));
-        Vector3 point11 = transform.TransformPoint(new Vector3(0.5f, 0.5f));
-
-        Random.InitState(Seed);
-
         NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)NoiseType][dimensions - 1];
         float stepSize = 1f / Resolution;
         for (int y = 0; y < Resolution; y++)
         {
-            Vector3 point0 = Vector3.Lerp(point00, point01, (y + 0.5f) * stepSize);
-            Vector3 point1 = Vector3.Lerp(point10, point11, (y + 0.5f) * stepSize);
             for (int x = 0; x < Resolution; x++)
             {
-                Vector3 point = Vector3.Lerp(point0, point1, (x + 0.5f) * stepSize);
-                float sample = NoiseMap.Sum(method, point, Frequency, octaves, lacunarity, persistence);
-                //sample = Mathf.PerlinNoise(point.x / Frequency, point.z / Frequency);
-                if (NoiseType != NoiseMethodType.Value)
-                {
-                    sample = sample * 0.5f + 0.5f;
-                }
+                Vector3 point = new Vector3(x + Seed, 0, y + Seed);
+                float sample = NoiseMap.Sum(method, point / WidthAmplitude, Frequency, octaves, lacunarity, persistence);
+
+                //sample *= 0.5f;
+                //sample += 0.50f;
+
+                sample = Mathf.Lerp(0, 1.5f, sample);
+                sample = Mathf.Clamp(sample, 0, 1);
+
+                if (NoiseType == NoiseMethodType.Value)
+                    sample *= 0.5f;
+
+                //sample = Mathf.PerlinNoise(x / WidthAmplitude, y / WidthAmplitude);
+
                 m_texture.SetPixel(x, y, coloring.Evaluate(sample));
             }
         }
 
         m_texture.Apply();
     }
-    //******************************************************
 }

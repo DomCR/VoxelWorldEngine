@@ -102,7 +102,7 @@ namespace VoxelWorldEngine.Biomes
         {
             throw new NotImplementedException();
         }
-        public void GetBase(BiomeAttributes att)
+        public void CopyBase(BiomeAttributes att)
         {
             this.DebugBlock = att.DebugBlock;
             this.Octaves = att.Octaves;
