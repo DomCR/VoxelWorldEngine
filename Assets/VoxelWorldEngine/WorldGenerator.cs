@@ -268,6 +268,8 @@ namespace VoxelWorldEngine
         {
             BlockType[] col = new BlockType[Chunk.YSize];
 
+            #region TO FIX
+            //TODO: Fix the biomes (libnoise voronoi)
             NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)NoiseType][Dimensions - 1];
             float temperatureNoise = (NoiseMap.Sum(method, new Vector3(basePos.x, 0, basePos.y) / WidthMagnitude, Frequency, Octaves, Lacunarity, Persistence) + 1) / 2;
             float heightNoise = (NoiseMap.Sum(method, new Vector3(basePos.x + HeightXNoiseGap, 0, basePos.y + HeightZNoiseGap) / WidthMagnitude, Frequency, Octaves, Lacunarity, Persistence) + 1) / 2;
@@ -284,9 +286,10 @@ namespace VoxelWorldEngine
 
                 bioAtt += b * presence;
                 nbiomes++;
-            }
+            } 
 
             bioAtt /= nbiomes;
+            #endregion
 
             for (int y = 0; y < Chunk.YSize; y++)
             {
@@ -301,7 +304,7 @@ namespace VoxelWorldEngine
                     continue;
                 }
 
-                col[y] = HeightNoise(pos, bioAtt);
+                col[y] = HeightNoise(pos, m_worldBiomes[0]);
             }
 
             return col;
