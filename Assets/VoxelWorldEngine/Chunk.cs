@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
+//using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -41,13 +41,18 @@ namespace VoxelWorldEngine
         private Mesh m_mesh;
         private MeshCollider m_collider;
 
+        /// <summary>
+        /// Guard to detect changes in the chunk state
+        /// </summary>
+        private ChunkState m_state = ChunkState.Idle;
+
         //TODO: implement the world class
         private WorldGenerator m_parent;
 
         //Thread variables
         Thread m_chunkThread;
         //TODO: implement thread pool to control the pc resources
-        private static List<Thread> m_threadPool = new List<Thread>();
+        private static List<Thread> m_activatedThreads = new List<Thread>();
         private const int k_threadLimit = 1;
         //*************************************************************
         #region Behaviour methods
@@ -78,7 +83,13 @@ namespace VoxelWorldEngine
         }
         void Update()
         {
-            StateBehaviour();
+            if(State != m_state)
+            {
+                StateBehaviour();
+                m_state = State;
+            }
+
+            ThreadControl();
         }
         private void OnDisable()
         {
@@ -97,13 +108,14 @@ namespace VoxelWorldEngine
                 case ChunkState.HeightMapGeneration:
                     if (m_parent.UseThreading)
                     {
-                        ThreadPool.QueueUserWorkItem(new WaitCallback(GenerateHeightMap));
+                        m_chunkThread = new Thread(new ThreadStart(GenerateHeightMap));
+                        m_activatedThreads.Add(m_chunkThread);
                     }
-                    //GenerateHeightMap();
-                    //m_chunkThread = new Thread(new ThreadStart(GenerateHeightMap));
-                    //m_chunkThread = new Thread(new ThreadStart(GenerateHeightMap));
-                    //m_threadPool.Add(m_chunkThread);
-                    //m_chunkThread.Start();
+                    else
+                    {
+                        m_chunkThread = new Thread(new ThreadStart(GenerateHeightMap));
+                        m_chunkThread.Start();
+                    }
                     break;
                 case ChunkState.CaveGeneration:
                     m_chunkThread = new Thread(new ThreadStart(GenerateHoles));
@@ -111,9 +123,16 @@ namespace VoxelWorldEngine
                     m_chunkThread.Start();
                     break;
                 case ChunkState.NeedFaceUpdate:
-                    m_chunkThread = new Thread(new ThreadStart(UpdateFaces));
-                    //m_threadPool.Add(m_chunkThread);
-                    m_chunkThread.Start();
+                    if (m_parent.UseThreading)
+                    {
+                        m_chunkThread = new Thread(new ThreadStart(UpdateFaces));
+                        m_activatedThreads.Add(m_chunkThread);
+                    }
+                    else
+                    {
+                        m_chunkThread = new Thread(new ThreadStart(UpdateFaces));
+                        m_chunkThread.Start();
+                    }
                     break;
                 case ChunkState.NeedMeshUpdate:
                     UpdateMesh();
@@ -140,29 +159,31 @@ namespace VoxelWorldEngine
                     break;
             }
         }
+        //TODO: set the thread control to the game manager (World generator by now)
         void ThreadControl()
         {
-            //ThreadPool.
-
             //Set the active threads limit
             int tactive;
-            if ((tactive = m_threadPool.Where(o => o.IsAlive).Count()) < k_threadLimit)
+            if ((tactive = m_activatedThreads.Where(o => o.IsAlive).Count()) < m_parent.MaxThreads)
             {
-                foreach (Thread th in m_threadPool)
+                foreach (Thread th in m_activatedThreads)
                 {
-                    if (tactive < k_threadLimit)
+                    if (tactive < m_parent.MaxThreads)
                     {
                         switch (th.ThreadState)
                         {
                             case System.Threading.ThreadState.Aborted:
+                                //Debug.Log("Thread aborted");
                                 break;
                             case System.Threading.ThreadState.AbortRequested:
                                 break;
                             case System.Threading.ThreadState.Background:
                                 break;
                             case System.Threading.ThreadState.Running:
+                                //Debug.Log("Thread running");
                                 break;
                             case System.Threading.ThreadState.Stopped:
+                                //Debug.Log("Thread stopped");
                                 break;
                             case System.Threading.ThreadState.StopRequested:
                                 break;
@@ -173,12 +194,18 @@ namespace VoxelWorldEngine
                             case System.Threading.ThreadState.Unstarted:
                                 th.Start();
                                 tactive++;
+                                Debug.Log("Generation started");
                                 break;
                             case System.Threading.ThreadState.WaitSleepJoin:
+                                Debug.Log("Thread waiting");
                                 break;
                             default:
                                 break;
                         }
+                    }
+                    else
+                    {
+                        break;
                     }
                 }
             }
@@ -186,8 +213,9 @@ namespace VoxelWorldEngine
         /// <summary>
         /// Generate the chunk mesh
         /// </summary>
-        void GenerateHeightMap(object stateInfo)
+        void GenerateHeightMap()
         {
+            //Thread.Sleep(5000);
             //Update the chunk state
             State = ChunkState.Updating;
 

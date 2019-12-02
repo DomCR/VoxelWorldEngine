@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using VoxelWorldEngine.Biomes;
@@ -25,6 +26,7 @@ namespace VoxelWorldEngine
 
         [Space()]
         public bool UseThreading;
+        public int MaxThreads = 8;
         
         [Space()]
         public int ChunksX;
@@ -74,6 +76,8 @@ namespace VoxelWorldEngine
         protected Vector3 m_position;
         protected Dictionary<Vector3, Chunk> m_chunks;
         protected BiomeAttributes[] m_worldBiomes;
+
+        protected bool firstTime = true;
         //****************************************************************
         #region Behaviour methods
         // Start is called before the first frame update
@@ -92,8 +96,7 @@ namespace VoxelWorldEngine
             //Clear the none needed data
             Array.Clear(BiomeData, 0, BiomeData.Length);
 
-            //Generate the world
-            GenerateWorld();
+            
         }
         // Update is called once per frame
         void Update()
@@ -101,6 +104,13 @@ namespace VoxelWorldEngine
             if (debug.IsActive)
             {
                 debugActions();
+            }
+
+            //Generate the world
+            if (firstTime)
+            {
+                GenerateWorld();
+                firstTime = false;
             }
         }
         #endregion

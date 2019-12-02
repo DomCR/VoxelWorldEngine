@@ -171,6 +171,7 @@ MonoBehaviour:
   Seed: 0
   UseSeed: 0
   UseThreading: 0
+  MaxThreads: 0
   ChunksX: 5
   ChunksY: 1
   ChunksZ: 5
@@ -398,9 +399,10 @@ MonoBehaviour:
   Seed: 0
   UseSeed: 1
   UseThreading: 1
-  ChunksX: 5
+  MaxThreads: 10
+  ChunksX: 10
   ChunksY: 1
-  ChunksZ: 5
+  ChunksZ: 10
   BiomeData:
   - {fileID: 11400000, guid: 2406e2b93a03aa748b5186656fff86d0, type: 2}
   - {fileID: 11400000, guid: 5d3eb6e0339d98045b54698ec8e34fa8, type: 2}
@@ -478,6 +480,7 @@ MonoBehaviour:
   Seed: 0
   UseSeed: 0
   UseThreading: 0
+  MaxThreads: 0
   ChunksX: 5
   ChunksY: 1
   ChunksZ: 5
