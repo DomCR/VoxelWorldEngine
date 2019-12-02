@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace VoxelWorldEngine.Enums
 {
+    [Obsolete]
     public enum NoiseType
     {
         HEIGHT_2D,
@@ -14,6 +15,7 @@ namespace VoxelWorldEngine.Enums
     }
 
     //Test enum for noise layers
+    [Obsolete]
     public enum NoiseLayerType
     {
         /// <summary>

@@ -19,10 +19,7 @@ namespace VoxelWorldEngine
         /// Faster to initialize but slower when it comes to calculate noise and biomes
         /// </summary>
         public BlockType[,,] Blocks;
-        /// <summary>
-        /// Slower to initialize but faster when it comes to calculate noise and biomes
-        /// </summary>
-        public BlockType[][][] ArrBlocks;
+
         public const int XSize = 16;
         public const int YSize = 256;
         public const int ZSize = 16;
@@ -51,11 +48,12 @@ namespace VoxelWorldEngine
         Thread m_chunkThread;
         //TODO: implement thread pool to control the pc resources
         private static List<Thread> m_threadPool = new List<Thread>();
-        private const int k_threadLimit = 8;
+        private const int k_threadLimit = 1;
         //*************************************************************
         #region Behaviour methods
         void Awake()
         {
+            ThreadPool.SetMaxThreads(k_threadLimit, 0);
             //Initialize the block array
             Blocks = new BlockType[XSize, YSize, ZSize];
 
@@ -80,18 +78,32 @@ namespace VoxelWorldEngine
         }
         void Update()
         {
+            StateBehaviour();
+        }
+        private void OnDisable()
+        {
+            m_chunkThread.Abort();
+        }
+        #endregion
+        //*************************************************************
+        void StateBehaviour()
+        {
             switch (State)
             {
-                //No action taken states
                 case ChunkState.Idle:
                 case ChunkState.Updating:
+                    //No action taken states
                     break;
                 case ChunkState.HeightMapGeneration:
+                    if (m_parent.UseThreading)
+                    {
+                        ThreadPool.QueueUserWorkItem(new WaitCallback(GenerateHeightMap));
+                    }
                     //GenerateHeightMap();
-                    m_chunkThread = new Thread(new ThreadStart(GenerateHeightMap));
+                    //m_chunkThread = new Thread(new ThreadStart(GenerateHeightMap));
                     //m_chunkThread = new Thread(new ThreadStart(GenerateHeightMap));
                     //m_threadPool.Add(m_chunkThread);
-                    m_chunkThread.Start();
+                    //m_chunkThread.Start();
                     break;
                 case ChunkState.CaveGeneration:
                     m_chunkThread = new Thread(new ThreadStart(GenerateHoles));
@@ -127,52 +139,54 @@ namespace VoxelWorldEngine
                 default:
                     break;
             }
-
-            #region WIP: Thread Management
-            ////Set the active threads limit
-            //int tactive;
-            //if ((tactive = m_threadPool.Where(o => o.IsAlive).Count()) < k_threadLimit)
-            //    foreach (Thread th in m_threadPool)
-            //    {
-            //        if (tactive < k_threadLimit)
-            //        {
-            //            switch (th.ThreadState)
-            //            {
-            //                case System.Threading.ThreadState.Aborted:
-            //                    break;
-            //                case System.Threading.ThreadState.AbortRequested:
-            //                    break;
-            //                case System.Threading.ThreadState.Background:
-            //                    break;
-            //                case System.Threading.ThreadState.Running:
-            //                    break;
-            //                case System.Threading.ThreadState.Stopped:
-            //                    break;
-            //                case System.Threading.ThreadState.StopRequested:
-            //                    break;
-            //                case System.Threading.ThreadState.Suspended:
-            //                    break;
-            //                case System.Threading.ThreadState.SuspendRequested:
-            //                    break;
-            //                case System.Threading.ThreadState.Unstarted:
-            //                    th.Start();
-            //                    tactive++;
-            //                    break;
-            //                case System.Threading.ThreadState.WaitSleepJoin:
-            //                    break;
-            //                default:
-            //                    break;
-            //            }
-            //        }
-            //    } 
-            #endregion
         }
-        #endregion
-        //*************************************************************
+        void ThreadControl()
+        {
+            //ThreadPool.
+
+            //Set the active threads limit
+            int tactive;
+            if ((tactive = m_threadPool.Where(o => o.IsAlive).Count()) < k_threadLimit)
+            {
+                foreach (Thread th in m_threadPool)
+                {
+                    if (tactive < k_threadLimit)
+                    {
+                        switch (th.ThreadState)
+                        {
+                            case System.Threading.ThreadState.Aborted:
+                                break;
+                            case System.Threading.ThreadState.AbortRequested:
+                                break;
+                            case System.Threading.ThreadState.Background:
+                                break;
+                            case System.Threading.ThreadState.Running:
+                                break;
+                            case System.Threading.ThreadState.Stopped:
+                                break;
+                            case System.Threading.ThreadState.StopRequested:
+                                break;
+                            case System.Threading.ThreadState.Suspended:
+                                break;
+                            case System.Threading.ThreadState.SuspendRequested:
+                                break;
+                            case System.Threading.ThreadState.Unstarted:
+                                th.Start();
+                                tactive++;
+                                break;
+                            case System.Threading.ThreadState.WaitSleepJoin:
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+        }
         /// <summary>
         /// Generate the chunk mesh
         /// </summary>
-        void GenerateHeightMap()
+        void GenerateHeightMap(object stateInfo)
         {
             //Update the chunk state
             State = ChunkState.Updating;

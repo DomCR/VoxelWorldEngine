@@ -24,6 +24,9 @@ namespace VoxelWorldEngine
         public bool UseSeed;
 
         [Space()]
+        public bool UseThreading;
+        
+        [Space()]
         public int ChunksX;
         public int ChunksY;
         public int ChunksZ;
