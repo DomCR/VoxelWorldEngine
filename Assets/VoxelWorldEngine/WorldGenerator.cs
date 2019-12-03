@@ -72,7 +72,7 @@ namespace VoxelWorldEngine
         [Tooltip("Noise dimensions, (x,z) as a 2Dplane, y is the up axis.")]
         public int Dimensions = 3;
         [Tooltip("Method to apply.")]
-        public NoiseMethodType NoiseType;
+        public NoiseMethodType_Obs NoiseType;
         //****************************************************************
         protected Vector3 m_position;
         protected Dictionary<Vector3, Chunk> m_chunks;
@@ -333,7 +333,7 @@ namespace VoxelWorldEngine
 
             //float bioNoise = Mathf.PerlinNoise(pos.x / 100, pos.z / 100);
 
-            NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)NoiseMethodType.Perlin][2 - 1];
+            NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)NoiseMethodType_Obs.Perlin][2 - 1];
             float bioNoise = (NoiseMap.Sum(method, pos / WidthMagnitude, 4, 4, 2, 0.5f) + 1) / 2;
 
 

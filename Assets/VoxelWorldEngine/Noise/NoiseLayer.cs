@@ -9,7 +9,7 @@ using VoxelWorldEngine.Noise.RawNoise;
 
 namespace VoxelWorldEngine.Noise
 {
-    [Serializable]
+    [Obsolete]
     public class NoiseLayer : INoiseLayer
     {
         public string Name;
@@ -40,7 +40,7 @@ namespace VoxelWorldEngine.Noise
         [Tooltip("Noise dimensions, (x,z) as a 2Dplane, y is the up axis.")]
         public int Dimensions = 3;
         [Tooltip("Method to apply.")]
-        public NoiseMethodType NoiseType;
+        public NoiseMethodType_Obs NoiseType;
 
         public BlockType Compute2D(Vector3 pos)
         {

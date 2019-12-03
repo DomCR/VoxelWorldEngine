@@ -24,7 +24,7 @@ public class NoiseViewer : MonoBehaviour
 
     [Range(1, 3)]
     public int dimensions = 3;
-    public NoiseMethodType NoiseType;
+    public NoiseMethodType_Obs NoiseType;
 
     public Gradient coloring;
 
@@ -72,14 +72,15 @@ public class NoiseViewer : MonoBehaviour
             {
                 Vector3 point = new Vector3(x + Seed, 0, y + Seed);
                 float sample = NoiseMap.Sum(method, point / WidthAmplitude, Frequency, octaves, lacunarity, persistence);
+                sample = (float)NoiseLibrary.GetValue(x / WidthAmplitude, 0, y / WidthAmplitude, Frequency, octaves, lacunarity, persistence);
 
                 //sample *= 0.5f;
                 //sample += 0.50f;
 
-                sample = Mathf.Lerp(0, 1.5f, sample);
-                sample = Mathf.Clamp(sample, 0, 1);
+                //sample = Mathf.Lerp(0, 1f, sample);
+                //sample = Mathf.Clamp(sample, 0, 1);
 
-                if (NoiseType == NoiseMethodType.Value)
+                if (NoiseType == NoiseMethodType_Obs.Value)
                     sample *= 0.5f;
 
                 //sample = Mathf.PerlinNoise(x / WidthAmplitude, y / WidthAmplitude);

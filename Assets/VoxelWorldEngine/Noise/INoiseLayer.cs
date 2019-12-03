@@ -8,6 +8,7 @@ using VoxelWorldEngine.Enums;
 
 namespace VoxelWorldEngine.Noise
 {
+    [Obsolete]
     public interface INoiseLayer 
     {
         BlockType Compute2D(Vector3 pos);

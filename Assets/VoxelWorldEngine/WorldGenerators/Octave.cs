@@ -34,7 +34,7 @@ namespace VoxelWorldEngine
         [Tooltip("Noise dimensions, (x,z) as a 2Dplane, y is the up axis.")]
         public int DimensionsDensity = 3;
         [Tooltip("Method to apply.")]
-        public NoiseMethodType NoiseTypeDensity;
+        public NoiseMethodType_Obs NoiseTypeDensity;
 
         //public Dictionary<string, string> NoiseLayers;
         //****************************************************************
@@ -64,6 +64,11 @@ namespace VoxelWorldEngine
         {
             NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)attr.NoiseType][attr.Dimensions - 1];
             float sample = (NoiseMap.Sum(method, pos / attr.WidthMagnitude, attr.Frequency, attr.Octaves, attr.Lacunarity, attr.Persistence) + 1) / 2;
+            //sample = (float)NoiseLibrary.GetValue(pos.x / attr.WidthMagnitude, 0, pos.z / WidthMagnitude, attr.Frequency, attr.Octaves, attr.Lacunarity, attr.Persistence);
+           
+            if (attr.NoiseType == NoiseMethodType_Obs.Value)
+                sample *= 0.5f;
+
             sample *= attr.HeightMagnitude;
 
             //Set the minimum height of the world

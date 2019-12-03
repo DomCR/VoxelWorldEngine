@@ -9,7 +9,7 @@ using VoxelWorldEngine.Noise.RawNoise;
 
 namespace VoxelWorldEngine.Noise
 {
-    [Serializable]
+    [Obsolete]
     public abstract class Noise
     {
         public string Name;

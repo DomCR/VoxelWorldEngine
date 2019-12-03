@@ -20,7 +20,7 @@ namespace VoxelWorldEngine.Biomes
         public float Lacunarity { get; set; }
         public float Persistence { get; set; }
         public int Dimensions { get; set; }
-        public NoiseMethodType NoiseType { get; set; }
+        public NoiseMethodType_Obs NoiseType { get; set; }
         public float Density { get; set; }
         public bool Inverted { get; set; }
         public float Frequency3D { get; set; }
@@ -29,7 +29,7 @@ namespace VoxelWorldEngine.Biomes
         public float Persistence3D { get; set; }
         public float Width3D { get; set; }
         public int DimensionsDensity { get; set; }
-        public NoiseMethodType NoiseTypeDensity { get; set; }
+        public NoiseMethodType_Obs NoiseTypeDensity { get; set; }
 
         public float Temperature { get; set; }
         public float Height { get; set; }

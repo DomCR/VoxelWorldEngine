@@ -60,7 +60,6 @@ namespace VoxelWorldEngine.Noise.RawNoise
 
     public sealed class OctaveNoise
     {
-
         readonly ImprovedNoise[] baseNoise;
         public OctaveNoise(int octaves, Random rnd)
         {

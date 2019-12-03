@@ -415,7 +415,7 @@ MonoBehaviour:
   HeightXNoiseGap: 0
   HeightZNoiseGap: 0
   Frequency: 2
-  Octaves: 2
+  Octaves: 5
   Lacunarity: 2
   Persistence: 0.5
   Dimensions: 2

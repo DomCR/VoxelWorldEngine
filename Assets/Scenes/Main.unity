@@ -244,15 +244,20 @@ MonoBehaviour:
     type: 3}
   debug:
     IsActive: 0
-    InitialState: 1
+    ChunkState: 0
   Seed: 0
   UseSeed: 0
+  UseThreadControl: 0
+  MaxThreads: 16
   ChunksX: 10
   ChunksY: 1
   ChunksZ: 10
+  BiomeData:
+  - {fileID: 11400000, guid: 2406e2b93a03aa748b5186656fff86d0, type: 2}
   WidthMagnitude: 100
-  HeightMagnitude: 100
-  MinHeight: 20
+  WorldHeight: 0
+  HeightXNoiseGap: 0
+  HeightZNoiseGap: 0
   Frequency: 3
   Octaves: 4
   Lacunarity: 2

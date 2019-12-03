@@ -1,11 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using VoxelWorldEngine.Noise;
 using VoxelWorldEngine.Noise.RawNoise;
 
-//[ExecuteInEditMode]
-public enum NoiseMethodType
+public enum NoiseMethodType_Obs
 {
     Value,
     Perlin
@@ -23,7 +23,7 @@ public class HeightMapVisualizer : MonoBehaviour
 
     [Range(1, 3)]
     public int dimensions = 3;
-    public NoiseMethodType NoiseType;
+    public NoiseMethodType_Obs NoiseType;
 
     [Space()]
     [Range(2, 1024)]
@@ -65,9 +65,9 @@ public class HeightMapVisualizer : MonoBehaviour
         Vector3 point01 = transform.TransformPoint(new Vector3(-0.5f, 0.5f));
         Vector3 point11 = transform.TransformPoint(new Vector3(0.5f, 0.5f));
 
-        Random.InitState(Seed);
+        UnityEngine.Random.InitState(Seed);
 
-        NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)NoiseType][dimensions - 1];
+        VoxelWorldEngine.Noise.RawNoise.NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)NoiseType][dimensions - 1];
         float stepSize = 1f / Resolution;
         for (int y = 0; y < Resolution; y++)
         {
@@ -78,7 +78,7 @@ public class HeightMapVisualizer : MonoBehaviour
                 Vector3 point = Vector3.Lerp(point0, point1, (x + 0.5f) * stepSize);
                 float sample = NoiseMap.Sum(method, point, Frequency, octaves, lacunarity, persistence);
                 //sample = Mathf.PerlinNoise(point.x / Frequency, point.z / Frequency);
-                if (NoiseType != NoiseMethodType.Value)
+                if (NoiseType != NoiseMethodType_Obs.Value)
                 {
                     sample = sample * 0.5f + 0.5f;
                 }
