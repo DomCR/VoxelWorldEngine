@@ -33,8 +33,7 @@ namespace LibNoise.Generator
         /// <param name="displacement">The displacement of the ridged-multifractal noise.</param>
         /// <param name="seed">The seed of the ridged-multifractal noise.</param>
         /// <param name="distance">Indicates whether the distance from the nearest seed point is applied to the output value.</param>
-        public Voronoi(double frequency, double displacement, int seed, bool distance)
-            : base(0)
+        public Voronoi(double frequency, double displacement, int seed, bool distance) : base(0)
         {
             Frequency = frequency;
             Displacement = displacement;
@@ -98,9 +97,9 @@ namespace LibNoise.Generator
             x *= _frequency;
             y *= _frequency;
             z *= _frequency;
-            var xi = (x > 0.0 ? (int) x : (int) x - 1);
-            var iy = (y > 0.0 ? (int) y : (int) y - 1);
-            var iz = (z > 0.0 ? (int) z : (int) z - 1);
+            var xi = (x > 0.0 ? (int)x : (int)x - 1);
+            var iy = (y > 0.0 ? (int)y : (int)y - 1);
+            var iz = (z > 0.0 ? (int)z : (int)z - 1);
             var md = 2147483647.0;
             double xc = 0;
             double yc = 0;
@@ -140,10 +139,9 @@ namespace LibNoise.Generator
             {
                 v = 0.0;
             }
-            return v + (_displacement * Utils.ValueNoise3D((int) (Math.Floor(xc)), (int) (Math.Floor(yc)),
-                (int) (Math.Floor(zc)), 0));
+            return v + (_displacement * Utils.ValueNoise3D((int)(Math.Floor(xc)), (int)(Math.Floor(yc)),
+                (int)(Math.Floor(zc)), 0));
         }
-
         #endregion
     }
 }

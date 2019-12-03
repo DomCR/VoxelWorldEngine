@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace VoxelWorldEngine.Noise.RawNoise
+namespace VoxelWorldEngine.Noise
 {
     public static class PerlinNoise3D
     {

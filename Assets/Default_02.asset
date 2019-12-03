@@ -15,8 +15,8 @@ MonoBehaviour:
   Name: Default_01
   DebugBlock: 5
   WidthMagnitude: 50
-  HeightMagnitude: 200
-  Frequency: 6
+  HeightMagnitude: 100
+  Frequency: 2
   Octaves: 4
   Lacunarity: 2
   Persistence: 0.5

@@ -7,39 +7,10 @@ using UnityEngine;
 using LibNoise;
 using VoxelWorldEngine.Enums;
 
-namespace VoxelWorldEngine.Noise.RawNoise
+namespace VoxelWorldEngine.Noise
 {
-    public delegate float LibNoiseDelegate();
-    public class NoiseLibrary : INoise
+    public class NoiseLibrary
     {
-        // Create the module network
-        static ModuleBase moduleBase;
-
-        public static float Perlin(NoiseMethodType type)
-        {
-            switch (type)
-            {
-                case NoiseMethodType.Value:
-                    break;
-                case NoiseMethodType.Perlin:
-                    break;
-                case NoiseMethodType.Billow:
-                    break;
-                case NoiseMethodType.RidgedMultifractal:
-                    break;
-                case NoiseMethodType.Voronoi:
-                    break;
-                case NoiseMethodType.Mix:
-                    break;
-                case NoiseMethodType.Practice:
-                    break;
-                default:
-                    break;
-            }
-
-            return 0.0f;
-        }
-
         /// <summary>
         /// Returns the output value for the given input coordinates.
         /// </summary>

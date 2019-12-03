@@ -10,10 +10,5 @@ namespace VoxelWorldEngine.Enums
     {
         Value,
         Perlin,
-        Billow,
-        RidgedMultifractal,
-        Voronoi,
-        Mix,
-        Practice
     }
 }

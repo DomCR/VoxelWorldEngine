@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace VoxelWorldEngine.Noise.RawNoise
+namespace VoxelWorldEngine.Noise
 {
     /// <summary>
     /// Delegate the noise methods

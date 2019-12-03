@@ -9,7 +9,6 @@ using VoxelWorldEngine.Biomes;
 using VoxelWorldEngine.Enums;
 using VoxelWorldEngine.Utils;
 using VoxelWorldEngine.Noise;
-using VoxelWorldEngine.Noise.RawNoise;
 
 namespace VoxelWorldEngine
 {
@@ -72,7 +71,7 @@ namespace VoxelWorldEngine
         [Tooltip("Noise dimensions, (x,z) as a 2Dplane, y is the up axis.")]
         public int Dimensions = 3;
         [Tooltip("Method to apply.")]
-        public NoiseMethodType_Obs NoiseType;
+        public NoiseMethodType NoiseType;
         //****************************************************************
         protected Vector3 m_position;
         protected Dictionary<Vector3, Chunk> m_chunks;
@@ -270,25 +269,33 @@ namespace VoxelWorldEngine
 
             #region TO FIX
             //TODO: Fix the biomes (libnoise voronoi)
-            NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)NoiseType][Dimensions - 1];
-            float temperatureNoise = (NoiseMap.Sum(method, new Vector3(basePos.x, 0, basePos.y) / WidthMagnitude, Frequency, Octaves, Lacunarity, Persistence) + 1) / 2;
-            float heightNoise = (NoiseMap.Sum(method, new Vector3(basePos.x + HeightXNoiseGap, 0, basePos.y + HeightZNoiseGap) / WidthMagnitude, Frequency, Octaves, Lacunarity, Persistence) + 1) / 2;
+            //NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)NoiseType][Dimensions - 1];
+            //float temperatureNoise = (NoiseMap.Sum(method, new Vector3(basePos.x, 0, basePos.y) / WidthMagnitude, Frequency, Octaves, Lacunarity, Persistence) + 1) / 2;
+            //float heightNoise = (NoiseMap.Sum(method, new Vector3(basePos.x + HeightXNoiseGap, 0, basePos.y + HeightZNoiseGap) / WidthMagnitude, Frequency, Octaves, Lacunarity, Persistence) + 1) / 2;
 
-            BiomeAttributes bioAtt = new BiomeAttributes();
-            bioAtt.CopyBase(m_worldBiomes.OrderBy(o => o.Presence(heightNoise, temperatureNoise, 0.1f)).First());
-            int nbiomes = 0;
-            foreach (BiomeAttributes b in m_worldBiomes)
-            {
-                float presence = b.Presence(heightNoise, temperatureNoise, 0.7f);
+            //BiomeAttributes bioAtt = new BiomeAttributes();
+            //bioAtt.CopyBase(m_worldBiomes.OrderBy(o => o.Presence(heightNoise, temperatureNoise, 0.1f)).First());
+            //int nbiomes = 0;
+            //foreach (BiomeAttributes b in m_worldBiomes)
+            //{
+            //    float presence = b.Presence(heightNoise, temperatureNoise, 0.7f);
 
-                if (presence == 0)
-                    continue;
+            //    if (presence == 0)
+            //        continue;
 
-                bioAtt += b * presence;
-                nbiomes++;
-            } 
+            //    bioAtt += b * presence;
+            //    nbiomes++;
+            //} 
 
-            bioAtt /= nbiomes;
+            //bioAtt /= nbiomes;
+
+            //float temp = (float)VoronoiMap.GetValue(basePos.x, 0, basePos.y, WidthMagnitude, Frequency, false);
+            float temp = (float)(VoronoiMap.GetValue(basePos.x, 0, basePos.y, 1.5f, 0.05f, false) + 1) / 2f;
+            //int bioIndex = (int)Mathf.Lerp(0, m_worldBiomes.Length, temp);
+            float bioIndex = Mathf.Clamp(temp, 0f, m_worldBiomes.Length);
+            bioIndex *= m_worldBiomes.Length;
+            //bioIndex = Mathf.Clamp(temp, 0f, m_worldBiomes.Length);
+
             #endregion
 
             for (int y = 0; y < Chunk.YSize; y++)
@@ -304,7 +311,7 @@ namespace VoxelWorldEngine
                     continue;
                 }
 
-                col[y] = HeightNoise(pos, m_worldBiomes[0]);
+                col[y] = HeightNoise(pos, m_worldBiomes[(int)bioIndex]);
             }
 
             return col;
@@ -333,7 +340,7 @@ namespace VoxelWorldEngine
 
             //float bioNoise = Mathf.PerlinNoise(pos.x / 100, pos.z / 100);
 
-            NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)NoiseMethodType_Obs.Perlin][2 - 1];
+            NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)NoiseMethodType.Perlin][2 - 1];
             float bioNoise = (NoiseMap.Sum(method, pos / WidthMagnitude, 4, 4, 2, 0.5f) + 1) / 2;
 
 

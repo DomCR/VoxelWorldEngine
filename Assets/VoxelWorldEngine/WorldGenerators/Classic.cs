@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 using VoxelWorldEngine.Enums;
-using VoxelWorldEngine.Noise.RawNoise;
+using VoxelWorldEngine.Noise;
 using VoxelWorldEngine.Biomes;
 
 namespace VoxelWorldEngine

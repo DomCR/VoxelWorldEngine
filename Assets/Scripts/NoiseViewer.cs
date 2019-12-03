@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using VoxelWorldEngine.Noise.RawNoise;
+using VoxelWorldEngine.Enums;
+using VoxelWorldEngine.Noise;
 
 [ExecuteInEditMode]
 public class NoiseViewer : MonoBehaviour
@@ -24,7 +25,7 @@ public class NoiseViewer : MonoBehaviour
 
     [Range(1, 3)]
     public int dimensions = 3;
-    public NoiseMethodType_Obs NoiseType;
+    public NoiseMethodType NoiseType;
 
     public Gradient coloring;
 
@@ -73,6 +74,7 @@ public class NoiseViewer : MonoBehaviour
                 Vector3 point = new Vector3(x + Seed, 0, y + Seed);
                 float sample = NoiseMap.Sum(method, point / WidthAmplitude, Frequency, octaves, lacunarity, persistence);
                 sample = (float)NoiseLibrary.GetValue(x / WidthAmplitude, 0, y / WidthAmplitude, Frequency, octaves, lacunarity, persistence);
+                sample = (float)VoronoiMap.GetValue(x, 0, y, Frequency, WidthAmplitude, false);
 
                 //sample *= 0.5f;
                 //sample += 0.50f;
@@ -80,7 +82,7 @@ public class NoiseViewer : MonoBehaviour
                 //sample = Mathf.Lerp(0, 1f, sample);
                 //sample = Mathf.Clamp(sample, 0, 1);
 
-                if (NoiseType == NoiseMethodType_Obs.Value)
+                if (NoiseType == NoiseMethodType.Value)
                     sample *= 0.5f;
 
                 //sample = Mathf.PerlinNoise(x / WidthAmplitude, y / WidthAmplitude);

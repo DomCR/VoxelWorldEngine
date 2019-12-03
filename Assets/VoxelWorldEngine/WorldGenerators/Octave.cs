@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using VoxelWorldEngine.Biomes;
 using VoxelWorldEngine.Enums;
-using VoxelWorldEngine.Noise.RawNoise;
+using VoxelWorldEngine.Noise;
 
 namespace VoxelWorldEngine
 {
@@ -34,7 +34,7 @@ namespace VoxelWorldEngine
         [Tooltip("Noise dimensions, (x,z) as a 2Dplane, y is the up axis.")]
         public int DimensionsDensity = 3;
         [Tooltip("Method to apply.")]
-        public NoiseMethodType_Obs NoiseTypeDensity;
+        public NoiseMethodType NoiseTypeDensity;
 
         //public Dictionary<string, string> NoiseLayers;
         //****************************************************************
@@ -66,7 +66,7 @@ namespace VoxelWorldEngine
             float sample = (NoiseMap.Sum(method, pos / attr.WidthMagnitude, attr.Frequency, attr.Octaves, attr.Lacunarity, attr.Persistence) + 1) / 2;
             //sample = (float)NoiseLibrary.GetValue(pos.x / attr.WidthMagnitude, 0, pos.z / WidthMagnitude, attr.Frequency, attr.Octaves, attr.Lacunarity, attr.Persistence);
            
-            if (attr.NoiseType == NoiseMethodType_Obs.Value)
+            if (attr.NoiseType == NoiseMethodType.Value)
                 sample *= 0.5f;
 
             sample *= attr.HeightMagnitude;

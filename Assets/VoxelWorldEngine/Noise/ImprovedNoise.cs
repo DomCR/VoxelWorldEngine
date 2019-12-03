@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VoxelWorldEngine.Noise.RawNoise
+namespace VoxelWorldEngine.Noise
 {
     public sealed class ImprovedNoise
     {

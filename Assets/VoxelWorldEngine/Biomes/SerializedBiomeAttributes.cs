@@ -39,7 +39,7 @@ namespace VoxelWorldEngine.Biomes
         [Tooltip("Noise dimensions, (x,z) as a 2Dplane, y is the up axis.")]
         public int Dimensions = 3;
         [Tooltip("Method to apply.")]
-        public NoiseMethodType_Obs NoiseType;
+        public NoiseMethodType NoiseType;
 
         [Space]
         [Header("Biome spawn qualifications")]
@@ -70,6 +70,6 @@ namespace VoxelWorldEngine.Biomes
         [Tooltip("Noise dimensions, (x,z) as a 2Dplane, y is the up axis.")]
         public int DimensionsDensity = 3;
         [Tooltip("Method to apply.")]
-        public NoiseMethodType_Obs NoiseTypeDensity;
+        public NoiseMethodType NoiseTypeDensity;
     }
 }

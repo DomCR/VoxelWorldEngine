@@ -15,7 +15,7 @@ MonoBehaviour:
   Name: Default
   DebugBlock: 2
   WidthMagnitude: 128
-  HeightMagnitude: 200
+  HeightMagnitude: 100
   Frequency: 4
   Octaves: 8
   Lacunarity: 2
