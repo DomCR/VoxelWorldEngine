@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using VoxelWorldEngine.Enums;
 
-namespace VoxelWorldEngine.Biomes
+namespace VoxelWorldEngine.Attributes
 {
+    //TODO: CLEAN CODE
     public class BiomeAttributes
     {
         public const float MaxHeight = 256f;
@@ -21,15 +22,15 @@ namespace VoxelWorldEngine.Biomes
         public float Persistence { get; set; }
         public int Dimensions { get; set; }
         public NoiseMethodType NoiseType { get; set; }
-        public float Density { get; set; }
-        public bool Inverted { get; set; }
-        public float Frequency3D { get; set; }
-        public int Octaves3D { get; set; }
-        public float Lacunarity3D { get; set; }
-        public float Persistence3D { get; set; }
-        public float Width3D { get; set; }
-        public int DimensionsDensity { get; set; }
-        public NoiseMethodType NoiseTypeDensity { get; set; }
+        //public float Density { get; set; }
+        //public bool Inverted { get; set; }
+        //public float Frequency3D { get; set; }
+        //public int Octaves3D { get; set; }
+        //public float Lacunarity3D { get; set; }
+        //public float Persistence3D { get; set; }
+        //public float Width3D { get; set; }
+        //public int DimensionsDensity { get; set; }
+        //public NoiseMethodType NoiseTypeDensity { get; set; }
 
         public float Temperature { get; set; }
         public float Height { get; set; }
@@ -37,7 +38,7 @@ namespace VoxelWorldEngine.Biomes
         public BiomeAttributes()
         {
             Dimensions = 1;
-            DimensionsDensity = 1;
+            //DimensionsDensity = 1;
         }
         public BiomeAttributes(BiomeAttributes att)
         {
@@ -52,15 +53,15 @@ namespace VoxelWorldEngine.Biomes
             Persistence = att.Persistence;
             Dimensions = att.Dimensions;
             NoiseType = att.NoiseType;
-            Density = att.Density;
-            Inverted = att.Inverted;
-            Frequency3D = att.Frequency3D;
-            Octaves3D = att.Octaves3D;
-            Lacunarity3D = att.Lacunarity3D;
-            Persistence3D = att.Persistence3D;
-            Width3D = att.Width3D;
-            DimensionsDensity = att.DimensionsDensity;
-            NoiseTypeDensity = att.NoiseTypeDensity;
+            //Density = att.Density;
+            //Inverted = att.Inverted;
+            //Frequency3D = att.Frequency3D;
+            //Octaves3D = att.Octaves3D;
+            //Lacunarity3D = att.Lacunarity3D;
+            //Persistence3D = att.Persistence3D;
+            //Width3D = att.Width3D;
+            //DimensionsDensity = att.DimensionsDensity;
+            //NoiseTypeDensity = att.NoiseTypeDensity;
         }
         public BiomeAttributes(SerializedBiomeAttributes att)
         {
@@ -75,15 +76,15 @@ namespace VoxelWorldEngine.Biomes
             Persistence = att.Persistence;
             Dimensions = att.Dimensions;
             NoiseType = att.NoiseType;
-            Density = att.Density;
-            Inverted = att.Inverted;
-            Frequency3D = att.Frequency3D;
-            Octaves3D = att.Octaves3D;
-            Lacunarity3D = att.Lacunarity3D;
-            Persistence3D = att.Persistence3D;
-            Width3D = att.Width3D;
-            DimensionsDensity = att.DimensionsDensity;
-            NoiseTypeDensity = att.NoiseTypeDensity;
+            //Density = att.Density;
+            //Inverted = att.Inverted;
+            //Frequency3D = att.Frequency3D;
+            //Octaves3D = att.Octaves3D;
+            //Lacunarity3D = att.Lacunarity3D;
+            //Persistence3D = att.Persistence3D;
+            //Width3D = att.Width3D;
+            //DimensionsDensity = att.DimensionsDensity;
+            //NoiseTypeDensity = att.NoiseTypeDensity;
         }
         //**************************************************************************
         public float Presence(float height, float temperature, float spawnRange)
@@ -119,11 +120,11 @@ namespace VoxelWorldEngine.Biomes
             biomeAtts.Frequency += att2.Frequency;
             biomeAtts.Lacunarity += att2.Lacunarity;
             biomeAtts.Persistence += att2.Persistence;
-            biomeAtts.Density += att2.Density;
-            biomeAtts.Frequency3D += att2.Frequency3D;
-            biomeAtts.Lacunarity3D += att2.Lacunarity3D;
-            biomeAtts.Persistence3D += att2.Persistence3D;
-            biomeAtts.Width3D += att2.Width3D;
+            //biomeAtts.Density += att2.Density;
+            //biomeAtts.Frequency3D += att2.Frequency3D;
+            //biomeAtts.Lacunarity3D += att2.Lacunarity3D;
+            //biomeAtts.Persistence3D += att2.Persistence3D;
+            //biomeAtts.Width3D += att2.Width3D;
 
             return biomeAtts;
         }
@@ -136,11 +137,11 @@ namespace VoxelWorldEngine.Biomes
             biomeAtts.Frequency /= prod;
             biomeAtts.Lacunarity /= prod;
             biomeAtts.Persistence /= prod;
-            biomeAtts.Density /= prod;
-            biomeAtts.Frequency3D /= prod;
-            biomeAtts.Lacunarity3D /= prod;
-            biomeAtts.Persistence3D /= prod;
-            biomeAtts.Width3D /= prod;
+            //biomeAtts.Density /= prod;
+            //biomeAtts.Frequency3D /= prod;
+            //biomeAtts.Lacunarity3D /= prod;
+            //biomeAtts.Persistence3D /= prod;
+            //biomeAtts.Width3D /= prod;
 
             return biomeAtts;
         }
@@ -153,11 +154,11 @@ namespace VoxelWorldEngine.Biomes
             biomeAtts.Frequency *= prod;
             biomeAtts.Lacunarity *= prod;
             biomeAtts.Persistence *= prod;
-            biomeAtts.Density *= prod;
-            biomeAtts.Frequency3D *= prod;
-            biomeAtts.Lacunarity3D *= prod;
-            biomeAtts.Persistence3D *= prod;
-            biomeAtts.Width3D *= prod;
+            //biomeAtts.Density *= prod;
+            //biomeAtts.Frequency3D *= prod;
+            //biomeAtts.Lacunarity3D *= prod;
+            //biomeAtts.Persistence3D *= prod;
+            //biomeAtts.Width3D *= prod;
 
             return biomeAtts;
         }

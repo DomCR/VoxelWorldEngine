@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
-using VoxelWorldEngine.Biomes;
+using VoxelWorldEngine.Attributes;
 using VoxelWorldEngine.Enums;
 using VoxelWorldEngine.Utils;
 using VoxelWorldEngine.Noise;
@@ -34,18 +34,15 @@ namespace VoxelWorldEngine
         public int ChunksZ;
 
         [Space()]
-        //Array of all the world biomes available
+        [Tooltip("Array with all the world biomes available")]
         public SerializedBiomeAttributes[] BiomeData;
+        [Tooltip("Array with all the ores available in the world")]
+        public SerializedOreAttributes[] OreData;
 
         [Header("Generic biome noise properties")]
         [Range(0f, 999f)]
         [Tooltip("Wave length of the biome noise")]
         public float WidthMagnitude = 125;
-
-        //[Range(0f, 999f)]
-        //[Tooltip("Wave height of the biome noise")]
-        //[Obsolete("The biome noise is 2D, no need for height")]
-        //public float HeightMagnitude = 200;
 
         [Tooltip("Minimum world height")]
         public int WorldHeight = 0;
@@ -76,6 +73,7 @@ namespace VoxelWorldEngine
         protected Vector3 m_position;
         protected Dictionary<Vector3, Chunk> m_chunks;
         protected BiomeAttributes[] m_worldBiomes;
+        protected OreAttributes[] m_worldOres;
         //****************************************************************
         public List<Thread> ActiveThreads;
         //****************************************************************
@@ -94,8 +92,16 @@ namespace VoxelWorldEngine
             {
                 m_worldBiomes[i] = new BiomeAttributes(BiomeData[i]);
             }
+            //Feed the world biome attributes to be used outside the main thread
+            m_worldOres = new OreAttributes[OreData.Length];
+            for (int i = 0; i < OreData.Length; i++)
+            {
+                m_worldOres[i] = new OreAttributes(OreData[i]);
+            }
+
             //Clear the none needed data
             Array.Clear(BiomeData, 0, BiomeData.Length);
+            Array.Clear(OreData, 0, OreData.Length);
 
             //Generate the world
             GenerateWorld();
@@ -311,7 +317,8 @@ namespace VoxelWorldEngine
                     continue;
                 }
 
-                col[y] = HeightNoise(pos, m_worldBiomes[(int)bioIndex]);
+                //col[y] = HeightNoise(pos, m_worldBiomes[(int)bioIndex]);
+                col[y] = HeightNoise(pos, m_worldBiomes[0]);
             }
 
             return col;

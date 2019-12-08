@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using VoxelWorldEngine.Biomes;
+using VoxelWorldEngine.Attributes;
 using VoxelWorldEngine.Enums;
 using VoxelWorldEngine.Noise;
 

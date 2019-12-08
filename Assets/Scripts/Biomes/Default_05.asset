@@ -10,26 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc2c33e154944fc4088ef518ff055c70, type: 3}
-  m_Name: Default_04
+  m_Name: Default_05
   m_EditorClassIdentifier: 
   Name: Default_01
-  DebugBlock: 12
-  WidthMagnitude: 3
-  HeightMagnitude: 168
-  Frequency: 1
-  Octaves: 7
+  DebugBlock: 28
+  WidthMagnitude: 100
+  HeightMagnitude: 100
+  Frequency: 4
+  Octaves: 6
   Lacunarity: 2
   Persistence: 0.5
   Dimensions: 3
   NoiseType: 1
-  Temperature: 0.4
+  Temperature: 0.8
   Height: 0.5
-  Density: 0.45
-  Inverted: 0
-  Frequency3D: 2
-  Octaves3D: 1
-  Lacunarity3D: 1
-  Persistence3D: 0.5
-  Width3D: 50
-  DimensionsDensity: 3
-  NoiseTypeDensity: 0

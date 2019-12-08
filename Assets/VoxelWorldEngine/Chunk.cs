@@ -24,7 +24,8 @@ namespace VoxelWorldEngine
         public const int YSize = 256;
         public const int ZSize = 16;
 
-        public ChunkState State = ChunkState.HeightMapGeneration;
+        public ChunkState State;
+        public ChunkPhase Phase;
 
         public GameObject[] WorldObjects;
 

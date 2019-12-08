@@ -44,7 +44,7 @@ RenderSettings:
 LightmapSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 11
-  m_GIWorkflowMode: 0
+  m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -96,7 +96,9 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
-  m_LightingDataAsset: {fileID: 0}
+    m_LightProbeSampleCountMultiplier: 4
+  m_LightingDataAsset: {fileID: 112000000, guid: 514b0480edc347b4f9f365f5140aa270,
+    type: 2}
   m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
@@ -176,6 +178,7 @@ MonoBehaviour:
   ChunksY: 1
   ChunksZ: 5
   BiomeData: []
+  OreData: []
   WidthMagnitude: 80
   WorldHeight: 0
   HeightXNoiseGap: 0
@@ -213,8 +216,9 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705507993}
   m_Enabled: 1
-  serializedVersion: 9
+  serializedVersion: 10
   m_Type: 1
+  m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
   m_Range: 10
@@ -397,7 +401,7 @@ MonoBehaviour:
     IsActive: 1
     ChunkState: 1
   Seed: 0
-  UseSeed: 1
+  UseSeed: 0
   UseThreadControl: 1
   MaxThreads: 16
   ChunksX: 10
@@ -410,6 +414,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f1b53da96fffab3488414ef3b80361c5, type: 2}
   - {fileID: 11400000, guid: 6ba4b79e8c92fe441be3f0d18a30fed4, type: 2}
   - {fileID: 11400000, guid: 96e5e44532833ae45b6efbe051b6d83e, type: 2}
+  OreData:
+  - {fileID: 11400000, guid: 5da883e21cfdb844b8d853279894f4a9, type: 2}
   WidthMagnitude: 750
   WorldHeight: 10
   HeightXNoiseGap: 0
@@ -421,7 +427,7 @@ MonoBehaviour:
   Dimensions: 2
   NoiseType: 1
   Density: 0.55
-  Inverted: 0
+  Inverted: 1
   Frequency3D: 4
   Octaves3D: 2
   Lacunarity3D: 4
@@ -485,6 +491,7 @@ MonoBehaviour:
   ChunksY: 1
   ChunksZ: 5
   BiomeData: []
+  OreData: []
   WidthMagnitude: 125
   WorldHeight: 0
   HeightXNoiseGap: 0
