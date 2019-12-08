@@ -28,6 +28,12 @@ namespace VoxelWorldEngine.WorldGenerators
 
             throw new NotImplementedException();
         }
+
+        protected override BlockType OreNoise(Vector3 pos, OreAttributes attr)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override BlockType[] StrataNoise(Vector3 pos)
         {
             throw new NotImplementedException();

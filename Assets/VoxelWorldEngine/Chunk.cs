@@ -80,7 +80,7 @@ namespace VoxelWorldEngine
         }
         void Update()
         {
-            if(State != m_state)
+            if (State != m_state)
             {
                 m_state = State;
                 StateBehaviour();
@@ -106,38 +106,19 @@ namespace VoxelWorldEngine
                     //No action taken states
                     break;
                 case ChunkState.HeightMapGeneration:
-                    if (m_parent.UseThreadControl)
-                    {
-                        m_chunkThread = new Thread(new ThreadStart(GenerateHeightMap));
-                        m_parent.ActiveThreads.Add(m_chunkThread);
-                    }
-                    else
-                    {
-                        m_chunkThread = new Thread(new ThreadStart(GenerateHeightMap));
-                        m_chunkThread.Start();
-                    }
+                    startAction(GenerateHeightMap);
                     break;
                 case ChunkState.CaveGeneration:
-                    m_chunkThread = new Thread(new ThreadStart(GenerateHoles));
-                    //m_threadPool.Add(m_chunkThread);
-                    m_chunkThread.Start();
+                    startAction(GenerateCaves);
                     break;
                 case ChunkState.NeedFaceUpdate:
-                    if (m_parent.UseThreadControl)
-                    {
-                        m_chunkThread = new Thread(new ThreadStart(UpdateFaces));
-                        m_parent.ActiveThreads.Add(m_chunkThread);
-                    }
-                    else
-                    {
-                        m_chunkThread = new Thread(new ThreadStart(UpdateFaces));
-                        m_chunkThread.Start();
-                    }
+                    startAction(UpdateFaces);
                     break;
                 case ChunkState.NeedMeshUpdate:
                     UpdateMesh();
                     break;
                 case ChunkState.OreGeneration:
+                    startAction(GenerateOres);
                     break;
                 case ChunkState.StrataGeneration:
                     m_chunkThread = new Thread(new ThreadStart(GenerateStrata));
@@ -250,6 +231,33 @@ namespace VoxelWorldEngine
             //Update the chunk state
             State = ChunkState.NeedFaceUpdate;
         }
+        void GenerateCaves()
+        {
+            //Update the chunk state
+            State = ChunkState.Updating;
+
+            for (int x = 0; x < XSize; x++)
+            {
+                for (int y = 0; y < YSize; y++)
+                {
+                    for (int z = 0; z < ZSize; z++)
+                    {
+                        //Vector3 currBlockPos = new Vector3(
+                        //    x + this.transform.position.x,
+                        //    y + this.transform.position.y,
+                        //    z + this.transform.position.z); 
+                        Vector3 currBlockPos = new Vector3(
+                            x + Position.x,
+                            y + Position.y,
+                            z + Position.z);
+
+                    }
+                }
+            }
+
+            //Update the chunk state
+            State = ChunkState.NeedFaceUpdate;
+        }
         void GenerateDensityMap()
         {
             //Update the chunk state
@@ -279,32 +287,31 @@ namespace VoxelWorldEngine
             //Update the chunk state
             State = ChunkState.NeedFaceUpdate;
         }
-        void GenerateHoles()
+        void GenerateOres()
         {
             //Update the chunk state
             State = ChunkState.Updating;
 
             for (int x = 0; x < XSize; x++)
             {
-                for (int y = 0; y < YSize; y++)
+                for (int z = 0; z < ZSize; z++)
                 {
-                    for (int z = 0; z < ZSize; z++)
+                    for (int y = 0; y < YSize; y++)
                     {
-                        //Vector3 currBlockPos = new Vector3(
-                        //    x + this.transform.position.x,
-                        //    y + this.transform.position.y,
-                        //    z + this.transform.position.z); 
+                        //Guard, only generate ores in the stone
+                        if (Blocks[x, y, z] != BlockType.STONE)
+                            continue;
+
+                        //If the block above is air compute the dirt
                         Vector3 currBlockPos = new Vector3(
                             x + Position.x,
                             y + Position.y,
                             z + Position.z);
 
+                        Blocks[x, y, z] = m_parent.ComputeOreNoise(currBlockPos);
                     }
                 }
             }
-
-            //Update the chunk state
-            State = ChunkState.NeedFaceUpdate;
         }
         /// <summary>
         /// Spawn vegetation in the game
@@ -441,7 +448,7 @@ namespace VoxelWorldEngine
             m_mesh.vertices = m_mesh_vertices.ToArray();
             m_mesh.uv = m_uv.ToArray();
             m_mesh.triangles = m_mesh_triangles.ToArray();
-            
+
             m_mesh.RecalculateNormals();
 
             //Realize optimizations
@@ -542,6 +549,19 @@ namespace VoxelWorldEngine
             }
 
             m_uv.AddRange(Block.GetTexture(map));
+        }
+        private void startAction(Action action)
+        {
+            if (m_parent.UseThreadControl)
+            {
+                m_chunkThread = new Thread(new ThreadStart(action));
+                m_parent.ActiveThreads.Add(m_chunkThread);
+            }
+            else
+            {
+                m_chunkThread = new Thread(new ThreadStart(action));
+                m_chunkThread.Start();
+            }
         }
     }
 }

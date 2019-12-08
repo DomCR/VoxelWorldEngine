@@ -432,7 +432,7 @@ MonoBehaviour:
   Octaves3D: 2
   Lacunarity3D: 4
   Persistence3D: 1
-  Width3D: 100
+  Width3D: 200
   DimensionsDensity: 3
   NoiseTypeDensity: 1
 --- !u!4 &1668945964

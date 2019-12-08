@@ -89,5 +89,10 @@ namespace VoxelWorldEngine
         {
             throw new NotImplementedException();
         }
+
+        protected override BlockType OreNoise(Vector3 pos, OreAttributes attr)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

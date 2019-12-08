@@ -122,76 +122,6 @@ namespace VoxelWorldEngine
         }
         #endregion
         //****************************************************************
-        void debugActions()
-        {
-            if (debug.StateHasChanged())
-            {
-                foreach (Chunk chunk in m_chunks.Values)
-                {
-                    chunk.State = debug.ChunkState;
-                }
-            }
-        }
-        void threadControl()
-        {
-            //Set the active threads limit
-            int tactive;
-            if ((tactive = ActiveThreads.Where(o => o.IsAlive).Count()) < this.MaxThreads)
-            {
-                List<Thread> threadsToRemove = new List<Thread>();
-
-                foreach (Thread th in ActiveThreads)
-                {
-                    if (tactive < this.MaxThreads)
-                    {
-                        switch (th.ThreadState)
-                        {
-                            case System.Threading.ThreadState.Aborted:
-                                Debug.Log("Thread aborted");
-                                break;
-                            case System.Threading.ThreadState.AbortRequested:
-                                break;
-                            case System.Threading.ThreadState.Background:
-                                Debug.Log("Thread background running");
-                                break;
-                            case System.Threading.ThreadState.Running:
-                                //Debug.Log("Thread running");
-                                break;
-                            case System.Threading.ThreadState.Stopped:
-                                threadsToRemove.Add(th);
-                                Debug.Log("Thread stopped");
-                                break;
-                            case System.Threading.ThreadState.StopRequested:
-                                break;
-                            case System.Threading.ThreadState.Suspended:
-                                break;
-                            case System.Threading.ThreadState.SuspendRequested:
-                                break;
-                            case System.Threading.ThreadState.Unstarted:
-                                th.Start();
-                                tactive++;
-                                Debug.Log("Generation started");
-                                break;
-                            case System.Threading.ThreadState.WaitSleepJoin:
-                                Debug.Log("Thread waiting");
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                //Remove finished threads
-                foreach (Thread item in threadsToRemove)
-                {
-                    ActiveThreads.Remove(item);
-                }
-            }
-        }
-        //****************************************************************
         /// <summary>
         /// Create the world chunks 
         /// </summary>
@@ -392,6 +322,19 @@ namespace VoxelWorldEngine
         {
             return StrataNoise(pos);
         }
+        public BlockType ComputeOreNoise(Vector3 basePos)
+        {
+            BlockType ore = BlockType.STONE;
+
+            foreach (OreAttributes att in m_worldOres)
+            {
+                ore = OreNoise(basePos, att);
+                if (ore != BlockType.STONE)
+                    break;
+            }
+
+            return ore;
+        }
         public BlockType ComputeDensityNoise(Vector3 pos)
         {
             return DensityNoise(pos);
@@ -430,6 +373,77 @@ namespace VoxelWorldEngine
         [Obsolete]
         protected abstract BlockType HeightNoise(Vector3 pos);
         protected abstract BlockType HeightNoise(Vector3 pos, BiomeAttributes attr);
+        protected abstract BlockType OreNoise(Vector3 pos, OreAttributes attr);
         protected abstract BlockType DensityNoise(Vector3 pos);
+        //****************************************************************
+        private void debugActions()
+        {
+            if (debug.StateHasChanged())
+            {
+                foreach (Chunk chunk in m_chunks.Values)
+                {
+                    chunk.State = debug.ChunkState;
+                }
+            }
+        }
+        private void threadControl()
+        {
+            //Set the active threads limit
+            int tactive;
+            if ((tactive = ActiveThreads.Where(o => o.IsAlive).Count()) < this.MaxThreads)
+            {
+                List<Thread> threadsToRemove = new List<Thread>();
+
+                foreach (Thread th in ActiveThreads)
+                {
+                    if (tactive < this.MaxThreads)
+                    {
+                        switch (th.ThreadState)
+                        {
+                            case System.Threading.ThreadState.Aborted:
+                                Debug.Log("Thread aborted");
+                                break;
+                            case System.Threading.ThreadState.AbortRequested:
+                                break;
+                            case System.Threading.ThreadState.Background:
+                                Debug.Log("Thread background running");
+                                break;
+                            case System.Threading.ThreadState.Running:
+                                //Debug.Log("Thread running");
+                                break;
+                            case System.Threading.ThreadState.Stopped:
+                                threadsToRemove.Add(th);
+                                Debug.Log("Thread stopped");
+                                break;
+                            case System.Threading.ThreadState.StopRequested:
+                                break;
+                            case System.Threading.ThreadState.Suspended:
+                                break;
+                            case System.Threading.ThreadState.SuspendRequested:
+                                break;
+                            case System.Threading.ThreadState.Unstarted:
+                                th.Start();
+                                tactive++;
+                                Debug.Log("Generation started");
+                                break;
+                            case System.Threading.ThreadState.WaitSleepJoin:
+                                Debug.Log("Thread waiting");
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                //Remove finished threads
+                foreach (Thread item in threadsToRemove)
+                {
+                    ActiveThreads.Remove(item);
+                }
+            }
+        }
     }
 }

@@ -84,6 +84,19 @@ namespace VoxelWorldEngine
 
             return BlockType.NULL;
         }
+        protected override BlockType OreNoise(Vector3 pos, OreAttributes attr)
+        {
+            NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)attr.NoiseType][attr.Dimensions - 1];
+            Vector3 widthPos = new Vector3(pos.x / attr.XWidth, pos.y / attr.YWidth, pos.z / attr.ZWidth);
+            float sample = (NoiseMap.Sum(method, widthPos, attr.Frequency, attr.Octaves, attr.Lacunarity, attr.Persistence) + 1) / 2;
+
+            BlockType ore = BlockType.NULL;
+
+            if (attr.Density > sample)
+                ore = attr.OreBlock;
+
+            return ore;
+        }
         protected override BlockType[] StrataNoise(Vector3 pos)
         {
             //TODO: NEED FIX, crash if there are multiple chunks in Y
