@@ -86,6 +86,9 @@ namespace VoxelWorldEngine
         }
         protected override BlockType OreNoise(Vector3 pos, OreAttributes attr)
         {
+            if (pos.y > attr.HeightLimit)
+                return BlockType.NULL;
+
             NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)attr.NoiseType][attr.Dimensions - 1];
             Vector3 widthPos = new Vector3(pos.x / attr.XWidth, pos.y / attr.YWidth, pos.z / attr.ZWidth);
             float sample = (NoiseMap.Sum(method, widthPos, attr.Frequency, attr.Octaves, attr.Lacunarity, attr.Persistence) + 1) / 2;
