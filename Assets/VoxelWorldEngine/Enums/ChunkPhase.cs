@@ -8,6 +8,8 @@ namespace VoxelWorldEngine.Enums
 {
     public enum ChunkPhase
     {
+        Init,
+
         HeightMap,
         Strata,
         Caves,

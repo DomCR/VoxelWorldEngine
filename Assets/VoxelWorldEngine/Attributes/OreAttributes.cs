@@ -41,6 +41,9 @@ namespace VoxelWorldEngine.Attributes
             YWidth = att.YWidth;
             ZWidth = att.ZWidth;
 
+            Density = att.Density;
+            Inverted = att.Inverted;
+
             HeightLimit = att.HeightLimit;
             Frequency = att.Frequency;
             Octaves = att.Octaves;
@@ -57,6 +60,9 @@ namespace VoxelWorldEngine.Attributes
             XWidth = att.XWidth;
             YWidth = att.YWidth;
             ZWidth = att.ZWidth;
+
+            Density = att.Density;
+            Inverted = att.Inverted;
 
             HeightLimit = att.HeightLimit;
             Frequency = att.Frequency;

@@ -92,8 +92,20 @@ namespace VoxelWorldEngine
 
             BlockType ore = BlockType.NULL;
 
-            if (attr.Density > sample)
-                ore = attr.OreBlock;
+            if (attr.Inverted)
+            {
+                if (sample > attr.Density)
+                {
+                    ore = attr.OreBlock;
+                }
+            }
+            else
+            {
+                if (sample < attr.Density)
+                {
+                    ore = attr.OreBlock;
+                }
+            }
 
             return ore;
         }

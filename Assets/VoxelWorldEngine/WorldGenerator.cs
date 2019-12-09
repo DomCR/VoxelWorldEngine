@@ -324,16 +324,19 @@ namespace VoxelWorldEngine
         }
         public BlockType ComputeOreNoise(Vector3 basePos)
         {
-            BlockType ore = BlockType.STONE;
+            BlockType ore = BlockType.NULL;
 
             foreach (OreAttributes att in m_worldOres)
             {
                 ore = OreNoise(basePos, att);
-                if (ore != BlockType.STONE)
+                if (ore != BlockType.NULL)
                     break;
             }
 
-            return ore;
+            if (ore == BlockType.NULL)
+                return BlockType.STONE;
+            else
+                return ore;
         }
         public BlockType ComputeDensityNoise(Vector3 pos)
         {

@@ -426,15 +426,15 @@ MonoBehaviour:
   Persistence: 0.5
   Dimensions: 2
   NoiseType: 1
-  Density: 0.55
+  Density: 0.325
   Inverted: 1
-  Frequency3D: 4
-  Octaves3D: 2
-  Lacunarity3D: 4
-  Persistence3D: 1
-  Width3D: 200
+  Frequency3D: 10
+  Octaves3D: 8
+  Lacunarity3D: 2
+  Persistence3D: 0.8
+  Width3D: 300
   DimensionsDensity: 3
-  NoiseTypeDensity: 1
+  NoiseTypeDensity: 0
 --- !u!4 &1668945964
 Transform:
   m_ObjectHideFlags: 0

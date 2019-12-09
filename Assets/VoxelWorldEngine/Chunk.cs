@@ -1,5 +1,4 @@
 ﻿using System;
-//using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -46,6 +45,7 @@ namespace VoxelWorldEngine
         /// Guard to detect changes in the chunk state and execute the change only once.
         /// </summary>
         private ChunkState m_state = ChunkState.Idle;
+        private ChunkPhase m_phase = ChunkPhase.Init;
 
         //TODO: implement the world class
         private WorldGenerator m_parent;
@@ -80,13 +80,20 @@ namespace VoxelWorldEngine
         }
         void Update()
         {
+            if (!m_parent.debug.IsActive)
+            {
+                if (Phase != m_phase)
+                {
+                    m_phase = Phase;
+                    PhaseBehaviour();
+                }
+            }
+
             if (State != m_state)
             {
                 m_state = State;
                 StateBehaviour();
             }
-
-            //ThreadControl();
         }
         private void OnDisable()
         {
@@ -95,7 +102,7 @@ namespace VoxelWorldEngine
         #endregion
         //*************************************************************
         /// <summary>
-        /// 
+        /// Set the action to take according to the current state.
         /// </summary>
         void StateBehaviour()
         {
@@ -121,20 +128,38 @@ namespace VoxelWorldEngine
                     startAction(GenerateOres);
                     break;
                 case ChunkState.StrataGeneration:
-                    m_chunkThread = new Thread(new ThreadStart(GenerateStrata));
-                    //m_threadPool.Add(m_chunkThread);
-                    m_chunkThread.Start();
+                    startAction(GenerateStrata);
                     break;
                 case ChunkState.DensityMapGeneration:
-                    m_chunkThread = new Thread(new ThreadStart(GenerateDensityMap));
-                    //m_threadPool.Add(m_chunkThread);
-                    m_chunkThread.Start();
+                    startAction(GenerateDensityMap);
                     break;
                 case ChunkState.VegetationGeneration:
-                    //m_chunkThread = new Thread(new ThreadStart(GenerateVegetation));
-                    //m_threadPool.Add(m_chunkThread);
-                    //m_chunkThread.Start();
-                    GenerateVegetation();
+                    startAction(GenerateVegetation);
+                    break;
+                default:
+                    break;
+            }
+        }
+        void PhaseBehaviour()
+        {
+            //TODO: Implement auto generation
+            switch (m_phase)
+            {
+                case ChunkPhase.Init:
+                    State = ChunkState.HeightMapGeneration;
+                    break;
+                case ChunkPhase.HeightMap:
+
+                    break;
+                case ChunkPhase.Strata:
+                    break;
+                case ChunkPhase.Caves:
+                    break;
+                case ChunkPhase.OreGeneration:
+                    break;
+                case ChunkPhase.Vegetation:
+                    break;
+                case ChunkPhase.Generated:
                     break;
                 default:
                     break;
@@ -182,6 +207,7 @@ namespace VoxelWorldEngine
 
             //Update the chunk state
             State = ChunkState.NeedFaceUpdate;
+            Phase = ChunkPhase.Strata;
         }
         /// <summary>
         /// Generate the strata of the terrain (superficial dirt and grass)
@@ -242,14 +268,11 @@ namespace VoxelWorldEngine
                 {
                     for (int z = 0; z < ZSize; z++)
                     {
-                        //Vector3 currBlockPos = new Vector3(
-                        //    x + this.transform.position.x,
-                        //    y + this.transform.position.y,
-                        //    z + this.transform.position.z); 
                         Vector3 currBlockPos = new Vector3(
                             x + Position.x,
                             y + Position.y,
                             z + Position.z);
+
 
                     }
                 }
@@ -269,10 +292,6 @@ namespace VoxelWorldEngine
                 {
                     for (int z = 0; z < ZSize; z++)
                     {
-                        //Vector3 currBlockPos = new Vector3(
-                        //    x + this.transform.position.x,
-                        //    y + this.transform.position.y,
-                        //    z + this.transform.position.z); 
                         Vector3 currBlockPos = new Vector3(
                             x + Position.x,
                             y + Position.y,
@@ -312,6 +331,9 @@ namespace VoxelWorldEngine
                     }
                 }
             }
+
+            //Update the chunk state
+            State = ChunkState.NeedFaceUpdate;
         }
         /// <summary>
         /// Spawn vegetation in the game

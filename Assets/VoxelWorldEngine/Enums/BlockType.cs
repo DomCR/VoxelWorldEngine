@@ -42,6 +42,9 @@ namespace VoxelWorldEngine.Enums
         OAKTREE_LOG,
 
         //ROW 3
+        ORE_GOLD = BlockTextureMap.ORE_GOLD,
+        ORE_IRON = BlockTextureMap.ORE_IRON,
+        ORE_COAL = BlockTextureMap.ORE_COAL,
         GRASS_SPAWN = BlockTextureMap.GRASS,
     }
 }

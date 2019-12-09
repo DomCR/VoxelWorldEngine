@@ -12,17 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 389a64c3688f62043b1b3f063de6c3dd, type: 3}
   m_Name: Coal
   m_EditorClassIdentifier: 
-  Name: Default
-  OreBlock: 0
-  XWidth: 100
-  YWidth: 100
-  ZWidth: 100
-  HeightLimit: 0
-  Density: 0.45
+  Name: Coal
+  OreBlock: 51
+  XWidth: 300
+  YWidth: 300
+  ZWidth: 300
+  HeightLimit: 756
+  Density: 0.325
   Inverted: 0
-  Frequency: 4
-  Octaves: 1
+  Frequency: 10
+  Octaves: 8
   Lacunarity: 2
-  Persistence: 0.5
+  Persistence: 0.8
   Dimensions: 3
-  NoiseType: 0
+  NoiseType: 1
