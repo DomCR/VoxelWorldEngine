@@ -39,6 +39,27 @@ namespace VoxelWorldEngine
         [Tooltip("Array with all the ores available in the world")]
         public SerializedOreAttributes[] OreData;
 
+        //[Space()]
+        //[Header("Game modifiers")]
+        public int SectionLevel
+        {
+            get
+            {
+                return m_sectionLevel;
+            }
+            set
+            {
+                if (value < (ChunksY * Chunk.YSize - 1) && value >= 0)
+                {
+                    m_sectionLevel = value;
+                    //Update horizontal section location
+                    //UpdateWorldSection();
+                }
+            }
+        }
+        private int m_sectionLevel;
+
+        #region Density noise properties (to delete)
         [Header("Generic biome noise properties")]
         [Range(0f, 999f)]
         [Tooltip("Wave length of the biome noise")]
@@ -69,6 +90,7 @@ namespace VoxelWorldEngine
         public int Dimensions = 3;
         [Tooltip("Method to apply.")]
         public NoiseMethodType NoiseType;
+        #endregion
         //****************************************************************
         protected Vector3 m_position;
         protected Dictionary<Vector3, Chunk> m_chunks;
@@ -81,6 +103,9 @@ namespace VoxelWorldEngine
         // Start is called before the first frame update
         void Start()
         {
+            //DEBUG
+            SectionLevel = 50;
+
             //Initialize variables
             m_position = this.transform.position;
             m_chunks = new Dictionary<Vector3, Chunk>();
@@ -120,8 +145,22 @@ namespace VoxelWorldEngine
                 threadControl();
             }
         }
+        void UpdateWorldSection()
+        {
+            //Valudate that the world is generated
+            if (m_chunks == null)
+                return;
+
+            foreach (var item in m_chunks)
+            {
+                Chunk tmp = item.Value;
+                if (tmp.State != ChunkState.Updating)
+                    tmp.State = ChunkState.NeedFaceUpdate;
+            }
+        }
         #endregion
         //****************************************************************
+        #region World generation methods
         /// <summary>
         /// Create the world chunks 
         /// </summary>
@@ -371,6 +410,7 @@ namespace VoxelWorldEngine
 
             return false;
         }
+        #endregion
         //****************************************************************
         protected abstract BlockType[] StrataNoise(Vector3 pos);
         [Obsolete]

@@ -205,7 +205,7 @@ namespace VoxelWorldEngine
 
             return true;
         }
-        public static bool NotBlock(this BlockType id)
+        public static bool IsNotBlock(this BlockType id)
         {
             switch (id)
             {

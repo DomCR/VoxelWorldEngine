@@ -34,17 +34,19 @@ namespace VoxelWorldEngine
         private List<Vector3> m_collider_vertices = new List<Vector3>();
         private List<int> m_mesh_triangles = new List<int>();
         private List<int> m_collider_triangles = new List<int>();
-        private List<Color> m_colors = new List<Color>();
         private List<Vector2> m_uv = new List<Vector2>();
-        private int m_faceCount = 0;
+        private int m_mesh_faceCount = 0;
+        private int m_collider_faceCount = 0;
 
         private Mesh m_mesh;
         private MeshCollider m_collider;
 
+        private int m_sectionLevel;
+
         /// <summary>
         /// Guard to detect changes in the chunk state and execute the change only once.
         /// </summary>
-        private ChunkState m_state = ChunkState.Idle;
+        private ChunkState m_state_validation = ChunkState.Idle;
         private ChunkPhase m_phase = ChunkPhase.HeightMap;
 
         //TODO: implement the world class
@@ -56,6 +58,9 @@ namespace VoxelWorldEngine
         #region Behaviour methods
         void Awake()
         {
+            //Get the parent (world)
+            m_parent = this.GetComponentInParent<WorldGenerator>();
+
             //Initialize the block array
             Blocks = new BlockType[XSize, YSize, ZSize];
 
@@ -63,8 +68,7 @@ namespace VoxelWorldEngine
             m_mesh = this.GetComponent<MeshFilter>().mesh;
             m_collider = this.GetComponent<MeshCollider>();
 
-            //Get the parent (world)
-            m_parent = this.GetComponentInParent<WorldGenerator>();
+            m_sectionLevel = m_parent.SectionLevel;
 
             #region Debug utils
             if (m_parent.debug.IsActive)
@@ -80,6 +84,24 @@ namespace VoxelWorldEngine
         }
         void Update()
         {
+            ChunkPropertyChanged();
+        }
+        private void OnDisable()
+        {
+            m_chunkThread.Abort();
+        }
+        #endregion
+        //*************************************************************
+        void ChunkPropertyChanged()
+        {
+            if (m_sectionLevel != m_parent.SectionLevel)
+            {
+                if (setState(ChunkState.NeedFaceUpdate))
+                {
+                    m_sectionLevel = m_parent.SectionLevel;
+                }
+            }
+
             if (!m_parent.debug.IsActive)
             {
                 if (Phase != m_phase)
@@ -89,18 +111,12 @@ namespace VoxelWorldEngine
                 }
             }
 
-            if (State != m_state)
+            if (State != m_state_validation)
             {
-                m_state = State;
+                m_state_validation = State;
                 StateBehaviour();
             }
         }
-        private void OnDisable()
-        {
-            m_chunkThread.Abort();
-        }
-        #endregion
-        //*************************************************************
         /// <summary>
         /// Set the action to take according to the current state.
         /// </summary>
@@ -192,18 +208,6 @@ namespace VoxelWorldEngine
                     {
                         Blocks[x, y, z] = col[y];
                     }
-                    #endregion
-
-                    #region SLOWER: consider the methods obsolete (code cleaning)
-                    //for (int y = 0; y < YSize; y++)
-                    //{
-                    //    Vector3 currBlockPos = new Vector3(
-                    //        x + Position.x,
-                    //        y + Position.y,
-                    //        z + Position.z);
-
-                    //    Blocks[x, y, z] = m_parent.ComputeHeightNoise(currBlockPos);
-                    //} 
                     #endregion
                 }
             }
@@ -394,7 +398,7 @@ namespace VoxelWorldEngine
         /// <summary>
         /// Update the vertices to generate the faces
         /// </summary>
-        void UpdateFaces()
+        public void UpdateFaces()
         {
             //Update the chunk state
             State = ChunkState.Updating;
@@ -414,17 +418,20 @@ namespace VoxelWorldEngine
                         if (Blocks[x, y, z] == BlockType.NULL)
                             continue;
 
+                        bool underSection = y < m_parent.SectionLevel;
+
                         //TODO: in case isn't a block (grass, spider web, flowers, mushrooms...)
                         //Implement an spawn method
-                        if (Blocks[x, y, z].NotBlock())
+                        if (Blocks[x, y, z].IsNotBlock())
                         {
                             //Check boundaries only need 1 free side to be render
-                            if (m_parent.GetBlock(currBlockPos.x + 1, currBlockPos.y, currBlockPos.z).IsTransparent()
+                            if ((m_parent.GetBlock(currBlockPos.x + 1, currBlockPos.y, currBlockPos.z).IsTransparent()
                                || m_parent.GetBlock(currBlockPos.x, currBlockPos.y + 1, currBlockPos.z).IsTransparent()
                                || m_parent.GetBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z + 1).IsTransparent()
                                || m_parent.GetBlock(currBlockPos.x - 1, currBlockPos.y, currBlockPos.z).IsTransparent()
                                || m_parent.GetBlock(currBlockPos.x, currBlockPos.y - 1, currBlockPos.z).IsTransparent()
                                || m_parent.GetBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z - 1).IsTransparent())
+                               && underSection)
                             {
                                 //Spawn the element and add the vertices to the mesh
                                 addNotBlockToMesh(x, y, z);
@@ -433,31 +440,70 @@ namespace VoxelWorldEngine
                             continue;
                         }
 
+                        //Apply the section if is in this block
+                        if (y == m_parent.SectionLevel - 1)
+                        {
+                            addBlockToMesh(x, y, z, FaceType.Top, BlockTextureMap.STONE_FLATTEN);
+                        }
+
                         #region Check block sides
                         //Set the visible faces
                         if (m_parent.GetBlock(currBlockPos.x + 1, currBlockPos.y, currBlockPos.z).IsTransparent())
                         {
-                            addBlockToMesh(x, y, z, FaceType.East);
+                            if (underSection)
+                                addBlockToMesh(x, y, z, FaceType.East);
+
+                            addBlockToCollider(x, y, z, FaceType.East);
                         }
                         if (m_parent.GetBlock(currBlockPos.x, currBlockPos.y + 1, currBlockPos.z).IsTransparent())
                         {
-                            addBlockToMesh(x, y, z, FaceType.Top);
+                            //addBlockToMesh(x, y, z, FaceType.Top, underSection);
+
+                            //Apply the section if is in this block
+                            //if (y == m_parent.SectionLevel)
+                            //{
+                            //    addFaceTexture(BlockTextureMap.FORBBIDEN_SIGN);
+                            //}
+
+                            if (underSection)
+                                addBlockToMesh(x, y, z, FaceType.Top);
+
+                            addBlockToCollider(x, y, z, FaceType.Top);
                         }
                         if (m_parent.GetBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z + 1).IsTransparent())
                         {
-                            addBlockToMesh(x, y, z, FaceType.North);
+                            //addBlockToMesh(x, y, z, FaceType.North, underSection);
+
+                            if (underSection)
+                                addBlockToMesh(x, y, z, FaceType.North);
+
+                            addBlockToCollider(x, y, z, FaceType.North);
                         }
                         if (m_parent.GetBlock(currBlockPos.x - 1, currBlockPos.y, currBlockPos.z).IsTransparent())
                         {
-                            addBlockToMesh(x, y, z, FaceType.West);
+                            //addBlockToMesh(x, y, z, FaceType.West, underSection);
+
+                            if (underSection)
+                                addBlockToMesh(x, y, z, FaceType.West);
+
+                            addBlockToCollider(x, y, z, FaceType.West);
                         }
                         if (m_parent.GetBlock(currBlockPos.x, currBlockPos.y - 1, currBlockPos.z).IsTransparent())
                         {
-                            addBlockToMesh(x, y, z, FaceType.Bottom);
+                            //addBlockToMesh(x, y, z, FaceType.Bottom, underSection);
+
+                            if (underSection)
+                                addBlockToMesh(x, y, z, FaceType.Bottom);
+
+                            addBlockToCollider(x, y, z, FaceType.Bottom);
                         }
                         if (m_parent.GetBlock(currBlockPos.x, currBlockPos.y, currBlockPos.z - 1).IsTransparent())
                         {
-                            addBlockToMesh(x, y, z, FaceType.South);
+                            //addBlockToMesh(x, y, z, FaceType.South, underSection);
+                            if (underSection)
+                                addBlockToMesh(x, y, z, FaceType.South);
+
+                            addBlockToCollider(x, y, z, FaceType.South);
                         }
                         #endregion
                     }
@@ -487,32 +533,59 @@ namespace VoxelWorldEngine
             m_mesh.MarkDynamic();
 
             //Setup the collider
-            m_collider.sharedMesh = new Mesh();
-            m_collider.sharedMesh.vertices = m_collider_vertices.ToArray();
-            m_collider.sharedMesh.triangles = m_collider_triangles.ToArray();
+            UpdateCollider();
 
             //Clear the memory
             m_mesh_vertices.Clear();
             m_uv.Clear();
             m_mesh_triangles.Clear();
-            m_colors.Clear();
-            m_faceCount = 0;
+            m_mesh_faceCount = 0;
+            m_collider_faceCount = 0;
 
             State = ChunkState.Idle;
+        }
+        void UpdateCollider()
+        {
+            //Setup the collider
+            m_collider.sharedMesh = new Mesh();
+            m_collider.sharedMesh.vertices = m_collider_vertices.ToArray();
+            m_collider.sharedMesh.triangles = m_collider_triangles.ToArray();
         }
         //*************************************************************
         private void addNotBlockToMesh(int x, int y, int z)
         {
             Block.PlaceNotBlock(x, y, z, m_mesh_vertices, m_mesh_triangles);
             //setFaceTexture(x, y, z, );
-            m_faceCount += 2;
+            m_mesh_faceCount += 2;
             m_uv.AddRange(Block.GetTexture((BlockTextureMap)Blocks[x, y, z]));
             m_uv.AddRange(Block.GetTexture((BlockTextureMap)Blocks[x, y, z]));
         }
+        private void addBlockToMesh(int x, int y, int z, FaceType face, BlockTextureMap map)
+        {
+            Block.GetFace(x, y, z, out List<Vector3> tmpVert, out List<int> tmpTri, m_mesh_faceCount, face);
+
+            addFaceTexture(map);
+            //render mesh vertex
+            m_mesh_vertices.AddRange(tmpVert);
+            m_mesh_triangles.AddRange(tmpTri);
+
+            m_mesh_faceCount++;
+        }
         private void addBlockToMesh(int x, int y, int z, FaceType face)
         {
+            Block.GetFace(x, y, z, out List<Vector3> tmpVert, out List<int> tmpTri, m_mesh_faceCount, face);
 
-            Block.GetFace(x, y, z, out List<Vector3> tmpVert, out List<int> tmpTri, m_faceCount, face);
+            addFaceTexture(x, y, z, face);
+            //render mesh vertex
+            m_mesh_vertices.AddRange(tmpVert);
+            m_mesh_triangles.AddRange(tmpTri);
+
+            m_mesh_faceCount++;
+        }
+        [Obsolete]
+        private void addBlockToMesh(int x, int y, int z, FaceType face, bool addTexture)
+        {
+            Block.GetFace(x, y, z, out List<Vector3> tmpVert, out List<int> tmpTri, m_mesh_faceCount, face);
 
             //Add the vertices and triangles to the mesh and the collider
             if (Blocks[x, y, z].IsSolid())
@@ -521,14 +594,38 @@ namespace VoxelWorldEngine
                 m_collider_vertices.AddRange(tmpVert);
                 Block.AddTriangles(m_collider_triangles, (m_collider_vertices.Count / 4) - 1);
             }
-            //render mesh vertex
-            m_mesh_vertices.AddRange(tmpVert);
-            m_mesh_triangles.AddRange(tmpTri);
 
-            setFaceTexture(x, y, z, face);
-            m_faceCount++;
+            //Add the texture incase is necessary
+            if (true)
+            //if (addTexture)
+            {
+                addFaceTexture(x, y, z, face);
+                //render mesh vertex
+                m_mesh_vertices.AddRange(tmpVert);
+                m_mesh_triangles.AddRange(tmpTri);
+            }
+
+            m_mesh_faceCount++;
         }
-        private void setFaceTexture(int x, int y, int z, FaceType face)
+        private void addBlockToCollider(int x, int y, int z, FaceType face)
+        {
+            Block.GetFace(x, y, z, out List<Vector3> tmpVert, out List<int> tmpTri, m_collider_faceCount, face);
+
+            //Add the vertices and triangles to the mesh and the collider
+            if (Blocks[x, y, z].IsSolid())
+            {
+                //Add the vertices to the collider
+                m_collider_vertices.AddRange(tmpVert);
+                Block.AddTriangles(m_collider_triangles, (m_collider_vertices.Count / 4) - 1);
+
+                m_collider_faceCount++;
+            }
+        }
+        private void addFaceTexture(BlockTextureMap map)
+        {
+            m_uv.AddRange(Block.GetTexture(map));
+        }
+        private void addFaceTexture(int x, int y, int z, FaceType face)
         {
             BlockTextureMap map = (BlockTextureMap)Blocks[x, y, z];
 
@@ -591,6 +688,16 @@ namespace VoxelWorldEngine
                 m_chunkThread = new Thread(new ThreadStart(action));
                 m_chunkThread.Start();
             }
+        }
+        private bool setState(ChunkState state)
+        {
+            if (State != ChunkState.Updating)
+            {
+                State = state;
+                return true;
+            }
+
+            return false;
         }
     }
 }

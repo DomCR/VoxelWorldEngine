@@ -398,7 +398,7 @@ MonoBehaviour:
   ChunkPrefab: {fileID: 662855818199676993, guid: c7922437e70d5654c99418c25739b33e,
     type: 3}
   debug:
-    IsActive: 1
+    IsActive: 0
     ChunkState: 1
   Seed: 0
   UseSeed: 0
