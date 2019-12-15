@@ -45,7 +45,7 @@ namespace VoxelWorldEngine
         /// Guard to detect changes in the chunk state and execute the change only once.
         /// </summary>
         private ChunkState m_state = ChunkState.Idle;
-        private ChunkPhase m_phase = ChunkPhase.Init;
+        private ChunkPhase m_phase = ChunkPhase.HeightMap;
 
         //TODO: implement the world class
         private WorldGenerator m_parent;
@@ -146,18 +146,21 @@ namespace VoxelWorldEngine
             switch (m_phase)
             {
                 case ChunkPhase.Init:
-                    State = ChunkState.HeightMapGeneration;
                     break;
                 case ChunkPhase.HeightMap:
-
+                    State = ChunkState.HeightMapGeneration;
                     break;
                 case ChunkPhase.Strata:
+                    State = ChunkState.StrataGeneration;
                     break;
                 case ChunkPhase.Caves:
+                    State = ChunkState.CaveGeneration;
                     break;
                 case ChunkPhase.OreGeneration:
+                    State = ChunkState.OreGeneration;
                     break;
                 case ChunkPhase.Vegetation:
+                    State = ChunkState.VegetationGeneration;
                     break;
                 case ChunkPhase.Generated:
                     break;
@@ -256,6 +259,7 @@ namespace VoxelWorldEngine
 
             //Update the chunk state
             State = ChunkState.NeedFaceUpdate;
+            Phase = ChunkPhase.Caves;
         }
         void GenerateCaves()
         {
@@ -280,6 +284,7 @@ namespace VoxelWorldEngine
 
             //Update the chunk state
             State = ChunkState.NeedFaceUpdate;
+            Phase = ChunkPhase.OreGeneration;
         }
         void GenerateDensityMap()
         {
@@ -334,6 +339,7 @@ namespace VoxelWorldEngine
 
             //Update the chunk state
             State = ChunkState.NeedFaceUpdate;
+            State = ChunkState.VegetationGeneration;
         }
         /// <summary>
         /// Spawn vegetation in the game
@@ -383,6 +389,7 @@ namespace VoxelWorldEngine
             }
 
             State = ChunkState.NeedFaceUpdate;
+            Phase = ChunkPhase.Generated;
         }
         /// <summary>
         /// Update the vertices to generate the faces
