@@ -33,6 +33,9 @@ namespace VoxelWorldEngine
         public int ChunksY;
         public int ChunksZ;
 
+        [Tooltip("Minimum world height")]
+        public int MinWorldHeight = 0;
+
         [Space()]
         [Tooltip("Array with all the world biomes available")]
         public SerializedBiomeAttributes[] BiomeData;
@@ -60,36 +63,34 @@ namespace VoxelWorldEngine
         private int m_sectionLevel;
 
         #region Density noise properties (to delete)
-        [Header("Generic biome noise properties")]
-        [Range(0f, 999f)]
-        [Tooltip("Wave length of the biome noise")]
-        public float WidthMagnitude = 125;
+        //[Header("Generic biome noise properties")]
+        //[Range(0f, 999f)]
+        //[Tooltip("Wave length of the biome noise")]
+        //public float WidthMagnitude = 125;
 
-        [Tooltip("Minimum world height")]
-        public int WorldHeight = 0;
-        public float HeightXNoiseGap;
-        public float HeightZNoiseGap;
+        //public float HeightXNoiseGap;
+        //public float HeightZNoiseGap;
 
-        [Space]
-        [Header("Temperature noise map properties")]
-        [Tooltip("Stablish the noise frequency by each point.")]
-        public float Frequency = 4;
-        [Range(1, 8)]
-        [Tooltip("Number of iterations for the noise, each octave is a new noise sum.")]
-        public int Octaves = 1;
-        [Range(1f, 4f)]
-        [Tooltip("Phase between the different noise frequencies when the sum is applied.")]
-        public float Lacunarity = 2f;
-        [Range(0f, 1f)]
-        [Tooltip("Multiplier for the noise sum, decrease each noise sum")]
-        public float Persistence = 0.5f;
-        [Space]
-        [Range(1, 3)]
+        //[Space]
+        //[Header("Temperature noise map properties")]
+        //[Tooltip("Stablish the noise frequency by each point.")]
+        //public float Frequency = 4;
+        //[Range(1, 8)]
+        //[Tooltip("Number of iterations for the noise, each octave is a new noise sum.")]
+        //public int Octaves = 1;
+        //[Range(1f, 4f)]
+        //[Tooltip("Phase between the different noise frequencies when the sum is applied.")]
+        //public float Lacunarity = 2f;
+        //[Range(0f, 1f)]
+        //[Tooltip("Multiplier for the noise sum, decrease each noise sum")]
+        //public float Persistence = 0.5f;
+        //[Space]
+        //[Range(1, 3)]
 
-        [Tooltip("Noise dimensions, (x,z) as a 2Dplane, y is the up axis.")]
-        public int Dimensions = 3;
-        [Tooltip("Method to apply.")]
-        public NoiseMethodType NoiseType;
+        //[Tooltip("Noise dimensions, (x,z) as a 2Dplane, y is the up axis.")]
+        //public int Dimensions = 3;
+        //[Tooltip("Method to apply.")]
+        //public NoiseMethodType NoiseType;
         #endregion
         //****************************************************************
         protected Vector3 m_position;
@@ -186,6 +187,7 @@ namespace VoxelWorldEngine
                         pos += this.transform.position;
 
                         GameObject tmp_chunk = Instantiate(ChunkPrefab, pos, new Quaternion(0, 0, 0, 0), this.transform);
+                        tmp_chunk.name = "Chunk_" + (int)pos.x + "_" + (int)pos.y + "_" + (int)pos.z;
                         m_chunks.Add(pos, tmp_chunk.GetComponent<Chunk>());
                     }
                 }
@@ -317,7 +319,7 @@ namespace VoxelWorldEngine
             //float bioNoise = Mathf.PerlinNoise(pos.x / 100, pos.z / 100);
 
             NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)NoiseMethodType.Perlin][2 - 1];
-            float bioNoise = (NoiseMap.Sum(method, pos / WidthMagnitude, 4, 4, 2, 0.5f) + 1) / 2;
+            float bioNoise = (NoiseMap.Sum(method, pos /*/ WidthMagnitude*/, 4, 4, 2, 0.5f) + 1) / 2;
 
 
             BiomeAttributes bioAtt = new BiomeAttributes();

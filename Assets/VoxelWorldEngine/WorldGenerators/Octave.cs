@@ -40,23 +40,23 @@ namespace VoxelWorldEngine
         //****************************************************************
         protected override BlockType HeightNoise(Vector3 pos)
         {
-            NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)NoiseType][Dimensions - 1];
-            float sample = (NoiseMap.Sum(method, pos / WidthMagnitude, Frequency, Octaves, Lacunarity, Persistence) + 1) / 2;
+            //NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)NoiseType][Dimensions - 1];
+            //float sample = (NoiseMap.Sum(method, pos / WidthMagnitude, Frequency, Octaves, Lacunarity, Persistence) + 1) / 2;
 
-            //Apply the height magnitude
-            //float h = Mathf.PerlinNoise(pos.x / (WidthMagnitude), pos.z / (WidthMagnitude)) * 200;
-            //Debug.Log(h);
-            //TODO: Control the height, cannot generate mountains without increase the depht
-            //sample *= HeightMagnitude;
-            //sample *= h;
+            ////Apply the height magnitude
+            ////float h = Mathf.PerlinNoise(pos.x / (WidthMagnitude), pos.z / (WidthMagnitude)) * 200;
+            ////Debug.Log(h);
+            ////TODO: Control the height, cannot generate mountains without increase the depht
+            ////sample *= HeightMagnitude;
+            ////sample *= h;
 
-            //Set the minimum height of the world
-            sample += WorldHeight;
+            ////Set the minimum height of the world
+            //sample += WorldHeight;
 
-            if (pos.y < WorldHeight)
-                return BlockType.SAND;
-            if (pos.y < sample)
-                return BlockType.STONE;
+            //if (pos.y < WorldHeight)
+            //    return BlockType.SAND;
+            //if (pos.y < sample)
+            //    return BlockType.STONE;
 
             return BlockType.NULL;
         }
@@ -65,16 +65,16 @@ namespace VoxelWorldEngine
             NoiseMethod_delegate method = NoiseMap.NoiseMethods[(int)attr.NoiseType][attr.Dimensions - 1];
             float sample = (NoiseMap.Sum(method, pos / attr.WidthMagnitude, attr.Frequency, attr.Octaves, attr.Lacunarity, attr.Persistence) + 1) / 2;
             //sample = (float)NoiseLibrary.GetValue(pos.x / attr.WidthMagnitude, 0, pos.z / WidthMagnitude, attr.Frequency, attr.Octaves, attr.Lacunarity, attr.Persistence);
-           
+
             if (attr.NoiseType == NoiseMethodType.Value)
                 sample *= 0.5f;
 
             sample *= attr.HeightMagnitude;
 
             //Set the minimum height of the world
-            sample += WorldHeight;
+            sample += MinWorldHeight;
 
-            if (pos.y < WorldHeight)
+            if (pos.y < MinWorldHeight)
                 return BlockType.SAND;
             if (pos.y < sample)
                 if (debug.IsActive)
