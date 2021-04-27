@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7db2a26a8369ada478953de22e1e15cb, type: 3}
+  m_Name: Biome_03
+  m_EditorClassIdentifier: 
+  Noise: {fileID: 11400000, guid: 60f2f83854513b647bc9e66fb5de5ad9, type: 2}
+  Block: {fileID: 11400000, guid: 60335275d99eb5b4980d2b2706a377e7, type: 2}
