@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 684f32dc73d35dd42a9a567b9db0e8c0, type: 3}
   m_Name: TestingHeightNoise
   m_EditorClassIdentifier: 
-  MaxHeight: 200
+  MaxHeight: 239.4
   MinHeight: 0
   Smooth: 0.01
-  Octaves: 5
-  Persistence: 0.5
+  Octaves: 3
+  Persistence: 0.1

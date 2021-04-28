@@ -18,6 +18,6 @@ MonoBehaviour:
   Octaves: 6
   Lacunarity: 2
   Persistence: 0.5
-  WidthMagnitude: 200
-  HeightMagnitude: 50
+  WidthMagnitude: 150
+  HeightMagnitude: 100
   MinWorldHeight: 50

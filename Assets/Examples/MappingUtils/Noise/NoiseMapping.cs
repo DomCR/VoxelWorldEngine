@@ -27,7 +27,7 @@ public class NoiseMapping : MonoBehaviour
 			GetComponent<MeshRenderer>().sharedMaterial.mainTexture = m_texture;
 
 			FillTexture();
-			Refresh = false;
+			//Refresh = false;
 		}
 	}
 	// Update is called once per frame

@@ -268,7 +268,7 @@ MonoBehaviour:
       ChunkSizeY: 128
       ChunkSizeZ: 16
       BiomeInfluence: 0
-    RenderSides: 0
+    RenderSides: 1
     TextureTiling: {x: 0.0625, y: 0.0625}
     TextureAtlas: {fileID: 2100000, guid: 2d556279457328f49b7c5c047394f611, type: 2}
     Center: {fileID: 0}

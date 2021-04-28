@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7db2a26a8369ada478953de22e1e15cb, type: 3}
   m_Name: Biome_02
   m_EditorClassIdentifier: 
-  Noise: {fileID: 11400000, guid: 842a1e7e294922546a5c1a79fc089e53, type: 2}
+  Noise: {fileID: 11400000, guid: 877cbab8d1561fe4c85b27dbc2fea588, type: 2}
   Block: {fileID: 11400000, guid: ae576ae804721c242a97cbe0e5fcedee, type: 2}

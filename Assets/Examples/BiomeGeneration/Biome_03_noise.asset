@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Biome_03_noise
   m_EditorClassIdentifier: 
   NoiseType: 1
-  Dimension: 2
+  Dimension: 1
   Frequency: 2
   Octaves: 6
   Lacunarity: 1

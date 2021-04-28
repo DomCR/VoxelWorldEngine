@@ -9,7 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f0eecd315598a547b3e0ca56d2537a9, type: 3}
-  m_Name: FastNoise
+  m_Script: {fileID: 11500000, guid: 0fbd371caf35da446a658df5f2caf71a, type: 3}
+  m_Name: Noise_mapping_example
   m_EditorClassIdentifier: 
-  Frequency: 0.005
+  NoiseType: 0
+  Dimension: 1
+  Frequency: 4
+  Octaves: 8
+  Lacunarity: 2
+  Persistence: 0.5
+  WidthMagnitude: 200
+  HeightMagnitude: 250
+  MinWorldHeight: 0
